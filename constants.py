@@ -1,11 +1,13 @@
 bucket_name = 'abherbs-resources'
 thumbdir = '.thumbnails'
-storagedir = 'D:\\Dev\\Storage\\photos\\'
-plantsdir = 'D:\\Dev\\Plants\\'
-observationsdir = 'D:\\Dev\\Observations\\'
+storagedir = '/home/adrian/Dev/Storage/photos/'
+plantsdir = '/home/adrian/Dev/Plants/'
+observationsdir = '/home/adrian/Dev/Observations/'
 sources = 'sources.txt'
 extension = '.webp'
 extension_txt = '.txt'
+certificate_firebase = '/home/adrian/Dev/keystore/abherbs-backend-firebase-adminsdk-l5787-69082c19ae.json'
+databaseURL = 'https://abherbs-backend.firebaseio.com'
 
 apgiv_names = {
     'Amborellales': 'Superregnum/Regnum/Cladus/Cladus/Ordo',

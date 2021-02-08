@@ -3,6 +3,8 @@ from firebase_admin import credentials
 from firebase_admin import db
 from geopy.geocoders import Nominatim
 
+import constants
+
 
 def refresh_public_stats():
     stats = {}
@@ -180,9 +182,9 @@ def refresh_private_stats(ranks):
 
 
 if __name__ == "__main__":
-    cred = credentials.Certificate('D:\\Dev\\Keystore\\abherbs-backend-firebase-adminsdk-l5787-d877acd19f.json')
+    cred = credentials.Certificate(constants.certificate_firebase)
     firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://abherbs-backend.firebaseio.com'
+        'databaseURL': constants.databaseURL
     })
     geolocator = Nominatim(user_agent="abherbs")
 

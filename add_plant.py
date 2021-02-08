@@ -104,8 +104,10 @@ def add_plant_v2(order, family, plant, wikidata, id, flowering_from, flowering_t
             usda_id = claims['P1772'][0]['mainsnak']['datavalue']['value']
         if 'P961' in claims.keys():
             ipni_id = claims['P961'][0]['mainsnak']['datavalue']['value']
-            if ipni_id == '60445561-2':
-                ipni_id = '77184471-1'
+            if ipni_id == '95179-1':
+                ipni_id = '1004515-2'
+            elif ipni_id == '576529-1':
+                ipni_id = '77206410-1'
 
     taxons = []
     species = wikilinks['species']
@@ -255,9 +257,9 @@ def getName(name, language):
         return name.lower()
 
 if __name__ == "__main__":
-    cred = credentials.Certificate('D:\\Dev\\Keystore\\abherbs-backend-firebase-adminsdk-l5787-d877acd19f.json')
+    cred = credentials.Certificate(constants.certificate_firebase)
     firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://abherbs-backend.firebaseio.com'
+        'databaseURL': constants.databaseURL
     })
     refCount = db.reference('plants_to_update/count')
     count = refCount.get()
