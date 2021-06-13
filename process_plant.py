@@ -138,9 +138,9 @@ def photo_ok(root, images, scales, combos, origin, target, plant):
 
 
 if __name__ == "__main__":
-    cred = credentials.Certificate('D:\\Dev\\Keystore\\abherbs-backend-firebase-adminsdk-l5787-d877acd19f.json')
+    cred = credentials.Certificate(constants.certificate_firebase)
     firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://abherbs-backend.firebaseio.com'
+        'databaseURL': constants.databaseURL
     })
     ImageFile.LOAD_TRUNCATED_IMAGES = True
 
