@@ -48,13 +48,20 @@ def refresh_public_stats():
             except TypeError:
                 print(observation_key)
                 continue
+            except ValueError:
+                print(observation_key)
+                continue
 
-            country_code = location.raw['address']['country_code']
-            ref_observation_cc = db.reference('observations/public/by date/list/' + observation_key)
-            observation['country'] = country_code
-            ref_observation_cc.update(observation)
-            ref_observation_cc = db.reference('observations/public/by plant/' + observation['plant'] + '/list/' + observation_key)
-            ref_observation_cc.update(observation)
+            if (location):
+                country_code = location.raw['address']['country_code']
+                ref_observation_cc = db.reference('observations/public/by date/list/' + observation_key)
+                observation['country'] = country_code
+                ref_observation_cc.update(observation)
+                ref_observation_cc = db.reference('observations/public/by plant/' + observation['plant'] + '/list/' + observation_key)
+                ref_observation_cc.update(observation)
+            else:
+                print(observation_key)
+                continue
 
         if country_code not in countries:
             countries.append(country_code)
@@ -137,6 +144,10 @@ def refresh_private_stats(ranks):
                 try:
                     location = geolocator.reverse(str(observation['latitude']) + ', ' + str(observation['longitude']))
                 except:
+                    print(observation_key + ': ' + str(observation['latitude']) + ', ' + str(observation['longitude']))
+                    continue
+
+                if location is None:
                     print(observation_key + ': ' + str(observation['latitude']) + ', ' + str(observation['longitude']))
                     continue
 

@@ -104,37 +104,40 @@ def add_plant_v2(order, family, plant, wikidata, id, flowering_from, flowering_t
             usda_id = claims['P1772'][0]['mainsnak']['datavalue']['value']
         if 'P961' in claims.keys():
             ipni_id = claims['P961'][0]['mainsnak']['datavalue']['value']
-            if ipni_id == '60445561-2':
-                ipni_id = '77184471-1'
+            if ipni_id == '161931-2':
+                ipni_id = '508578-1'
+            elif ipni_id == '597506-1':
+                ipni_id = '597505-1'
 
     taxons = []
-    species = wikilinks['species']
-    with urllib.request.urlopen(species) as url_species:
-        bs = BeautifulSoup(url_species.read().decode('utf8'), features='lxml')
-        tag = bs('p')
-        for i in range(0,2):
-            elem = tag[i]
-            taxons.extend([y.strip() for y in [x for x in elem.text.split('\n') if x]])
-
     apg_iv = {}
-    taxon_count = 0
-    taxons.reverse()
-    for taxon in taxons:
-        if ':' in taxon and not taxon.startswith('Species') and not taxon.startswith('Variet') and not taxon.startswith('Subspecies'):
-            if taxon.startswith('Ordo'):
-                taxon_names = constants.apgiv_names[order].split('/')
-                taxon_names.reverse()
-                taxon_values = constants.apgiv_values[order].split('/')
-                taxon_values.reverse()
-                for i in range(len(taxon_names)):
-                    apg_iv['{:0>2d}'.format(taxon_count) + '_' + taxon_names[i]] = taxon_values[i]
+    if 'species' in wikilinks.keys():
+        species = wikilinks['species']
+        with urllib.request.urlopen(species) as url_species:
+            bs = BeautifulSoup(url_species.read().decode('utf8'), features='lxml')
+            tag = bs('p')
+            for i in range(0,2):
+                elem = tag[i]
+                taxons.extend([y.strip() for y in [x for x in elem.text.split('\n') if x]])
+
+        taxon_count = 0
+        taxons.reverse()
+        for taxon in taxons:
+            if ':' in taxon and not taxon.startswith('Species') and not taxon.startswith('Variet') and not taxon.startswith('Subspecies'):
+                if taxon.startswith('Ordo'):
+                    taxon_names = constants.apgiv_names[order].split('/')
+                    taxon_names.reverse()
+                    taxon_values = constants.apgiv_values[order].split('/')
+                    taxon_values.reverse()
+                    for i in range(len(taxon_names)):
+                        apg_iv['{:0>2d}'.format(taxon_count) + '_' + taxon_names[i]] = taxon_values[i]
+                        taxon_count += 1
+                    break
+                else:
+                    line = taxon.split(': ')
+                    line_value = line[1].split(' ')
+                    apg_iv['{:0>2d}'.format(taxon_count) + '_' + line[0]] = line_value[len(line_value)-1]
                     taxon_count += 1
-                break
-            else:
-                line = taxon.split(': ')
-                line_value = line[1].split(' ')
-                apg_iv['{:0>2d}'.format(taxon_count) + '_' + line[0]] = line_value[len(line_value)-1]
-                taxon_count += 1
 
     plant_v2 = {
         'APGIV': apg_iv,
