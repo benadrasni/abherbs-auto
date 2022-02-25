@@ -258,7 +258,7 @@ def getName(name, language):
         return name.lower()
 
 if __name__ == "__main__":
-    cred = credentials.Certificate('D:\\Dev\\Keystore\\abherbs-backend-firebase-adminsdk-l5787-d877acd19f.json')
+    cred = credentials.Certificate(constants.certificate_firebase)
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://abherbs-backend.firebaseio.com'
     })
