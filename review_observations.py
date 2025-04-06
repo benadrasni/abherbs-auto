@@ -61,7 +61,7 @@ def observation_cancel():
 
 
 def review_observation(observation_key, observation):
-    storage_client = storage.Client()
+    storage_client = storage.Client("abherbs-backend")
     bucket = storage_client.bucket(constants.bucket_name)
 
     paths = observation['photoPaths']
@@ -109,7 +109,7 @@ def review_observation(observation_key, observation):
     i = 0
     for image in images:
         ratio = image.width/image.height
-        photo = ImageTk.PhotoImage(image.resize((250, int(250/ratio)), Image.ANTIALIAS))
+        photo = ImageTk.PhotoImage(image.resize((250, int(250/ratio)), Image.Resampling.LANCZOS))
         photos.append(photo)
         label = tk.Label(frame, image=photo).grid(row=0, column=i)
         labels.append(label)

@@ -9,7 +9,7 @@ def make_blob_public(bucket_name, blob_name):
     # bucket_name = "your-bucket-name"
     # blob_name = "your-object-name"
 
-    storage_client = storage.Client()
+    storage_client = storage.Client("abherbs-backend")
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_name)
 

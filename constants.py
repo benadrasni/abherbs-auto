@@ -1,12 +1,12 @@
 bucket_name = 'abherbs-resources'
 thumbdir = '.thumbnails'
-storagedir = '/home/adrian/Dev/Storage/photos/'
-plantsdir = '/home/adrian/Dev/Plants/'
-observationsdir = '/home/adrian/Dev/Observations/'
+storagedir = '/Users/adrianbenko/Development/Storage/photos/'
+plantsdir = '/Users/adrianbenko/Development/Plants/'
+observationsdir = '/Users/adrianbenko/Development/Observations/'
 sources = 'sources.txt'
 extension = '.webp'
 extension_txt = '.txt'
-certificate_firebase = '/home/adrian/Dev/keystore/abherbs-backend-firebase-adminsdk-l5787-69082c19ae.json'
+certificate_firebase = '/Users/adrianbenko/Development/Keystore/abherbs-backend-firebase-adminsdk-l5787-839f896846.json'
 databaseURL = 'https://abherbs-backend.firebaseio.com'
 
 apgiv_names = {

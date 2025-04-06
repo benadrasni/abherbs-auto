@@ -20,6 +20,9 @@ def check_observations():
     observations = ref_observations.get()
     for user in observations.keys():
         user_observations = observations[user]
+        if 'by date' not in user_observations or 'list' not in user_observations['by date']:
+            print(user)
+            continue
         for observation_id in user_observations['by date']['list'].keys():
             observation = user_observations['by date']['list'][observation_id]
             if not observation['date']:
@@ -31,7 +34,7 @@ def check_observations():
                 
 
 if __name__ == "__main__":
-    cred = credentials.Certificate('D:\\Dev\\Keystore\\abherbs-backend-firebase-adminsdk-l5787-d877acd19f.json')
+    cred = credentials.Certificate('/Users/adrianbenko/Development/Keystore/abherbs-backend-firebase-adminsdk-l5787-839f896846.json')
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://abherbs-backend.firebaseio.com'
     })
