@@ -31,7 +31,28 @@ def check_observations():
                 print(observation_id)
             if observation['longitude'] == 0:
                 print(observation_id)
-                
+
+def check_plants_en_translations():
+    ref_translations = db.reference('translations/en')
+    plants = ref_translations.get()
+    for plant in plants.keys():
+        translation = plants[plant]
+        if 'description' not in translation:
+            print(plant + ': missing description')
+        if 'flower' not in translation:
+            print(plant + ': missing flower')
+        if 'fruit' not in translation:
+            print(plant + ': missing fruit')
+        if 'habitat' not in translation:
+            print(plant + ': missing habitat')
+        if 'inflorescence' not in translation:
+            print(plant + ': missing inflorescence')
+        if 'leaf' not in translation:
+            print(plant + ': missing leaf')
+        if 'stem' not in translation:
+            print(plant + ': missing stem')
+
+
 
 if __name__ == "__main__":
     cred = credentials.Certificate('/Users/adrianbenko/Development/Keystore/abherbs-backend-firebase-adminsdk-l5787-839f896846.json')
@@ -40,6 +61,7 @@ if __name__ == "__main__":
     })
 
     #check_translations_taxonomy()
-    check_observations()
+    #check_observations()
+    check_plants_en_translations()
 
 

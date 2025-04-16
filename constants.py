@@ -8,6 +8,7 @@ extension = '.webp'
 extension_txt = '.txt'
 certificate_firebase = '/Users/adrianbenko/Development/Keystore/abherbs-backend-firebase-adminsdk-l5787-839f896846.json'
 databaseURL = 'https://abherbs-backend.firebaseio.com'
+project = 'abherbs-backend'
 
 apgiv_names = {
     'Amborellales': 'Superregnum/Regnum/Cladus/Cladus/Ordo',

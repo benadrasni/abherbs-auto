@@ -3,13 +3,15 @@ import sys
 # [START storage_make_public]
 from google.cloud import storage
 
+import constants
+
 
 def make_blob_public(bucket_name, blob_name):
     """Makes a blob publicly accessible."""
     # bucket_name = "your-bucket-name"
     # blob_name = "your-object-name"
 
-    storage_client = storage.Client("abherbs-backend")
+    storage_client = storage.Client(constants.project)
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_name)
 
