@@ -2,6 +2,8 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
+import constants
+
 
 def check_translations_taxonomy():
     ref_translation_taxonomy = db.reference('translations_taxonomy')
@@ -55,10 +57,8 @@ def check_plants_en_translations():
 
 
 if __name__ == "__main__":
-    cred = credentials.Certificate('/Users/adrianbenko/Development/Keystore/abherbs-backend-firebase-adminsdk-l5787-839f896846.json')
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://abherbs-backend.firebaseio.com'
-    })
+    cred = credentials.Certificate(constants.certificate_firebase)
+    firebase_admin.initialize_app(cred, {'databaseURL': constants.databaseURL})
 
     #check_translations_taxonomy()
     #check_observations()
