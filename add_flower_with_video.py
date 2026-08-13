@@ -10,7 +10,7 @@ cred = credentials.Certificate(constants.certificate_firebase)
 firebase_admin.initialize_app(cred, {'databaseURL': constants.databaseURL})
 
 # Define the new number to add (can be modified as needed)
-new_number = "536"
+new_number = "707"
 
 # Get reference to 'lists_custom/by language'
 ref = db.reference('lists_custom/by language')

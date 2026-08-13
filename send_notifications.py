@@ -16,7 +16,6 @@ language_map = {
     'Polish': 'pl',
     'Romanian': 'ro',
     'Russian': 'ru',
-    'Hebrew': 'he',
     'Japanese': 'ja',
     'Danish': 'da',
     'Dutch': 'nl',
@@ -44,7 +43,7 @@ def get_translated_label(language_code, plant_name):
 
 def main():
     # Define notification parameters
-    plant_name = 'Silene latifolia'
+    plant_name = 'Kosteletzkya virginica'
     notification_name = 'Plant Video'
     notification_body = 'Click here to see the video.'
 

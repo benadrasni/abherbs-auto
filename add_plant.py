@@ -21,7 +21,7 @@ def add_plant_header(order, family, plant, id, ipni_id, color, habitat, petal):
     target = path.join(constants.storagedir, order, family, plant.replace(' ', '_'))
     names = plant.split(' ')
     name = names[0][0].lower() + names[len(names) - 1][0].lower() + constants.extension
-    if (not path.exists(path.join(target, name))):
+    if not path.exists(path.join(target, name)):
         name = names[0][0].lower() + names[len(names) - 1][0].lower() + '1' + constants.extension
     url = '/'.join([order, family, plant.replace(' ', '_'), name])
 
@@ -48,8 +48,8 @@ def add_plant_header(order, family, plant, id, ipni_id, color, habitat, petal):
     distribution_regions = list(dict.fromkeys(distribution_regions))
     distribution_regions.sort()
 
-    refHeader = db.reference('plants_headers/' + str(id))
-    refHeader.update({
+    ref_header = db.reference('plants_headers/' + str(id))
+    ref_header.update({
         'family': family,
         'filterColor': [int(x) for x in color.split(',')],
         'filterDistribution': distribution_regions,
@@ -209,16 +209,16 @@ def add_plant_translations(plant, wikidata, synonyms):
         labels = data['entities'][wikidata]['labels']
         for label in labels:
             if labels[label]['value'] != plant:
-                names[label] = [getName(labels[label]['value'], label)]
+                names[label] = [get_name(labels[label]['value'], label)]
 
         aliases = data['entities'][wikidata]['aliases']
         for alias in aliases:
             for alias_item in aliases[alias]:
-                if alias_item['value'] != plant and not isSynonym(alias_item['value'], synonyms):
+                if alias_item['value'] != plant and not is_synonym(alias_item['value'], synonyms):
                     if alias in names.keys():
-                        names[alias].append(getName(alias_item['value'], alias))
+                        names[alias].append(get_name(alias_item['value'], alias))
                     else:
-                        names[alias] = [getName(alias_item['value'], alias)]
+                        names[alias] = [get_name(alias_item['value'], alias)]
 
         wikilinks = {}
         sitelinks = data['entities'][wikidata]['sitelinks']
@@ -242,13 +242,13 @@ def add_plant_translations(plant, wikidata, synonyms):
             ref_translation.update(translation)
 
 
-def isSynonym(name, synonyms):
+def is_synonym(name, synonyms):
     for synonym in synonyms:
         if synonym['name'].startswith(name):
             return True
     return False
 
-def getName(name, language):
+def get_name(name, language):
     if language == 'de':
         if ' ' in name:
             return name[0].lower() + name[1:]
@@ -259,16 +259,15 @@ def getName(name, language):
 
 if __name__ == "__main__":
     cred = credentials.Certificate(constants.certificate_firebase)
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://abherbs-backend.firebaseio.com'
-    })
+    firebase_admin.initialize_app(cred, {'databaseURL': constants.databaseURL})
+
     refCount = db.reference('plants_to_update/count')
     count = refCount.get()
 
-    filepath = 'plants_to_upload.txt'
-    with open(filepath) as fp:
-        for line in fp:
-            items = line.rstrip().split(';')
+    plants_to_upload = 'plants_to_upload.txt'
+    with open(plants_to_upload) as fp:
+        for plant_line in fp:
+            items = plant_line.rstrip().split(';')
             print(items[2].strip())
             add_plant(
                 id=count,
