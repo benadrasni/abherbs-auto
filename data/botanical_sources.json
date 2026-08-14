@@ -1,0 +1,186 @@
+{
+  "sources": [
+    {
+      "id": "wikipedia",
+      "name": "English Wikipedia",
+      "home": "https://en.wikipedia.org/",
+      "fetch": "pipeline",
+      "when": {"always": true},
+      "reliable": true,
+      "good_for": ["description", "flower", "inflorescence", "leaf", "stem", "habitat"],
+      "notes": "First-class pipeline source via the Wikipedia API. Skip culture, culinary, and toxicity-in-pets sections."
+    },
+    {
+      "id": "wcvp",
+      "name": "World Checklist of Vascular Plants",
+      "home": "https://powo.science.kew.org/",
+      "fetch": "pipeline",
+      "when": {"always": true},
+      "good_for": ["distribution", "lifeform"],
+      "notes": "Local sqlite only. Live POWO is Cloudflare-blocked; do not scrape POWO."
+    },
+    {
+      "id": "pfaf",
+      "name": "Plants For A Future",
+      "home": "https://pfaf.org/",
+      "url": "https://pfaf.org/user/plant.aspx?latinname={latin_plus}",
+      "fetch": "latin",
+      "reliable": true,
+      "when": {"always": true},
+      "good_for": ["habitat", "flower", "fruit", "leaf", "stem", "garden"],
+      "stop_at": ["Related Plants", "The Bookshop", "Readers comment", "PFAF Bookshop"],
+      "notes": "Reliable habitat line, flowering/seed months, and 'ornamental' / woodland-garden notes. Ignore the related-plants table."
+    },
+    {
+      "id": "temperate_ferns",
+      "name": "Useful Temperate Plants",
+      "home": "https://temperate.theferns.info/",
+      "url": "https://temperate.theferns.info/plant/{latin_plus}",
+      "fetch": "manual",
+      "when": {"always": true},
+      "good_for": ["habitat", "flower", "fruit"],
+      "notes": "PFAF sister. Same Ken Fern data; check if PFAF is thin. Do not auto-fetch both."
+    },
+    {
+      "id": "rhs",
+      "name": "Royal Horticultural Society",
+      "home": "https://www.rhs.org.uk/plants",
+      "url": "https://www.rhs.org.uk/plants/search-results?query={latin_plus}",
+      "fetch": "manual",
+      "reliable": true,
+      "when": {"always": true},
+      "good_for": ["flower", "inflorescence", "leaf", "stem", "garden"],
+      "notes": "Garden measurements (flower length, raceme count, height) and planting types. Search first; plant IDs are not Latin names. Award of Garden Merit supports filterHabitat 2."
+    },
+    {
+      "id": "lilium_species_foundation",
+      "name": "Lilium Species Foundation",
+      "home": "https://liliumspeciesfoundation.org/",
+      "url": "https://liliumspeciesfoundation.org/lilies-of-the-world-lilium-species-data-base/{latin_dash}/",
+      "fetch": "latin",
+      "when": {"genera": ["Lilium"]},
+      "good_for": ["flower", "inflorescence", "leaf", "stem", "habitat", "fruit"],
+      "stop_at": ["Loading Comments", "Write a Comment"],
+      "notes": "Best wild-habitat and morphology notes for Lilium. Grassland/scrub ecotones, rocky slopes, winter rosette."
+    },
+    {
+      "id": "go_botany",
+      "name": "Go Botany (Native Plant Trust)",
+      "home": "https://gobotany.nativeplanttrust.org/",
+      "url": "https://gobotany.nativeplanttrust.org/species/{genus_lower}/{epithet_lower}/",
+      "fetch": "latin",
+      "when": {"always": true},
+      "good_for": ["habitat", "flower"],
+      "notes": "New England / northeast North America. Useful when a species is naturalized there. 404 is normal for plants absent from the region."
+    },
+    {
+      "id": "pacific_bulb_society",
+      "name": "Pacific Bulb Society wiki",
+      "home": "https://www.pacificbulbsociety.org/pbswiki/",
+      "fetch": "manual",
+      "when": {"lifeforms": ["bulb", "bulbous", "corm", "tuber"]},
+      "good_for": ["flower", "stem", "leaf", "garden"],
+      "notes": "Bulb genera. Page titles are irregular (section pages, not always the binomial)."
+    },
+    {
+      "id": "flora_israel",
+      "name": "Flora of Israel Online",
+      "home": "https://flora.org.il/en/plants/",
+      "fetch": "manual",
+      "when": {"regions": ["eastern Mediterranean", "Levant"]},
+      "good_for": ["habitat", "flower", "distribution"],
+      "notes": "Good for Balkans / Turkey / Levant plants (e.g. Lilium candidum). URLs use a short code, not the Latin name."
+    },
+    {
+      "id": "minnesota_dnr",
+      "name": "Minnesota DNR invasive plants",
+      "home": "https://www.dnr.state.mn.us/invasives/terrestrialplants/",
+      "fetch": "manual",
+      "when": {"topics": ["invasive", "naturalized North America"]},
+      "good_for": ["habitat"],
+      "notes": "Concrete habitat lists (grassland, prairie, forest edge, yards) for species invasive in the US Midwest. Do not treat noxious-weed status as habitat text."
+    },
+    {
+      "id": "missouriplants",
+      "name": "Missouri Plants",
+      "home": "https://www.missouriplants.com/",
+      "url": "https://www.missouriplants.com/{latin_under}_page.html",
+      "fetch": "latin",
+      "reliable": true,
+      "when": {"always": true},
+      "good_for": ["flower", "inflorescence", "fruit", "leaf", "stem", "habitat"],
+      "start_at": ["Family -", "Habit -"],
+      "stop_at": ["Lookalikes", "Photographs taken"],
+      "notes": "Excellent structured English: habit, stems, leaves, inflorescence, flowers, fruits, flowering months, habitat. Missouri / central US flora; 404 is normal for plants not in that flora. Skip lookalikes so another species is not copied."
+    },
+    {
+      "id": "luontoportti",
+      "name": "NatureGate / Luontoportti",
+      "home": "https://luontoportti.com/",
+      "url": "https://luontoportti.com/en",
+      "fetch": "search",
+      "reliable": true,
+      "when": {"always": true},
+      "good_for": ["flower", "inflorescence", "fruit", "leaf", "stem", "habitat"],
+      "notes": "Reliable morphological English: growing form, height, flower, leaf, fruit, habitat. Nordic/Finnish flora — no page is normal (e.g. Digitalis lanata, Lilium candidum). Search scientific name only; ignore article mentions of other species."
+    },
+    {
+      "id": "eppo",
+      "name": "EPPO Global Database",
+      "home": "https://gd.eppo.int/",
+      "url": "https://gd.eppo.int/search?k={latin_plus}",
+      "fetch": "search",
+      "reliable": true,
+      "when": {"always": true},
+      "good_for": ["names"],
+      "notes": "Best multilingual common-name table. Search the preferred scientific name, then use https://gd.eppo.int/taxon/{EPPO-code}. Take only names printed for that language. A miss or an empty table is normal. Do not use a hybrid/group hit (e.g. Lilium candidum hybrids)."
+    },
+    {
+      "id": "botanycz",
+      "name": "BOTANY.cz",
+      "home": "https://botany.cz/",
+      "url": "https://botany.cz/cs/{latin_dash}/",
+      "fetch": "search",
+      "reliable": true,
+      "when": {"always": true},
+      "good_for": ["description", "flower", "inflorescence", "fruit", "leaf", "stem", "habitat"],
+      "start_at": [
+        "Česká jména",
+        "České jména",
+        "České mená",
+        "Slovenská jména",
+        "Family:",
+        "Syn.:",
+        "Rozšíření:",
+        "Distribution:"
+      ],
+      "stop_at": [
+        "Fotografovali",
+        "These images were taken",
+        "Photographed",
+        "Související články",
+        "Related articles",
+        "Navigace příspěvků"
+      ],
+      "notes": "Reliable Central European flora. Czech pages have Popis, Ekologie, Rozšíření, and Czech/Slovak names; some species also have English. Latin slug /cs/{genus-epithet}/; try /en/ first. 404 is normal. Skip related-article and prev/next links so another species is not copied."
+    },
+    {
+      "id": "efloras",
+      "name": "eFloras (FOC, FNA and others)",
+      "home": "http://www.efloras.org/",
+      "fetch": "manual",
+      "when": {"always": true},
+      "good_for": ["flower", "fruit", "leaf", "stem", "habitat"],
+      "notes": "Already used in the live catalog. Flora of China and Flora of North America treatments."
+    },
+    {
+      "id": "onrockgarden",
+      "name": "Ontario Rock Garden & Hardy Plant Society",
+      "home": "https://onrockgarden.com/",
+      "fetch": "manual",
+      "when": {"topics": ["rock garden", "hardy perennial"]},
+      "good_for": ["habitat", "garden"],
+      "notes": "Occasional habitat one-liners (grassland, woodland edge). Pages can be thin or empty."
+    }
+  ]
+}

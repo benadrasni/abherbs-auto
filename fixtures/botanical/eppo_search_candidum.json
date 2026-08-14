@@ -1,0 +1,20 @@
+[
+  {
+    "i": 36164,
+    "e": "LILCA",
+    "f": "Lilium candidum",
+    "p": true,
+    "t": "plant",
+    "l": "Scientific",
+    "sc": true
+  },
+  {
+    "i": 63128,
+    "e": "LILCH",
+    "f": "Lilium candidum hybrids",
+    "p": true,
+    "t": "plant",
+    "l": "Scientific",
+    "sc": true
+  }
+]

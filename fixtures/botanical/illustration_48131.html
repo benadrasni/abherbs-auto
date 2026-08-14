@@ -1,0 +1,445 @@
+			</html>
+
+
+
+
+			<!DOCTYPE html>
+<html>
+	<head>
+				<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+				<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+				<link href = "style_tablet.css" rel = "stylesheet" type = "text/css">
+				<meta charset="UTF-8"/>
+				<meta http-equiv="Content-Language" content="nl">
+				<meta name="viewport" content="width=device-width/" >
+				<!--<link rel="stylesheet" media="all and (orientation:portrait)"  href="style_portrait.css" rel = "stylesheet" type = "text/css">
+				<link rel="stylesheet" media="all and (orientation:landscape)" href="style_landscape.css" rel = "stylesheet" type = "text/css">-->
+				
+				<title>
+				Acer campestre L.								</title>
+
+		<script>			
+			function getHorizontalScreenResolution()
+			{
+			var width = screen.width;
+			}
+		
+			function getVerticalScreenResolution()
+			{
+			var height = screen.height;
+			}
+			
+			function uitvergroten()
+			{
+			var loupeFullSize = document.getElementById('container_illustration_window_closed_full_size'); 
+			container_illustration_window_closed_full_size.style.display='block';
+			}
+			
+			function url_exist($url) 
+			{
+				$urlheaders = get_headers($url);
+				//print_r($urlheaders);
+				$urlmatches  = preg_grep('/200 ok/i', $urlheaders);
+				 if(!empty($urlmatches))
+				 {
+				   return true;
+				 }
+				 else
+				 {
+				   return false;
+				 }
+			}
+		</script>
+	</head>
+	<!--volgende code allemaal voor niet mobiel!!-->
+		<!-- $mobile == 1 or $mobile == 4 -->
+
+
+						<img src="images/baobab_blue.jpg" id="baobab"/>	
+
+						<div class = "container_header">
+
+						<A HREF="javascript:javascript:history.go(-1)"><IMG SRC="images/previous.gif"  class="button"  width="55px" height="55px"  id="pijl_links"></A>		
+						<A HREF="javascript:javascript:history.go(+1)"><IMG SRC="images/next.gif"      class="button"  width="55px" height="55px"  id="pijl_rechts"></A>
+
+							<form method="GET"> 
+															    <input type="image"  class="button" SRC="images/desktop_4k_blue.jpg" 	title="desktop 4k version">
+							    								<input type="hidden" name="mobile" value = 0 />	
+								<input type="hidden" name="uhd" value=1 />	
+								 <input type="hidden" name="id_volume" value=538>	
+								 <input type="hidden" name="id_illustration" value=48131>								
+							</form>
+
+							<form method="GET"> 
+								 <input type="image"  class="button" SRC="images/desktop_white.jpg" 	title="desktop version">
+																<input type="hidden" name="mobile" 	value=0 />	
+								<input type="hidden" name="uhd" 	value=0 />	
+								 <input type="hidden" name="id_volume" value=538>	
+								 <input type="hidden" name="id_illustration" value=48131>								
+							</form>	
+											
+							<form method="GET"> 
+																	
+								<input type="image"  class="button" SRC="images/laptop_blue.jpg"  title="laptop version">
+																<input type="hidden" name="mobile" 	value=3 />	
+								<input type="hidden" name="uhd" 	value=0 />	
+								 <input type="hidden" name="id_volume" value=538>	
+								 <input type="hidden" name="id_illustration" value=48131>								
+							</form>
+
+							<form method="GET"> 
+																								<input type="image"  class="button" SRC="images/touchscreen_blue.jpg"  title="touchscreen version">
+																<input type="hidden" name="mobile" 	value=4 />	
+								<input type="hidden" name="uhd"    	value=0 />
+								 <input type="hidden" name="id_volume" value=538>	
+								 <input type="hidden" name="id_illustration" value=48131>							</form>
+
+							<form method="GET"> 
+																								<input type="image"  class="button" SRC="images/tablet_blue.jpg" title="tablet version">
+																<input type="hidden" name="mobile" value=1 />
+								<input type="hidden" name="uhd"    value=0 />	
+								 <input type="hidden" name="id_volume" value=538>								 <input type="hidden" name="id_illustration" value=48131>								
+							</form>
+										
+							<form method="GET"> 
+																								<input type="image" class="button" SRC="images/smartphone_blue.jpg" title="smartphone version">
+																<input type="hidden" name="mobile" value=2 />
+								<input type="hidden" name="uhd"    value=0 />	
+								 <input type="hidden" name="id_volume" value=538>								 <input type="hidden" name="id_illustration" value="48131">										
+							</form>				
+
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							<form method="GET" action="publications.php">
+								<button type="submit"  class="button header_1
+																								" title="search publications">publications</button>
+								<input type="hidden" name="mobile" value="0" />
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>
+					
+							<form method="GET" action="non_linnean_names.php">
+								<button type="submit"  class="button header_1
+																								" title="search non-linnean names">non-linnean</button>
+								<input type="hidden" name="mobile" value="0" />
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>
+
+							<form method="GET" action="artists.php">
+								<button type="submit"  class="button header_1
+																								" title="search artists">artists</button>
+								<input type="hidden" name="mobile" value="0" />
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>
+					
+							<form method="GET" action="epithets.php">
+								<button type="submit"  class="button header_1
+																								
+								"  title="search etymology epithets">epithets</button>
+								<input type="hidden" name="mobile" value="0"/>
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>
+
+							<form method="GET" action="distribution_filter.php">
+								<button type="image"  class="button header_1
+																								" title="generic distribution filter">distribution</button>
+								<input type="hidden" name="mobile" value="0" />
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>
+							
+							<form method="GET" action="filter_determination.php">
+								<button type="image" class="button header_1
+																								" title="generic determination">determination</button>
+								<input type="hidden" name="mobile" value=0 />
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>
+					
+							<form  method="GET" action="about.php">
+								<button type="submit" class="button header_1
+																								" title="about">about</button>
+								<input type="hidden" name="mobile" value=0 />
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>		
+					</div>
+		
+
+	<div id="header_mobile_index">			
+				<!-- ABOUT -->
+								
+
+				
+
+</div>	
+
+				<div id = "version">
+					local: 0				</div>		
+
+	
+			
+		
+			
+
+
+<!------------------------------------------------------------------------------------------------------------------------------->
+<div class="container_header top_2">
+
+			
+			
+										<form  method="GET" action="search.php">
+								<input type="image" class="button home" SRC="images/home_blue.jpg" title="home a1">
+								<input type="hidden" name="mobile" 	value="0" />
+								<input type="hidden" name="uhd" 	value="0" />
+								<input type="hidden" name="size" 	value="0" />
+							</form>
+												
+						
+				
+			
+			<!------------------------------------------------------------------------------------------------------------------------------->
+				
+			 
+			<!------------------------------------------------------------------------------------------------------------------------------->
+				
+				
+					
+
+								
+				
+			<FORM action="search.php"  method="get" >
+			      
+				
+			<INPUT type= "text" class="search_box italic" name="search_box_vernacular" id="search_box_vernacular"  placeholder="enter vernacular name" value=""/>  
+
+			      
+				<div id="query_type">
+																								
+				</div>
+									
+						<INPUT type="text"   class="search_box"  name="input" id="input"  placeholder="enter scientific name" value=""/> 				
+						<INPUT type="hidden" name="mobile" value=0 />	
+						<INPUT type="hidden" name="uhd" value=0 />	
+						<INPUT type="hidden" name="size" value=0 />								
+						<INPUT type="image"  SRC="images/loupe_blue.jpg" action="search.php"  class="button" title="search (loupe index 1)"/>
+													
+			</FORM>
+
+			
+<script>
+function resetZoekCriteria() {
+  document.getElementById("input").value='';
+  document.getElementById("input").focus();
+  document.getElementById("search_box_vernacular").value='';
+}
+</script>
+<input type="image" class="button"	src="images/reset_button_blue.jpg" onclick="resetZoekCriteria();">
+					
+		
+</div>	
+
+<hr id="bottom_line">	
+	
+	    
+
+					
+<!--INFO ILLUSTRATION LEFT (ALLEEN LOCAAL ZICHTBAAR--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->	
+	<div id="info_illustration_left">
+		
+<!----TITLE ABREVIATION----------------------------------------------------------------------------------------------------------------------------------->				
+					<a href="volumes.php?
+										&id_publication=150										&id_volume=538										&mobile=0
+										&uhd=0										&size=0">
+										Krebs, F.L., <i>Vollständige Beschreibung und Abbildung der Sämmtlichen Holzarten</i> (1826)<br /><strong>Vollst. Beschr. Holzart.</strong><br />										</a>
+					<hr class="hd_illustration"><!----VOLUME YEAR ----------------------------------------------------------------------------------------------------------------------------------->				
+ 
+										<a href="volume.php?id_volume=538										&id_publication=150										&mobile=0										&uhd=0										&size=0										">							
+										   (1826-1835)</a>
+										
+<!----TITLE VOLUME----------------------------------------------------------------------------------------------------------------------------------->				
+									
+						<hr class="hd_illustration">
+						t. <strong>3</strong>						
+																													
+<!-----NAVIGATE THROUGH VOLUME----------------------------------------------------------------------------------------------------------------------------------------------------->				
+											<hr class="hd_illustration">
+												<a href="illustration.php?id_illustration=48130							&id_volume=538							&mobile=0							&uhd=0							&size=0							">
+						<strong><</strong></a>
+												&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+																		<a href="illustration.php?id_illustration=48274							&id_volume=538							&mobile=0							&uhd=0							&size=0							">
+						<strong>></strong></a>
+												
+												&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp navigate through volume <br />
+						<hr class="hd_illustration">
+										
+	<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->									
+					
+ 
+					
+					<!--SPECIES RECOGNIZED H1-->
+					
+						<a href="species.php?id_species=8838						&mobile=0						&uhd=0						&size=0						">
+					<div id="recognized"><h1>						<a href="species.php?id_species=8838						&mobile=0						&uhd=0						&size=0">
+						Acer campestre L.</h1></div></a>					
+					<hr class="hd_illustration">
+					
+					<!-- 4 NAMEN cited,cited_basionym,recognized,recognized_basionym 
+					NAME CITED (moet altijd vermeld worden: -->
+					
+					name cited: <br/>										
+											<a href="species.php?id_taxon=0											&id_species=8838											&mobile=0											&size=0											&uhd=0											">
+																						Acer campestre L.</a>											
+										
+				<!-- NAME CITED BASIONYM hoeft alleen vermeld te worden als deze afwijkend is van name_cited-->
+					
+										
+					
+					<br/>name recognized: <br/>					
+					
+					<a href="species.php?id_taxon=0						&genus=Acer						&id_species=8838						&mobile=0						&uhd=0						&size=0						&query_type=genus">
+										Acer campestre L.</a>						<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->		
+
+									
+	<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->		
+	
+										<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->	
+						<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->							
+						
+	<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->							
+					
+															<hr class="hd_illustration">drawing: 		
+												
+												
+
+										
+					
+							<a href="artist.php?id_artist=757							&genus=							&species=							&id_species=8838							&mobile=0							&uhd=0							&size=0">Muller y Ochme lit.</a>
+						
+							<input type="hidden" name="query_type"    value="artist">	
+								<input type="hidden" name="thumbnails_selectable" 				value=0>
+								<input type="hidden" name="query_broad_or_restricted" 			value=broad>
+
+					
+															
+										
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->		
+					
+									
+										
+					
+															
+					
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->		
+					<!--//ID COPY-->					
+									
+					
+					
+																			
+																									
+																													
+				
+				
+				
+																				
+				
+
+
+
+
+
+
+
+				
+	<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->							
+	
+					<hr class="hd_illustration">family: <strong>Aceraceae</strong>					
+		<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->							
+				
+					<hr class="hd_illustration">epithet: 					<a href="epithet.php?id_epithet=212346								&genus=								&species=								&id_species=8838								&mobile=0								&uhd=0								&size=0								&lay_out=0
+								&group=0
+								&hd=0
+								&query_type=epithet
+								&thumbnails_selectable=0								&query_broad_or_restricted=broad">
+								campestris,-is,-e</a><br />
+	<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->							
+						
+						<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->							
+										
+	<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->							
+			<hr class="hd_illustration">Illustration contributed by:<br/><a href= "https://archive.org/details/mobot31753000076890">Missouri Botanical Garden, St. Louis, U.S.A.</a><!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->							
+					<hr class="hd_illustration">link to this page:<br /> https://www.plantillustrations.org/illustration.php?id_illustration=48131	
+
+					<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->							
+						
+
+
+
+					
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->							
+						<hr class="hd_illustration">
+<a class="contact-us-link" href="mailto:mantheunisse@freeler.nl?subject=plantillustrations.org ID illustration 48131 Acer campestre L.&body=http://www.plantillustrations.org/illustration.php?id_illustration=48131">contact about this record</a>
+
+
+				<hr class="hd_illustration">synonyms: <br />									
+				<details>									</details>														
+					
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------->							
+			
+					
+				
+						<!--viewport: <strong>
+						<script>	
+							document.write (screen.width +  'x' + screen.height);
+							/*document.write (documentElement. clientWidth + 'x' + documentElement.clientHeight);*/
+						</script>
+						</strong>-->
+
+					
+						 
+				</div>
+
+		</div>	
+			
+		
+
+<!-- HD ILLUSTRATION WORDT HIER TOEGEVOEGD -->	
+
+		<div id="container_illustration_desktop"><div id="transparant"><IMG class="illustration_100 HD"        SRC="ILLUSTRATIONS_HDa17fjeuj8e7rf397/48131.jpg"           
+										ALT= "no HD illustration available (3)" 
+										TITLE="2 8838 Acer campestre L./www.plantillustrations.org?id_illustration=48131/F.L. Krebs, Vollst. Beschr. Holzart.: t. 3 (1826-1835) [Muller y Ochme lit.](5)"></a></div>		</div>
+		
+
+		
+		
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------>		
+
+
+		
+	</body>
+</html>			
+		<link href = "style.css"     	rel = "stylesheet" type = "text/css">
+
+
+
+
+																		
+ 
+ <!-- hier zit $http_user_agent!! -->	

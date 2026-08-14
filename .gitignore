@@ -1,7 +1,9 @@
 /venv/
+/.venv/
 __pycache__/
 /index_out/
 /catalog_dump/
 .DS_Store
+publish_*_translations.py
 
 

@@ -172,6 +172,7 @@ def _add_search_hit(search_map, name, plant_id, is_label, warnings):
     key = name.lower()
     if is_illegal_search_key(key):
         warnings.append("illegal search key %r for plant %s" % (key, plant_id))
+        return
     entry = search_map.get(key)
     if entry is None:
         entry = {"list": {}}

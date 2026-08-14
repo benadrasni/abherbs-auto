@@ -1,0 +1,21 @@
+{
+  "pageProps": {
+    "data": {
+      "taxonomy_by_pk": {
+        "id": 1712,
+        "scientific_name": "Digitalis purpurea",
+        "common_name": "Foxglove",
+        "taxonomy_articles": [
+          {
+            "language": "fi",
+            "article": "<h3>Kukka</h3><p>Teriö kellomainen.</p>"
+          },
+          {
+            "language": "en",
+            "article": "<ul><li><h3>Growing form</h3><p>Biennial herb.</p></li><li><h3>Flower</h3><p>Corolla campanulate, purple or red, 4-5 cm long.</p></li><li><h3>Fruit</h3><p>Ovate capsule.</p></li><li><h3>Habitat</h3><p>Clearings, bright and mixed forests, forest margins. Gardens.</p></li></ul>"
+          }
+        ]
+      }
+    }
+  }
+}

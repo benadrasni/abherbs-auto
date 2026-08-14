@@ -6,7 +6,7 @@ import urllib.request, json
 from bs4 import BeautifulSoup
 import urllib.parse
 
-import constants
+from sources import ipni_overrides
 
 def getIPNI(plant):
     ipni_id = ''
@@ -17,13 +17,7 @@ def getIPNI(plant):
 
         claims = data['entities'][wikidata]['claims']
         if 'P961' in claims.keys():
-            ipni_id = claims['P961'][0]['mainsnak']['datavalue']['value']
-            if ipni_id == '30005905-2':
-                ipni_id = '721172-1'
-            elif ipni_id == '837329-1':
-                ipni_id = '5849-2'
-            elif ipni_id == '30073474-2':
-                ipni_id = '721244-1'
+            ipni_id = ipni_overrides.apply(claims['P961'][0]['mainsnak']['datavalue']['value'])
 
     plant_v2 = {}
     if ipni_id:

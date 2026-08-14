@@ -1,0 +1,463 @@
+</html>
+
+
+<!DOCTYPE html>
+<html>
+	<head>
+			<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+			<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+			
+			<link href = "style.css"     	rel = "stylesheet" type = "text/css">
+			
+			<script>	
+						
+		
+/*		
+accentMap = {
+  ae: '(ae|æ|ǽ|ǣ)',
+  a:  '(a|á|ă|ắ|ặ|ằ|ẳ|ẵ|ǎ|â|ấ|ậ|ầ|ẩ|ẫ|ä|ǟ|ȧ|ǡ|ạ|ȁ|à|ả|ȃ|ā|ą|ᶏ|ẚ|å|ǻ|ḁ|ⱥ|ã)',
+  c:  '(c|ć|č|ç|ḉ|ĉ|ɕ|ċ|ƈ|ȼ)',
+  e:  '(e|é|ĕ|ě|ȩ|ḝ|ê|ế|ệ|ề|ể|ễ|ḙ|ë|ė|ẹ|ȅ|è|ẻ|ȇ|ē|ḗ|ḕ|ⱸ|ę|ᶒ|ɇ|ẽ|ḛ)',
+  i:  '(i|í|ĭ|ǐ|î|ï|ḯ|ị|ȉ|ì|ỉ|ȋ|ī|į|ᶖ|ɨ|ĩ|ḭ)',
+  n:  '(n|ń|ň|ņ|ṋ|ȵ|ṅ|ṇ|ǹ|ɲ|ṉ|ƞ|ᵰ|ᶇ|ɳ|ñ)',
+  o:  '(o|ó|ŏ|ǒ|ô|ố|ộ|ồ|ổ|ỗ|ö|ȫ|ȯ|ȱ|ọ|ő|ȍ|ò|ỏ|ơ|ớ|ợ|ờ|ở|ỡ|ȏ|ō|ṓ|ṑ|ǫ|ǭ|ø|ǿ|õ|ṍ|ṏ|ȭ)',
+  u:  '(u|ú|ŭ|ǔ|û|ṷ|ü|ǘ|ǚ|ǜ|ǖ|ṳ|ụ|ű|ȕ|ù|ủ|ư|ứ|ự|ừ|ử|ữ|ȗ|ū|ṻ|ų|ᶙ|ů|ũ|ṹ|ṵ)'
+};
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function checkHighlightList(str, queries) {
+  accentRegex = new RegExp(Object.keys(accentMap).join('|'), 'g');
+  const queryRegex = new RegExp(queries.map(q => {
+    return escapeRegExp(q).toLowerCase().replace(accentRegex, m => {
+      return accentMap[m] || m;
+    });
+  }).join('|'), 'gi');
+  return str.replace(queryRegex, m => `<span class="highlight">${ m }</span>`);
+}
+
+let source = 'Pokémon & Crème Brulée';
+let result = checkHighlightList(source, [ 'kemon', 'creme' ]);
+console.log('source:\n  "' + source + '"');
+console.log('result:\n  "' + result + '"');
+*/
+/*
+ * This is the function that actually highlights a text string by
+ * adding HTML tags before and after all occurrences of the search
+ * term. You can pass your own tags if you'd like, or if the
+ * highlightStartTag or highlightEndTag parameters are omitted or
+ * are empty strings then the default <font> tags will be used.
+ */
+ 
+
+function doHighlight(bodyText, searchTerm, highlightStartTag, highlightEndTag) 
+{
+  // the highlightStartTag and highlightEndTag parameters are optional
+  if ((!highlightStartTag) || (!highlightEndTag)) {
+    highlightStartTag = "<font style='color:blue; background-color:#00FF00;'>";
+    highlightEndTag = "</font>";
+  }
+  
+  // find all occurences of the search term in the given text,
+  // and add some "highlight" tags to them (we're not using a
+  // regular expression search, because we want to filter out
+  // matches that occur within HTML tags and script blocks, so
+  // we have to do a little extra validation)
+  var newText = "";
+  var i = -1;
+  var lcSearchTerm = searchTerm.toLowerCase();
+  var lcBodyText = bodyText.toLowerCase();
+    
+  while (bodyText.length > 0) {
+    i = lcBodyText.indexOf(lcSearchTerm, i+1);
+    if (i < 0) {
+      newText += bodyText;
+      bodyText = "";
+    } else {
+      // skip anything inside an HTML tag
+      if (bodyText.lastIndexOf(">", i) >= bodyText.lastIndexOf("<", i)) {
+        // skip anything inside a <script> block
+        if (lcBodyText.lastIndexOf("/script>", i) >= lcBodyText.lastIndexOf("<script", i)) {
+          newText += bodyText.substring(0, i) + highlightStartTag + bodyText.substr(i, searchTerm.length) + highlightEndTag;
+          bodyText = bodyText.substr(i + searchTerm.length);
+          lcBodyText = bodyText.toLowerCase();
+          i = -1;
+        }
+      }
+    }
+  }
+  
+  return newText;
+}
+
+
+/*
+ * This is sort of a wrapper function to the doHighlight function.
+ * It takes the searchText that you pass, optionally splits it into
+ * separate words, and transforms the text on the current web page.
+ * Only the "searchText" parameter is required; all other parameters
+ * are optional and can be omitted.
+ */
+function highlightSearchTerms(searchText, treatAsPhrase, warnOnFailure, highlightStartTag, highlightEndTag)
+{
+  // if the treatAsPhrase parameter is true, then we should search for 
+  // the entire phrase that was entered; otherwise, we will split the
+  // search string so that each word is searched for and highlighted
+  // individually
+  if (treatAsPhrase) {
+    searchArray = [searchText];
+  } else {
+    searchArray = searchText.split(" ");
+  }
+  
+  if (!document.body || typeof(document.body.innerHTML) == "undefined") {
+    if (warnOnFailure) {
+      alert("Sorry, for some reason the text of this page is unavailable. Searching will not work.");
+    }
+    return false;
+  }
+  
+  var bodyText = document.body.innerHTML;
+  for (var i = 0; i < searchArray.length; i++) {
+    bodyText = doHighlight(bodyText, searchArray[i], highlightStartTag, highlightEndTag);
+  }
+  
+  document.body.innerHTML = bodyText;
+  return true;
+}
+
+
+/*
+ * This displays a dialog box that allows a user to enter their own
+ * search terms to highlight on the page, and then passes the search
+ * text or phrase to the highlightSearchTerms function. All parameters
+ * are optional.
+ */
+function searchPrompt(defaultText, treatAsPhrase, textColor, bgColor)
+{
+  // This function prompts the user for any words that should
+  // be highlighted on this web page
+  if (!defaultText) {
+    defaultText = "";
+  }
+  
+  // we can optionally use our own highlight tag values
+  if ((!textColor) || (!bgColor)) {
+    highlightStartTag = "";
+    highlightEndTag = "";
+  } else {
+    highlightStartTag = "<font style='color:" + textColor + "; background-color:" + bgColor + ";'>";
+    highlightEndTag = "</font>";
+  }
+  
+  if (treatAsPhrase) {
+    promptText = "Please enter the phrase you'd like to search for:";
+  } else {
+    promptText = "Please enter the words you'd like to search for, separated by spaces:";
+  }
+  
+  searchText = prompt(promptText, defaultText);
+
+  if (!searchText)  {
+    alert("No search terms were entered. Exiting function.");
+    return false;
+  }
+  
+  return highlightSearchTerms(searchText, treatAsPhrase, true, highlightStartTag, highlightEndTag);
+}
+
+
+/*
+ * This function takes a referer/referrer string and parses it
+ * to determine if it contains any search terms. If it does, the
+ * search terms are passed to the highlightSearchTerms function
+ * so they can be highlighted on the current page.
+ */
+function highlightGoogleSearchTerms(referrer)
+{
+  // This function has only been very lightly tested against
+  // typical Google search URLs. If you wanted the Google search
+  // terms to be automatically highlighted on a page, you could
+  // call the function in the onload event of your <body> tag, 
+  // like this:
+  //   <body onload='highlightGoogleSearchTerms(document.referrer);'>
+  
+  //var referrer = document.referrer;
+  if (!referrer) {
+    return false;
+  }
+  
+  var queryPrefix = "q=";
+  var startPos = referrer.toLowerCase().indexOf(queryPrefix);
+  if ((startPos < 0) || (startPos + queryPrefix.length == referrer.length)) {
+    return false;
+  }
+  
+  var endPos = referrer.indexOf("&", startPos);
+  if (endPos < 0) {
+    endPos = referrer.length;
+  }
+  
+  var queryString = referrer.substring(startPos + queryPrefix.length, endPos);
+  // fix the space characters
+  queryString = queryString.replace(/%20/gi, " ");
+  queryString = queryString.replace(/\+/gi, " ");
+  // remove the quotes (if you're really creative, you could search for the
+  // terms within the quotes as phrases, and everything else as single terms)
+  queryString = queryString.replace(/%22/gi, "");
+  queryString = queryString.replace(/\"/gi, "");
+  
+  return highlightSearchTerms(queryString, false);
+}
+
+
+/*
+ * This function is just an easy way to test the highlightGoogleSearchTerms
+ * function.
+ */
+function testHighlightGoogleSearchTerms()
+{
+  var referrerString = "http://www.google.com/search?q=javascript%20highlight&start=0";
+  referrerString = prompt("Test the following referrer string:", referrerString);
+  return highlightGoogleSearchTerms(referrerString);
+}
+			</script>
+	</head>
+	
+		
+
+			
+	<body onload="highlightSearchTerms('Acer campestre')">
+		
+	
+		
+	
+				
+
+
+ 
+ <!-------------------------------------------------------------------------------------------------------------------------------------------------->	
+ 	 <!-- desktop en laptop-->	
+		
+		<!-- $mobile == 1 or $mobile == 4 -->
+
+
+						<img src="images/baobab_blue.jpg" id="baobab"/>	
+
+						<div class = "container_header">
+
+						<A HREF="javascript:javascript:history.go(-1)"><IMG SRC="images/previous.gif"  class="button"  width="55px" height="55px"  id="pijl_links"></A>		
+						<A HREF="javascript:javascript:history.go(+1)"><IMG SRC="images/next.gif"      class="button"  width="55px" height="55px"  id="pijl_rechts"></A>
+
+							<form method="GET"> 
+															    <input type="image"  class="button" SRC="images/desktop_4k_blue.jpg" 	title="desktop 4k version">
+							    								<input type="hidden" name="mobile" value = 0 />	
+								<input type="hidden" name="uhd" value=1 />	
+								 <input type="hidden" name="id_volume" value=0>	
+								 <input type="hidden" name="id_illustration" value=0>								
+							</form>
+
+							<form method="GET"> 
+								 <input type="image"  class="button" SRC="images/desktop_white.jpg" 	title="desktop version">
+																<input type="hidden" name="mobile" 	value=0 />	
+								<input type="hidden" name="uhd" 	value=0 />	
+								 <input type="hidden" name="id_volume" value=0>	
+								 <input type="hidden" name="id_illustration" value=0>								
+							</form>	
+											
+							<form method="GET"> 
+																	
+								<input type="image"  class="button" SRC="images/laptop_blue.jpg"  title="laptop version">
+																<input type="hidden" name="mobile" 	value=3 />	
+								<input type="hidden" name="uhd" 	value=0 />	
+								 <input type="hidden" name="id_volume" value=0>	
+								 <input type="hidden" name="id_illustration" value=0>								
+							</form>
+
+							<form method="GET"> 
+																								<input type="image"  class="button" SRC="images/touchscreen_blue.jpg"  title="touchscreen version">
+																<input type="hidden" name="mobile" 	value=4 />	
+								<input type="hidden" name="uhd"    	value=0 />
+								 <input type="hidden" name="id_volume" value=0>	
+								 <input type="hidden" name="id_illustration" value=0>							</form>
+
+							<form method="GET"> 
+																								<input type="image"  class="button" SRC="images/tablet_blue.jpg" title="tablet version">
+																<input type="hidden" name="mobile" value=1 />
+								<input type="hidden" name="uhd"    value=0 />	
+								 <input type="hidden" name="id_volume" value=0>								 <input type="hidden" name="id_illustration" value=0>								
+							</form>
+										
+							<form method="GET"> 
+																								<input type="image" class="button" SRC="images/smartphone_blue.jpg" title="smartphone version">
+																<input type="hidden" name="mobile" value=2 />
+								<input type="hidden" name="uhd"    value=0 />	
+								 <input type="hidden" name="id_volume" value=0>								 <input type="hidden" name="id_illustration" value="0">										
+							</form>				
+
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							<form method="GET" action="publications.php">
+								<button type="submit"  class="button header_1
+																								" title="search publications">publications</button>
+								<input type="hidden" name="mobile" value="0" />
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>
+					
+							<form method="GET" action="non_linnean_names.php">
+								<button type="submit"  class="button header_1
+																								" title="search non-linnean names">non-linnean</button>
+								<input type="hidden" name="mobile" value="0" />
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>
+
+							<form method="GET" action="artists.php">
+								<button type="submit"  class="button header_1
+																								" title="search artists">artists</button>
+								<input type="hidden" name="mobile" value="0" />
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>
+					
+							<form method="GET" action="epithets.php">
+								<button type="submit"  class="button header_1
+																								
+								"  title="search etymology epithets">epithets</button>
+								<input type="hidden" name="mobile" value="0"/>
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>
+
+							<form method="GET" action="distribution_filter.php">
+								<button type="image"  class="button header_1
+																								" title="generic distribution filter">distribution</button>
+								<input type="hidden" name="mobile" value="0" />
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>
+							
+							<form method="GET" action="filter_determination.php">
+								<button type="image" class="button header_1
+																								" title="generic determination">determination</button>
+								<input type="hidden" name="mobile" value=0 />
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>
+					
+							<form  method="GET" action="about.php">
+								<button type="submit" class="button header_1
+																								" title="about">about</button>
+								<input type="hidden" name="mobile" value=0 />
+								<input type="hidden" name="uhd" value="0" />
+								<input type="hidden" name="size" value="0" />
+							</form>		
+					</div>
+		
+
+	<div id="header_mobile_index">			
+				<!-- ABOUT -->
+								
+
+				
+
+</div>	
+
+				<div id = "version">
+					local: 0				</div>		
+
+	
+			
+		
+			
+
+
+<!------------------------------------------------------------------------------------------------------------------------------->
+<div class="container_header top_2">
+
+			
+			
+									
+													<form  method="GET" action="search.php">
+								<input type="image" class="button home" SRC="images/home_white.jpg" title="home b1">
+								<input type="hidden" name="mobile" 	value=0 />
+								<input type="hidden" name="uhd" 	value="0" />
+								<input type="hidden" name="size" 	value="0" />				
+							</form>
+						
+				
+			
+			<!------------------------------------------------------------------------------------------------------------------------------->
+				
+			 
+			<!------------------------------------------------------------------------------------------------------------------------------->
+				
+				
+					
+
+								
+				
+			<FORM action="search.php"  method="get" >
+			      
+				
+			<INPUT type= "text" class="search_box italic" name="search_box_vernacular" id="search_box_vernacular"  placeholder="enter vernacular name" value=""/>  
+
+									
+						<INPUT type="text"   class="search_box"  name="input" id="input"  placeholder="enter scientific name" value=""/> 				
+						<INPUT type="hidden" name="mobile" value=0 />	
+						<INPUT type="hidden" name="uhd" value=0 />	
+						<INPUT type="hidden" name="size" value=0 />								
+						<INPUT type="image"  SRC="images/loupe_blue.jpg" action="search.php"  class="button" title="search (loupe index 1)"/>
+													
+			</FORM>
+
+			
+<script>
+function resetZoekCriteria() {
+  document.getElementById("input").value='';
+  document.getElementById("input").focus();
+  document.getElementById("search_box_vernacular").value='';
+}
+</script>
+<input type="image" class="button"	src="images/reset_button_blue.jpg" onclick="resetZoekCriteria();">
+					
+		
+</div>	
+
+<hr id="bottom_line">	
+	
+		<div id="container_resultset" class="_2">
+			<div id="resultset">
+				&nbspThere were 62 records found for: <strong>Acer campestre</strong><br /><br /><table><thead><tr><td class="header">ID</td><td class="header">name</td><td class="header">taxonomic status</td><td class="header">basionym</td><td class="header">accepted name (rounded)</td><td class="header">recognized name</td><td class="header">number illustrations</td></tr></thead><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">1</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre L.</a></td><td>Accepted</td><td></td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">2</a></td><td><a href="species.php?id_species=8839&mobile=0&uhd=0">Acer campestre forma aegaeicum Drenk.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">3</a></td><td><a href="species.php?id_species=8840&mobile=0&uhd=0">Acer campestre forma argenteovariegatum Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">4</a></td><td><a href="species.php?id_species=8841&mobile=0&uhd=0">Acer campestre variety austriacum (Tratt.) DC.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8869&mobile=0&uhd=0">Acer campestre subspecies leiocarpum (Opiz) Schwer.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">5</a></td><td><a href="species.php?id_species=8842&mobile=0&uhd=0">Acer campestre forma bedoi (Borbás) Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">6</a></td><td><a href="species.php?id_species=8843&mobile=0&uhd=0">Acer campestre forma bedoioides Drenk.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">7</a></td><td><a href="species.php?id_species=8844&mobile=0&uhd=0">Acer campestre forma boomii Geerinck</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">8</a></td><td><a href="species.php?id_species=8845&mobile=0&uhd=0">Acer campestre forma brachypterum Borbás & Pax</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">9</a></td><td><a href="species.php?id_species=8846&mobile=0&uhd=0">Acer campestre variety collinum DC.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">10</a></td><td><a href="species.php?id_species=8847&mobile=0&uhd=0">Acer campestre forma collinum (DC.) Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">11</a></td><td><a href="species.php?id_species=8848&mobile=0&uhd=0">Acer campestre forma compactum Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">12</a></td><td><a href="species.php?id_species=8849&mobile=0&uhd=0">Acer campestre forma deflexum Jovan.-Dunj.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">13</a></td><td><a href="species.php?id_species=8850&mobile=0&uhd=0">Acer campestre variety eriocarpum </a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8875&mobile=0&uhd=0">Acer campestre subspecies marsicum (Guss.) Hayek</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">14</a></td><td><a href="species.php?id_species=8851&mobile=0&uhd=0">Acer campestre variety fastigiatum Springer</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">15</a></td><td><a href="species.php?id_species=8852&mobile=0&uhd=0">Acer campestre forma ferrugineum Jovan.-Dunj.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">16</a></td><td><a href="species.php?id_species=8853&mobile=0&uhd=0">Acer campestre variety foliis-variegatis Loudon</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">17</a></td><td><a href="species.php?id_species=8854&mobile=0&uhd=0">Acer campestre variety glabratum Wimm. & Grab.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">18</a></td><td><a href="species.php?id_species=8855&mobile=0&uhd=0">Acer campestre forma glabratum (Wimm. & Grab.) Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">19</a></td><td><a href="species.php?id_species=8856&mobile=0&uhd=0">Acer campestre variety hebecarpum DC.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">20</a></td><td><a href="species.php?id_species=8857&mobile=0&uhd=0">Acer campestre subspecies hebecarpum (DC.) Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">21</a></td><td><a href="species.php?id_species=8858&mobile=0&uhd=0">Acer campestre variety hederifolium Heinr.Braun</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">22</a></td><td><a href="species.php?id_species=8859&mobile=0&uhd=0">Acer campestre forma hederifolium (Heinr.Braun) Schwer.</a></td><td>Synonym</td><td>Acer campestre variety hederifolium Heinr.Braun </td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">23</a></td><td><a href="species.php?id_species=8860&mobile=0&uhd=0">Acer campestre variety hirtivalvum Borbás</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">24</a></td><td><a href="species.php?id_species=8861&mobile=0&uhd=0">Acer campestre forma hirtivalvum (Borbás) Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">25</a></td><td><a href="species.php?id_species=8862&mobile=0&uhd=0">Acer campestre variety integrilobum Tausch</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">26</a></td><td><a href="species.php?id_species=8863&mobile=0&uhd=0">Acer campestre variety josifovicii Gajic & Diklic</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">27</a></td><td><a href="species.php?id_species=8864&mobile=0&uhd=0">Acer campestre forma josifovicii (Gajic & Diklic) Jovan.-Dunj.</a></td><td>Synonym</td><td>Acer campestre variety josifovicii Gajic & Diklic </td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">28</a></td><td><a href="species.php?id_species=8865&mobile=0&uhd=0">Acer campestre forma jovanovicii Gajic & Drenk.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">29</a></td><td><a href="species.php?id_species=8866&mobile=0&uhd=0">Acer campestre variety laevigatum Loudon</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">30</a></td><td><a href="species.php?id_species=8867&mobile=0&uhd=0">Acer campestre variety lasiophyllum Wimm. & Grab.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8869&mobile=0&uhd=0">Acer campestre subspecies leiocarpum (Opiz) Schwer.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">31</a></td><td><a href="species.php?id_species=8868&mobile=0&uhd=0">Acer campestre forma latilobum Jovan.-Dunj.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">32</a></td><td><a href="species.php?id_species=8869&mobile=0&uhd=0">Acer campestre subspecies leiocarpum (Opiz) Schwer.</a></td><td>Accepted</td><td></td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">33</a></td><td><a href="species.php?id_species=8870&mobile=0&uhd=0">Acer campestre variety leiocarpum (Opiz) Tausch</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8869&mobile=0&uhd=0">Acer campestre subspecies leiocarpum (Opiz) Schwer.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">34</a></td><td><a href="species.php?id_species=8871&mobile=0&uhd=0">Acer campestre forma leiophyllum Pax</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8869&mobile=0&uhd=0">Acer campestre subspecies leiocarpum (Opiz) Schwer.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">35</a></td><td><a href="species.php?id_species=8872&mobile=0&uhd=0">Acer campestre variety lobatum Pax</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">36</a></td><td><a href="species.php?id_species=8873&mobile=0&uhd=0">Acer campestre forma longipetiolatum Jovan.-Dunj.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">37</a></td><td><a href="species.php?id_species=8874&mobile=0&uhd=0">Acer campestre variety macrocarpum Tausch</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">38</a></td><td><a href="species.php?id_species=8875&mobile=0&uhd=0">Acer campestre subspecies marsicum (Guss.) Hayek</a></td><td>Accepted</td><td></td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">39</a></td><td><a href="species.php?id_species=8876&mobile=0&uhd=0">Acer campestre variety marsicum (Guss.) K. Koch</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8875&mobile=0&uhd=0">Acer campestre subspecies marsicum (Guss.) Hayek</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">40</a></td><td><a href="species.php?id_species=8877&mobile=0&uhd=0">Acer campestre forma microcarpon (Masson ex Opiz) Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">41</a></td><td><a href="species.php?id_species=8878&mobile=0&uhd=0">Acer campestre variety microcarpum Tausch</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">42</a></td><td><a href="species.php?id_species=8879&mobile=0&uhd=0">Acer campestre forma microphyllum Jovan.-Dunj.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">43</a></td><td><a href="species.php?id_species=8880&mobile=0&uhd=0">Acer campestre forma molle (Opiz) Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">44</a></td><td><a href="species.php?id_species=8881&mobile=0&uhd=0">Acer campestre variety mollissimum Tausch</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">45</a></td><td><a href="species.php?id_species=8882&mobile=0&uhd=0">Acer campestre variety nanum Loudon</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">46</a></td><td><a href="species.php?id_species=8883&mobile=0&uhd=0">Acer campestre forma oblongifolium Racib.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">47</a></td><td><a href="species.php?id_species=8884&mobile=0&uhd=0">Acer campestre variety oxytomum Borbás</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">48</a></td><td><a href="species.php?id_species=8885&mobile=0&uhd=0">Acer campestre variety palmatifidum Tausch</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">49</a></td><td><a href="species.php?id_species=8886&mobile=0&uhd=0">Acer campestre variety palmatisectum Celak.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">50</a></td><td><a href="species.php?id_species=8887&mobile=0&uhd=0">Acer campestre forma pendulum Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">51</a></td><td><a href="species.php?id_species=8888&mobile=0&uhd=0">Acer campestre forma platypterum Jovan.-Dunj.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">52</a></td><td><a href="species.php?id_species=8889&mobile=0&uhd=0">Acer campestre variety pseudomarsicum Pax ex Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8869&mobile=0&uhd=0">Acer campestre subspecies leiocarpum (Opiz) Schwer.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">53</a></td><td><a href="species.php?id_species=8890&mobile=0&uhd=0">Acer campestre forma pseudomonspessulanum Bornm. & Pax</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8869&mobile=0&uhd=0">Acer campestre subspecies leiocarpum (Opiz) Schwer.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">54</a></td><td><a href="species.php?id_species=8891&mobile=0&uhd=0">Acer campestre forma puncticulatum Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">55</a></td><td><a href="species.php?id_species=8892&mobile=0&uhd=0">Acer campestre forma quinquelobum Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">56</a></td><td><a href="species.php?id_species=8893&mobile=0&uhd=0">Acer campestre variety saniculifolium Borbás</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">57</a></td><td><a href="species.php?id_species=8894&mobile=0&uhd=0">Acer campestre forma saniculifolium (Borbás) Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">58</a></td><td><a href="species.php?id_species=8895&mobile=0&uhd=0">Acer campestre variety serotinum Kit.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">59</a></td><td><a href="species.php?id_species=8896&mobile=0&uhd=0">Acer campestre forma subtrilobum R.Uechtr. & Sint.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">60</a></td><td><a href="species.php?id_species=8897&mobile=0&uhd=0">Acer campestre forma tauricum Schwer.</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">61</a></td><td><a href="species.php?id_species=8898&mobile=0&uhd=0">Acer campestre forma trichopodum Borbás</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr><tr><td><a href="species.php?id_species=8838&mobile=1&uhd=0">62</a></td><td><a href="species.php?id_species=8899&mobile=0&uhd=0">Acer campestre variety variegatum Pax</a></td><td>Synonym</td><td></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">Acer campestre species  L.</a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0"><strong>Acer campestre species  L. </strong></a></td><td><a href="species.php?id_species=8838&mobile=0&uhd=0">[<strong>44</strong>]</a></td></tr></table>			</div>
+		</div>	
+			
+<!-------------------------------------------------------------------------------------------------------------------------------------------------->	
+
+						<!-- tablet/touchscreen -->
+					
+		
+<!-------------------------------------------------------------------------------------------------------------------------------------------------->	
+		
+			
+<!-------------------------------------------------------------------------------------------------------------------------------------------------->	
+		
+
+			</body>	
+</html>

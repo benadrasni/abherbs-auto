@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import urllib.parse
 
 import constants
+from sources import ipni_overrides
 
 
 def add_plant(id, order, family, plant, wikidata, flowering_from, flowering_to, height_from, height_to, color, habitat, petal):
@@ -103,11 +104,7 @@ def add_plant_v2(order, family, plant, wikidata, id, flowering_from, flowering_t
         if 'P1772' in claims.keys():
             usda_id = claims['P1772'][0]['mainsnak']['datavalue']['value']
         if 'P961' in claims.keys():
-            ipni_id = claims['P961'][0]['mainsnak']['datavalue']['value']
-            if ipni_id == '161931-2':
-                ipni_id = '508578-1'
-            elif ipni_id == '597506-1':
-                ipni_id = '597505-1'
+            ipni_id = ipni_overrides.apply(claims['P961'][0]['mainsnak']['datavalue']['value'])
 
     taxons = []
     apg_iv = {}

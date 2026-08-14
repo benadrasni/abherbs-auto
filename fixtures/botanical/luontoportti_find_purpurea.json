@@ -1,0 +1,14 @@
+{
+  "taxonomy_find": [
+    {
+      "id": 1712,
+      "match": "Digitalis purpurea",
+      "match_type": "scientific_name",
+      "taxonomy": {
+        "id": 1712,
+        "scientific_name": "Digitalis purpurea",
+        "common_name": "Foxglove"
+      }
+    }
+  ]
+}

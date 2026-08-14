@@ -1,0 +1,4 @@
+plant_name_id|ipni_id|taxon_rank|taxon_status|family|genus_hybrid|genus|species_hybrid|species|infraspecific_rank|infraspecies|parenthetical_author|primary_author|publication_author|place_of_publication|volume_and_page|first_published|nomenclatural_remarks|geographic_area|lifeform_description|climate_description|taxon_name|taxon_authors|accepted_plant_name_id|basionym_plant_name_id|replaced_synonym_author|homotypic_synonym|parent_plant_name_id|powo_id|hybrid_formula|reviewed
+2615447|781250-1|Species|Accepted|Sapindaceae||Acer||campestre|||||||||||tree||Acer campestre|L.|2615447|||||2615447|781250-1||Y
+783061|783061-1|Species|Synonym|Sapindaceae||Euacer||campestre|||||||||||||Euacer campestre|(L.) Opiz|2615447|||||2615447|783061-1||Y
+2615999|781389-1|Species|Accepted|Sapindaceae||Acer||platanoides|||||||||||tree||Acer platanoides|L.|2615999|||||2615999|781389-1||Y

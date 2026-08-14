@@ -1,0 +1,14 @@
+{
+  "taxonomy_find": [
+    {
+      "id": 1850,
+      "match": "<b>Digitalis</b> <b>lanata</b> Villasormustinkukka on meillä melko harvinainen koristekasvi",
+      "match_type": "article",
+      "taxonomy": {
+        "id": 1850,
+        "scientific_name": "Digitalis grandiflora",
+        "common_name": "Big-flowered Foxglove"
+      }
+    }
+  ]
+}

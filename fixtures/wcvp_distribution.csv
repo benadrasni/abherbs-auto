@@ -1,0 +1,14 @@
+plant_locality_id|plant_name_id|continent_code_l1|continent|region_code_l2|region|area_code_l3|area|introduced|extinct|location_doubtful
+1|2615447|1|EUROPE|10|Northern Europe|DEN|Denmark|0|0|0
+2|2615447|1|EUROPE|11|Middle Europe|GER|Germany|0|0|0
+3|2615447|1|EUROPE|12|Southwestern Europe|FRA|France|0|0|0
+4|2615447|1|EUROPE|13|Southeastern Europe|ITA|Italy|0|0|0
+5|2615447|1|EUROPE|14|Eastern Europe|UKR|Ukraine|0|0|0
+6|2615447|2|AFRICA|20|Northern Africa|ALG|Algeria|0|0|0
+7|2615447|3|ASIA-TEMPERATE|33|Caucasus|TCS|Transcaucasus|0|0|0
+8|2615447|3|ASIA-TEMPERATE|34|Western Asia|TUR|Turkey|0|0|0
+9|2615447|7|NORTHERN AMERICA|72|Southeastern U.S.A.|NCA|North Carolina|1|0|0
+10|2615447|7|NORTHERN AMERICA|75|Northeastern U.S.A.|NWY|New York|1|0|0
+11|2615447|7|NORTHERN AMERICA|76|North-Central U.S.A.|ILL|Illinois|1|0|0
+12|2615447|7|NORTHERN AMERICA|74|Western Canada|ASK|Alaska|1|1|0
+13|2615999|1|EUROPE|11|Middle Europe|GER|Germany|0|0|0
