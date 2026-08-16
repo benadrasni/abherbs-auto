@@ -1,6 +1,7 @@
 """Build a one-plant index patch. Does not write Firebase."""
 
 import catalog_indexes
+import web_catalog
 
 
 def filter_patch(plant_id, header):
@@ -68,6 +69,7 @@ def build_patch(packet):
     filters = filter_patch(plant_id, header)
     search = search_patch(plant_id, translations, latin, synonyms)
     photo = photo_patch(latin, synonyms, v2.get("freebaseId"))
+    web = web_catalog.catalog_patch(packet)
     return {
         "plant_id": plant_id,
         "name": latin,
@@ -75,6 +77,8 @@ def build_patch(packet):
         "lists": filters["lists"],
         "search": search["search"],
         "search_photo": photo,
+        "web_entry": web["entry"],
+        "web_labels": web["labels"],
         "warnings": search["warnings"],
         "filter_key_count": len(filters["counts"]),
     }

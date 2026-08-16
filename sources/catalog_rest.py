@@ -7,10 +7,13 @@ from . import httputil
 RTDB = "https://abherbs-backend.firebaseio.com"
 
 
-def get(path):
+def get(path, timeout=None):
     parts = [urllib.parse.quote(part, safe="") for part in path.strip("/").split("/")]
     url = RTDB.rstrip("/") + "/" + "/".join(parts) + ".json"
-    return httputil.get_json(url)
+    kwargs = {}
+    if timeout is not None:
+        kwargs["timeout"] = timeout
+    return httputil.get_json(url, **kwargs)
 
 
 def plants_to_update():

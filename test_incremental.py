@@ -48,6 +48,32 @@ class SearchPhotoPatchTests(unittest.TestCase):
         self.assertEqual("Acer campestre", photo["acer campestre"]["path"])
         self.assertIn("028j7f", photo["m"])
 
+    def test_build_patch_web_catalog(self):
+        packet = {
+            "job": {"id": 3, "accepted_name": "Acer campestre"},
+            "plants_header": {
+                "name": "Acer campestre",
+                "family": "Sapindaceae",
+                "url": "Sapindales/Sapindaceae/Acer_campestre/ac1.webp",
+                "filterColor": [5],
+                "filterHabitat": [6],
+                "filterPetal": [2],
+                "filterDistribution": [10],
+            },
+            "plants_v2": {
+                "id": 3,
+                "illustrationUrl": "Sapindales/Sapindaceae/Acer_campestre/Acer_campestre.webp",
+                "freebaseId": "/m/028j7f",
+            },
+            "translations": {"en": {"label": "field maple"}},
+            "synonyms": {"ipni": []},
+        }
+        patch = incremental_indexes.build_patch(packet)
+        self.assertEqual(3, patch["web_entry"]["id"])
+        self.assertEqual("Acer campestre", patch["web_entry"]["name"])
+        self.assertTrue(patch["web_entry"]["illustrationUrl"].endswith("Acer_campestre.webp"))
+        self.assertEqual({"en": "field maple"}, patch["web_labels"])
+
 
 def _digitalis_family():
     return {

@@ -11,6 +11,7 @@ import incremental_indexes
 import storage_make_public
 import storage_upload_file
 import validate
+import web_catalog
 
 
 def load_packet(job_dir):
@@ -151,10 +152,46 @@ def write_records(packet):
         db.reference("translations/%s/%s" % (language, latin)).update(payload)
     db.reference("plants_to_update/list").update({int(job["id"]): latin})
     db.reference("plants_to_update/count").set(int(job["id"]) + 1)
+    write_web_catalog(packet)
     today = date.today().isoformat()
     db.reference("lists_custom/new/%s/list" % today).update({plant_id: 1})
     db.reference("lists_custom/new/%s/time" % today).set(-int(time.time() * 1000))
     apply_apg_live(packet)
+
+
+def write_web_catalog(packet):
+    """One-plant web catalog + sourced labels. Same readable `web` tree as UI strings."""
+    from firebase_admin import db
+
+    plant_id = str(packet["job"]["id"])
+    db.reference(web_catalog.CATALOG_NODE + "/" + plant_id).update(
+        web_catalog.entry_from_packet(packet)
+    )
+    for language, label in web_catalog.labels_from_packet(packet).items():
+        db.reference("%s/%s/%s" % (web_catalog.LABELS_NODE, language, plant_id)).set(label)
+
+
+def write_web_labels(plant_id, translations):
+    """Update sourced labels for an existing catalog id (later-language publishes)."""
+    from firebase_admin import db
+
+    token = str(plant_id)
+    for language, label in web_catalog.labels_from_translations(translations).items():
+        db.reference("%s/%s/%s" % (web_catalog.LABELS_NODE, language, token)).set(label)
+
+
+def apply_web_catalog(catalog, labels):
+    """Replace web/catalog and web/labels. Does not touch web/{lang} UI strings."""
+    from firebase_admin import db
+
+    if not catalog:
+        raise ValueError("refusing to apply empty web catalog")
+    db.reference(web_catalog.CATALOG_NODE).set(catalog)
+    db.reference(web_catalog.LABELS_NODE).set(labels or {})
+    return {
+        "entries": len(catalog),
+        "label_languages": sorted(labels or {}),
+    }
 
 
 def publish(packet):

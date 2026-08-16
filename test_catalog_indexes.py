@@ -246,6 +246,12 @@ class CliTests(unittest.TestCase):
         self.assertIn("acer champavenii", latin)
         self.assertEqual("Rosa canina", photo["rosa canina"]["path"])
         self.assertEqual(False, summary["firebase_writes"])
+        self.assertEqual(2, summary["web_entries"])
+        self.assertEqual(["en"], summary["web_label_languages"])
+        web_catalog = load("web_catalog_new.json")
+        self.assertEqual("Acer campestre", web_catalog["0"]["name"])
+        self.assertEqual("Rosa canina", web_catalog["1"]["name"])
+        self.assertEqual("Field Maple", load(os.path.join("web_labels_new", "en.json"))["0"])
         self.assertNotIn("firebase_admin", refresh_indexes.__dict__)
         self.assertNotIn("requests", refresh_indexes.__dict__)
 
