@@ -109,6 +109,7 @@ def parse_species_gallery(html):
             {
                 "id_illustration": int(illustration_id),
                 "title": title,
+                "author": author_from_plate_title(title),
                 "thumbnail": _abs(src),
                 "score": score_plate(title),
             }
@@ -124,16 +125,28 @@ def parse_species_gallery(html):
         if illustration_id in seen or not illustration_id.isdigit():
             continue
         seen.add(illustration_id)
+        title = anchor.get_text(" ", strip=True)
         candidates.append(
             {
                 "id_illustration": int(illustration_id),
-                "title": anchor.get_text(" ", strip=True),
+                "title": title,
+                "author": author_from_plate_title(title),
                 "thumbnail": "",
                 "score": 0,
             }
         )
     candidates.sort(key=lambda item: (-item["score"], item["id_illustration"]))
     return candidates
+
+
+def author_from_plate_title(title):
+    """'Acer campestre L. / J. Kops, Fl. Bat., ...' -> 'J. Kops'."""
+    if not title or " / " not in title:
+        return ""
+    rest = title.split(" / ", 1)[1].strip()
+    if not rest:
+        return ""
+    return rest.split(",")[0].strip()
 
 
 def os_stem(filename):

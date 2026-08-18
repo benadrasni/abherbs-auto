@@ -155,23 +155,106 @@ class PhotoRoleTests(unittest.TestCase):
 
 
 class CleanIllustrationTests(unittest.TestCase):
-    def test_cream_paper_becomes_white(self):
+    def test_plate_paths_and_grid_url(self):
+        paths = media.official_plate_paths("/tmp/Acer_campestre.webp")
+        self.assertTrue(paths["master"].endswith("Acer_campestre@1600.webp"))
+        self.assertTrue(paths["grid"].endswith("Acer_campestre@400.webp"))
+        self.assertEqual("/tmp/Acer_campestre.webp", paths["alias"])
+        self.assertEqual(
+            "Acer_campestre@400.webp",
+            media.grid_filename("Acer_campestre@1600.webp"),
+        )
+        self.assertIsNone(media.grid_filename("Acer_campestre.webp"))
+        self.assertEqual(
+            "Sapindales/Acer_campestre@400.webp",
+            media.grid_url("Sapindales/Acer_campestre@1600.webp"),
+        )
+        self.assertEqual(
+            ["Acer_campestre@1600.webp", "Acer_campestre@400.webp"],
+            media.sibling_plate_filenames("Acer_campestre.webp"),
+        )
+
+    def test_cream_paper_becomes_2x3_plates(self):
         tmp = tempfile.TemporaryDirectory()
         try:
             src = os.path.join(tmp.name, "plate.jpg")
-            dest = os.path.join(tmp.name, "out.webp")
+            dest = os.path.join(tmp.name, "Acer_campestre@1600.webp")
             image = Image.new("RGB", (80, 120), (236, 228, 210))
             for x in range(20, 50):
                 for y in range(20, 70):
                     image.putpixel((x, y), (40, 120, 40))
             image.save(src, "JPEG")
-            media.clean_illustration(src, dest)
+            written = media.clean_illustration(src, dest)
+            self.assertEqual(dest, written)
             out = Image.open(dest)
+            grid = Image.open(os.path.join(tmp.name, "Acer_campestre@400.webp"))
             self.assertEqual("WEBP", out.format)
-            self.assertEqual((255, 255, 255), out.getpixel((2, 2)))
-            self.assertLess(out.size[1], 120)
+            self.assertEqual((1600, 2400), out.size)
+            self.assertEqual((400, 600), grid.size)
+            self.assertEqual("RGB", out.mode)
+            corner = out.getpixel((2, 2))
+            self.assertNotEqual((255, 255, 255), corner)
+            self.assertGreater(sum(corner), 500)
+            self.assertLess(sum(corner), sum(media.CREAM))
         finally:
             tmp.cleanup()
+
+    def test_imagine_import_does_not_recrop(self):
+        tmp = tempfile.TemporaryDirectory()
+        try:
+            src = os.path.join(tmp.name, "imagine.png")
+            dest = os.path.join(tmp.name, "Plant@1600.webp")
+            image = Image.new("RGB", (200, 300), media.CREAM)
+            for x in range(8, 28):
+                for y in range(8, 28):
+                    image.putpixel((x, y), (30, 90, 30))
+            for x in range(172, 192):
+                for y in range(272, 292):
+                    image.putpixel((x, y), (90, 30, 30))
+            image.save(src, "PNG")
+            media.import_imagine_result(src, dest)
+            out = Image.open(dest)
+            self.assertEqual((1600, 2400), out.size)
+            self.assertLess(out.getpixel((80, 80))[0], 80)
+            self.assertGreater(out.getpixel((1510, 2310))[0], 60)
+        finally:
+            tmp.cleanup()
+
+    def test_imagine_prompts(self):
+        tmp = tempfile.TemporaryDirectory()
+        try:
+            path = os.path.join(tmp.name, "prompt.txt")
+            media.write_imagine_prompt(path, kind="clean")
+            text = open(path, encoding="utf-8").read()
+            self.assertIn("#f4efe4", text)
+            self.assertIn("Do not add a Grok signature", text)
+            self.assertIn("leave the plate unsigned", text)
+            self.assertNotIn("colored by Grok Imagine", text)
+            media.write_imagine_prompt(path, kind="clean", author="J. Kops")
+            named = open(path, encoding="utf-8").read()
+            self.assertIn("J. Kops", named)
+            self.assertIn("Ignore any signature", named)
+            media.write_imagine_prompt(path, kind="colorize", author="J. Kops")
+            colorize = open(path, encoding="utf-8").read()
+            self.assertIn("colored by Grok Imagine", colorize)
+            self.assertIn("J. Kops", colorize)
+            media.write_imagine_prompt(path, kind="generate")
+            generate = open(path, encoding="utf-8").read()
+            self.assertIn("Grok Imagine", generate)
+            self.assertNotIn("colored by Grok Imagine", generate)
+        finally:
+            tmp.cleanup()
+
+    def test_author_from_plate_title(self):
+        from sources import botanical_illustrations
+
+        self.assertEqual(
+            "J. Kops",
+            botanical_illustrations.author_from_plate_title(
+                "Acer campestre L. / J. Kops, Fl. Bat., vol. 15 : t. 1166 (1877)"
+            ),
+        )
+        self.assertEqual("", botanical_illustrations.author_from_plate_title("Acer campestre L."))
 
     def test_photo_square(self):
         tmp = tempfile.TemporaryDirectory()

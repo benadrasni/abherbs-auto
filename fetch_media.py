@@ -41,7 +41,7 @@ def local_photo_files(directory):
 def fetch_illustration(name, dest_dir, illustration_file=None, illustration_id=None, client=None):
     media_dir = os.path.join(dest_dir, "media")
     os.makedirs(media_dir, exist_ok=True)
-    cleaned = os.path.join(media_dir, name.replace(" ", "_") + ".webp")
+    cleaned = media.plate_legacy_path(media_dir, name)
     raw = os.path.join(media_dir, "illustration_raw.jpg")
     result = {
         "ok": False,
@@ -59,7 +59,9 @@ def fetch_illustration(name, dest_dir, illustration_file=None, illustration_id=N
             src = raw
         media.clean_illustration(src, os.path.join(media_dir, "illustration_pil.webp"))
         media.clean_illustration(src, cleaned)
-        media.write_imagine_prompt(os.path.join(media_dir, "illustration_imagine_prompt.txt"), name)
+        media.write_imagine_prompt(
+            os.path.join(media_dir, "illustration_imagine_prompt.txt"), name
+        )
         result["ok"] = os.path.isfile(cleaned)
         result["cleaner"] = "pil"
         return result
@@ -81,14 +83,36 @@ def fetch_illustration(name, dest_dir, illustration_file=None, illustration_id=N
     if not hd:
         result["warning"] = "no HD url for illustration %s" % illustration_id
         return result
+    author = ""
+    for item in result.get("candidates") or []:
+        if item.get("id_illustration") == illustration_id:
+            author = item.get("author") or botanical_illustrations.author_from_plate_title(
+                item.get("title") or ""
+            )
+            break
+    if not author:
+        found = client.candidates(name, limit=40)
+        for item in found.get("plates") or []:
+            if item.get("id_illustration") == illustration_id:
+                author = item.get("author") or botanical_illustrations.author_from_plate_title(
+                    item.get("title") or ""
+                )
+                if not result.get("candidates"):
+                    result["candidates"] = found.get("plates") or []
+                break
     _download(hd, raw)
     pil_path = os.path.join(media_dir, "illustration_pil.webp")
     media.clean_illustration(raw, pil_path)
     media.clean_illustration(raw, cleaned)
-    media.write_imagine_prompt(os.path.join(media_dir, "illustration_imagine_prompt.txt"), name)
+    media.write_imagine_prompt(
+        os.path.join(media_dir, "illustration_imagine_prompt.txt"),
+        name,
+        author=author,
+    )
     result["ok"] = os.path.isfile(cleaned)
     result["cleaner"] = "pil"
     result["raw"] = raw
+    result["author"] = author
     result["source_url"] = botanical_illustrations.illustration_page_url(illustration_id)
     result["hd_url"] = hd
     return result

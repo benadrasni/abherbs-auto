@@ -122,10 +122,9 @@ def run_dry(
         )
         fetch_media.apply_to_packet(packet, illustration_info, photo_info)
         if imagine_illustration:
-            dest_ill = os.path.join(
-                dest,
-                "media",
-                packet["job"]["accepted_name"].replace(" ", "_") + ".webp",
+            dest_ill = media.plate_legacy_path(
+                os.path.join(dest, "media"),
+                packet["job"]["accepted_name"],
             )
             media.import_imagine_result(imagine_illustration, dest_ill)
             imagine_copy = os.path.join(dest, "media", "illustration_imagine.webp")

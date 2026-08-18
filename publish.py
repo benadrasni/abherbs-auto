@@ -8,6 +8,7 @@ from datetime import date
 import apg_tree
 import constants
 import incremental_indexes
+import media
 import storage_make_public
 import storage_upload_file
 import validate
@@ -46,6 +47,7 @@ def refuse(packet):
 def _official_files(packet):
     media_dir = os.path.join(packet["dir"], "media")
     names = [os.path.basename(packet["plants_v2"]["illustrationUrl"])]
+    names.extend(media.sibling_plate_filenames(names[0]))
     for url in packet["plants_v2"].get("photoUrls") or []:
         names.append(os.path.basename(url))
     files = []

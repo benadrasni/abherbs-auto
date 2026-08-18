@@ -36,11 +36,24 @@ If the name is already in `plants_to_update`, stop and say so.
 ## 2. Illustration
 
 Plate from botanicalillustrations.org. Download is
-`media/illustration_raw.jpg`.
+`media/illustration_raw.jpg`. Locked look: `ILLUSTRATION.md` (2:3 cream
+folio, treatment 1, signature bottom right).
 
 **If the user gave an illustration id, use that.**
 
-**If they did not**, search botanicalillustrations.org for the accepted
+**If media already has a proper plate**, use that and skip the
+gallery. Look in `plants/_jobs/{Genus_epithet}/media/` first —
+another process (Imagine colorize/generate, a manual drop) may have
+left `{Genus_epithet}@1600.webp`, `{Genus_epithet}.webp` / `.jpg`, or
+`illustration_imagine.*`. A proper plate is colour, cream book-page
+background, no labels, and shows this plant. Install with
+`media.import_imagine_result` if the official WebPs are missing. Do not
+treat `illustration_raw.jpg`, `refs/`, `cand_*`, or rejected `iter*`
+as finished. `--illustration` is the same idea: a local file the
+caller already chose.
+
+**If there is no user id and no local plate**, search
+botanicalillustrations.org for the accepted
 name, open the species gallery, and look at the available plates
 (thumbnails / HD). Choose the one that best *represents the plant* —
 typical flower colour and shape, readable habit, a clean colour plate
@@ -48,16 +61,36 @@ when possible. Prefer a diagnostic flowering shoot over fruit-only,
 outline, analytic, or multi-species sheets. Do not blindly take the
 first gallery hit or the auto `score_plate` rank; look at the pictures
 and pick. Then fetch that id (re-run with `--illustration-id` or
-download HD into the job). If there is no usable plate, say so and
-stop before publish.
+download HD into the job).
 
-Clean with Imagine, prompt exactly:
+**Monochrome plates.** If every usable plate is black, white, or grey
+(engraving, lithograph, uncoloured drawing), still pick the best
+representative plate. Download colour photographs of this species
+(Commons/GBIF, binomial gate — same rules as §3). Colour the chosen
+plate with Imagine using `media.IMAGINE_COLORIZE_PROMPT` (cream page;
+keep the original signature and add `colored by Grok Imagine`).
+Iterate until the colour matches the photos and the drawing still
+reads as that plate. Do not invent a colour the photos do not show.
 
-> Clean up, make background white, remove all labels
+**No proper plate.** If the gallery has no usable plate at all (wrong
+taxon, fruit-only, outline, or nothing that shows the plant), do not
+stop. Generate a 19th-century colour plate from photographs with
+Imagine using `media.IMAGINE_GENERATE_PROMPT` (cream page; signature
+`Grok Imagine` only), iterating until habit, flower, and leaf match
+the photos.
+
+Clean a colour plate with Imagine, prompt from
+`media.imagine_prompt("clean", author=…)` (also written to
+`media/illustration_imagine_prompt.txt`): cream folio, remove labels
+and scan noise, no Grok. Signature is the botanicalillustrations.org
+author, not any mark on the scan.
 
 Install with `media.import_imagine_result` as
-`media/{Genus_epithet}.webp` and set `job.illustration.cleaner = imagine`.
-PIL flatten is a fallback only.
+`media/{Genus_epithet}.webp` (also writes `@1600.webp` and `@400.webp`) and set
+`job.illustration.cleaner = imagine`. For a colourised monochrome
+plate or a generated plate, also set `job.illustration.source` to
+`colorized` or `generated`. PIL flatten is a fallback only for an
+already-coloured scan.
 
 ## 3. Photos
 
@@ -82,10 +115,18 @@ green from leaves, etc.).
 | distribution | WCVP TDWG L2 (native + introduced unless told otherwise) |
 
 Height and flowering months from metric sources. Prefer metres/cm over
-inches. Habitat codes must be backed by real habitat text (garden =
+inches. RHS “0.5–1 m” is often **spread**, not height — do not copy
+spread into `heightTo`. Flowering months are the overlap of floras, not
+the single widest interval (especially if it runs into the sourced seed
+months). Habitat codes must be backed by real habitat text (garden =
 cultivated / RHS AGM; woodland = forest/woods; rock = rocky/scrub/cliff).
 
-Toxicity class: do not invent; leave for human review if unsure.
+Toxicity class: `0` = no poison badge (website “None recorded”), `1`
+poisonous, `2` slightly poisonous. Do not invent. Contact rash / sap
+irritation from a source such as PFAF goes in translations `toxicity`
+text, **not** class 1 or 2. Leave class `0` if only handling irritation
+is sourced; leave the class for human review if ingestion poison is
+unclear.
 
 ## 5. APG browse path
 
@@ -108,9 +149,18 @@ Rewrite the auto-draft. Rules:
 - Multiple sources; short, accurate, easy to read.
 - Up to 4 sentences per field, only if the sources have the facts.
 - Do not invent.
+- Lead native range with local WCVP (POWO stand-in), not Wikipedia’s
+  broader wording. A *sensu lato* / traditional range may follow as a
+  second sentence when the species complex was split.
+- Do not mix measurements from split-off taxa or from a broader concept
+  into the accepted-name description.
+- Involucre width is not the flowering-head / disc diameter. Name the
+  organ. RHS “heads to 2 cm” and a flora involucre of 6–10 mm can both
+  be true; do not collapse them into one number.
 - Do not repeat description facts in habitat.
 - Habitat text must support the `filterHabitat` codes from sources.
 - Skip culture, culinary, pet-toxicity, and other-species asides.
+  Human contact irritation may go in optional `toxicity` text (see §4).
 - `sourceUrls` on the English record: Wikipedia + the floras actually used.
 
 Reliable sources (see `data/botanical_sources.json`): Wikipedia, PFAF,
@@ -128,7 +178,16 @@ Never translate an English common name. `label` / `names` only from:
 - a flora line such as BOTANY.cz *Česká / Slovenská jména*
 
 If a language has no sourced name, **omit `label`**. The app shows Latin.
-Do not draft SK/CS/RU/DE/FR/PL/JA/ES body texts unless asked.
+Do not draft CS/RU/DE/FR/PL/JA/ES body texts unless asked.
+
+## 7a. Slovak (always)
+
+After English is rewritten, write `translations/sk.json` with the same
+seven fields from the same sourced facts. `label` / `names` only from a
+Slovak source (Wikidata, sk.wikipedia title, EPPO, BOTANY.cz *Slovenská
+jména*). Omit `label` if none. Do not translate an English vernacular.
+Diagnostic contrasts may use `<b>…</b>`. `sourceUrls` are the pages
+actually used. The file goes live only with incremental publish.
 
 ## 8. Publish (only when asked to add to the database)
 
@@ -172,3 +231,9 @@ asks. Rebuild the slim website catalog locally with
 write `web/catalog` and `web/labels`. If publish crashes after media +
 records but during search, finish search/photo only — do not
 re-increment counts.
+
+To patch live English/Slovak/`plants_v2` after a first publish, update
+those nodes only. Do **not** call `publish.publish()` again (counts and
+`plants_to_update` would double). Set `versions/db_update` if the app
+should refresh. Filter keys change only when color/habitat/petal/L2
+change.
