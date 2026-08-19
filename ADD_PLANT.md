@@ -35,62 +35,11 @@ If the name is already in `plants_to_update`, stop and say so.
 
 ## 2. Illustration
 
-Plate from botanicalillustrations.org. Download is
-`media/illustration_raw.jpg`. Locked look: `ILLUSTRATION.md` (2:3 cream
-folio, treatment 1, signature bottom right).
-
-**If the user gave an illustration id, use that.**
-
-**If media already has a proper plate**, use that and skip the
-gallery. Look in `plants/_jobs/{Genus_epithet}/media/` first —
-another process (Imagine colorize/generate, a manual drop) may have
-left `{Genus_epithet}@1600.webp`, `{Genus_epithet}.webp` / `.jpg`, or
-`illustration_imagine.*`. A proper plate is colour, cream book-page
-background, no labels, and shows this plant. Install with
-`media.import_imagine_result` if the official WebPs are missing. Do not
-treat `illustration_raw.jpg`, `refs/`, `cand_*`, or rejected `iter*`
-as finished. `--illustration` is the same idea: a local file the
-caller already chose.
-
-**If there is no user id and no local plate**, search
-botanicalillustrations.org for the accepted
-name, open the species gallery, and look at the available plates
-(thumbnails / HD). Choose the one that best *represents the plant* —
-typical flower colour and shape, readable habit, a clean colour plate
-when possible. Prefer a diagnostic flowering shoot over fruit-only,
-outline, analytic, or multi-species sheets. Do not blindly take the
-first gallery hit or the auto `score_plate` rank; look at the pictures
-and pick. Then fetch that id (re-run with `--illustration-id` or
-download HD into the job).
-
-**Monochrome plates.** If every usable plate is black, white, or grey
-(engraving, lithograph, uncoloured drawing), still pick the best
-representative plate. Download colour photographs of this species
-(Commons/GBIF, binomial gate — same rules as §3). Colour the chosen
-plate with Imagine using `media.IMAGINE_COLORIZE_PROMPT` (cream page;
-keep the original signature and add `colored by Grok Imagine`).
-Iterate until the colour matches the photos and the drawing still
-reads as that plate. Do not invent a colour the photos do not show.
-
-**No proper plate.** If the gallery has no usable plate at all (wrong
-taxon, fruit-only, outline, or nothing that shows the plant), do not
-stop. Generate a 19th-century colour plate from photographs with
-Imagine using `media.IMAGINE_GENERATE_PROMPT` (cream page; signature
-`Grok Imagine` only), iterating until habit, flower, and leaf match
-the photos.
-
-Clean a colour plate with Imagine, prompt from
-`media.imagine_prompt("clean", author=…)` (also written to
-`media/illustration_imagine_prompt.txt`): cream folio, remove labels
-and scan noise, no Grok. Signature is the botanicalillustrations.org
-author, not any mark on the scan.
-
-Install with `media.import_imagine_result` as
-`media/{Genus_epithet}.webp` (also writes `@1600.webp` and `@400.webp`) and set
-`job.illustration.cleaner = imagine`. For a colourised monochrome
-plate or a generated plate, also set `job.illustration.source` to
-`colorized` or `generated`. PIL flatten is a fallback only for an
-already-coloured scan.
+Follow `/add-illustrations` (skill
+`.grok/skills/add-illustrations/SKILL.md`). That is the plate
+procedure: pick, clean / colorize / generate, install official WebPs,
+review grid, ship. Locked look: `ILLUSTRATION.md`. A new-species add
+still needs the official plate in the job before §8.
 
 ## 3. Photos
 
@@ -190,6 +139,9 @@ Diagnostic contrasts may use `<b>…</b>`. `sourceUrls` are the pages
 actually used. The file goes live only with incremental publish.
 
 ## 8. Publish (only when asked to add to the database)
+
+Plate-only replacement for a species already in the catalog is
+`/add-illustrations` (ship), not this full publish.
 
 `validate.validate` must be ok. Then incremental live publish
 (`publish.publish`):
