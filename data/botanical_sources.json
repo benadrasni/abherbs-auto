@@ -1,23 +1,124 @@
 {
+  "libraries": {
+    "bibdigital": {
+      "home": "https://bibdigital.rjb.csic.es/",
+      "cite": "https://bibdigital.rjb.csic.es/idurl/1/{bibdigital_id}",
+      "browse_flora": "https://bibdigital.rjb.csic.es/records?page=1&perpage=10&search_submit=1&search=Titulo_compl:Flora%20AND%20Categories.title:Flora",
+      "series": [
+        {
+          "name": "Flora de Veracruz",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/9887-flora-de-veracruz",
+          "when": "Mexico / Veracruz; family fascicles (partial here)"
+        },
+        {
+          "name": "Flora de la República de Cuba",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/12210-flora-de-la-republica-de-cuba-loranthaceae",
+          "when": "Cuba; only some family fascicles digitized"
+        },
+        {
+          "name": "Flora Batava",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/1772216-flora-batava",
+          "when": "Netherlands; plates + Dutch text"
+        },
+        {
+          "name": "Flora Danica",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/13317-flora-danica",
+          "when": "Denmark / Nordic; plates"
+        },
+        {
+          "name": "Flora Helvetica",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/10300-flora-helvetica",
+          "when": "Switzerland; 19th-c. Haller / Gaudin scans"
+        },
+        {
+          "name": "Flora Italica",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/10342-flora-italica",
+          "when": "Italy; Bertoloni"
+        },
+        {
+          "name": "Flora Gallica",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/11148-flora-gallica-seu-enumeratio-plantarum-in-gallia-sponte-nascentium",
+          "when": "France; 19th-c. enumeration"
+        },
+        {
+          "name": "Flora de Filipinas",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/9493-flora-de-filipinas",
+          "when": "Philippines; Blanco"
+        },
+        {
+          "name": "Flora Peruviana et Chilensis",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/9555-flora-peruviana-et-chilensis",
+          "when": "Peru / Chile; Ruiz & Pavón"
+        },
+        {
+          "name": "Flora Sibirica",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/12189-flora-sibirica",
+          "when": "Siberia; Gmelin"
+        },
+        {
+          "name": "Flora Rossica",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/11570-flora-rossica",
+          "when": "Russia; Ledebour"
+        },
+        {
+          "name": "Flora Lusitanica",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/9566-flora-lusitanica",
+          "when": "Portugal"
+        },
+        {
+          "name": "Flora balearica",
+          "hub": "https://bibdigital.rjb.csic.es/records/item/9570-flora-balearica",
+          "when": "Balearic Islands; Knoche"
+        }
+      ],
+      "notes": "Host for scanned floras. Works are flora_iberica and flora_slovenska. Browse the Flora category only when no registered work treated the species. Cite idurl/1/{id}. Skip pamphlets, exsiccata, red lists, and fungi."
+    }
+  },
   "sources": [
     {
       "id": "wikipedia",
       "name": "English Wikipedia",
       "home": "https://en.wikipedia.org/",
       "fetch": "pipeline",
-      "when": {"always": true},
+      "when": {
+        "always": true
+      },
       "reliable": true,
-      "good_for": ["description", "flower", "inflorescence", "leaf", "stem", "habitat"],
-      "notes": "First-class pipeline source via the Wikipedia API. Skip culture, culinary, and toxicity-in-pets sections."
+      "good_for": [
+        "description",
+        "flower",
+        "inflorescence",
+        "leaf",
+        "stem",
+        "habitat"
+      ],
+      "notes": "First-class pipeline source via the Wikipedia API. Skip culture, culinary, and toxicity-in-pets sections.",
+      "kind": "encyclopedia",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "en"
+      ]
     },
     {
       "id": "wcvp",
       "name": "World Checklist of Vascular Plants",
       "home": "https://powo.science.kew.org/",
       "fetch": "pipeline",
-      "when": {"always": true},
-      "good_for": ["distribution", "lifeform"],
-      "notes": "Local sqlite only. Live POWO is Cloudflare-blocked; do not scrape POWO."
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "distribution",
+        "lifeform"
+      ],
+      "notes": "Local sqlite only. Live POWO is Cloudflare-blocked; do not scrape POWO.",
+      "kind": "checklist",
+      "roles": [
+        "range"
+      ]
     },
     {
       "id": "pfaf",
@@ -26,10 +127,33 @@
       "url": "https://pfaf.org/user/plant.aspx?latinname={latin_plus}",
       "fetch": "latin",
       "reliable": true,
-      "when": {"always": true},
-      "good_for": ["habitat", "flower", "fruit", "leaf", "stem", "garden"],
-      "stop_at": ["Related Plants", "The Bookshop", "Readers comment", "PFAF Bookshop"],
-      "notes": "Reliable habitat line, flowering/seed months, and 'ornamental' / woodland-garden notes. Ignore the related-plants table."
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "habitat",
+        "flower",
+        "fruit",
+        "leaf",
+        "stem",
+        "garden"
+      ],
+      "stop_at": [
+        "Related Plants",
+        "The Bookshop",
+        "Readers comment",
+        "PFAF Bookshop"
+      ],
+      "notes": "Reliable habitat line, flowering/seed months, and 'ornamental' / woodland-garden notes. Ignore the related-plants table.",
+      "kind": "garden",
+      "roles": [
+        "habitat",
+        "morphology",
+        "garden"
+      ],
+      "langs": [
+        "en"
+      ]
     },
     {
       "id": "temperate_ferns",
@@ -37,9 +161,20 @@
       "home": "https://temperate.theferns.info/",
       "url": "https://temperate.theferns.info/plant/{latin_plus}",
       "fetch": "manual",
-      "when": {"always": true},
-      "good_for": ["habitat", "flower", "fruit"],
-      "notes": "PFAF sister. Same Ken Fern data; check if PFAF is thin. Do not auto-fetch both."
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "habitat",
+        "flower",
+        "fruit"
+      ],
+      "notes": "PFAF sister. Same Ken Fern data; check if PFAF is thin. Do not auto-fetch both.",
+      "kind": "garden",
+      "roles": [
+        "habitat",
+        "morphology"
+      ]
     },
     {
       "id": "rhs",
@@ -48,9 +183,25 @@
       "url": "https://www.rhs.org.uk/plants/search-results?query={latin_plus}",
       "fetch": "manual",
       "reliable": true,
-      "when": {"always": true},
-      "good_for": ["flower", "inflorescence", "leaf", "stem", "garden"],
-      "notes": "Garden measurements (flower length, raceme count, height) and planting types. Search first; plant IDs are not Latin names. Award of Garden Merit supports filterHabitat 2."
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "flower",
+        "inflorescence",
+        "leaf",
+        "stem",
+        "garden"
+      ],
+      "notes": "Garden measurements (flower length, raceme count, height) and planting types. Search first; plant IDs are not Latin names. Award of Garden Merit supports filterHabitat 2.",
+      "kind": "garden",
+      "roles": [
+        "morphology",
+        "garden"
+      ],
+      "langs": [
+        "en"
+      ]
     },
     {
       "id": "lilium_species_foundation",
@@ -58,10 +209,29 @@
       "home": "https://liliumspeciesfoundation.org/",
       "url": "https://liliumspeciesfoundation.org/lilies-of-the-world-lilium-species-data-base/{latin_dash}/",
       "fetch": "latin",
-      "when": {"genera": ["Lilium"]},
-      "good_for": ["flower", "inflorescence", "leaf", "stem", "habitat", "fruit"],
-      "stop_at": ["Loading Comments", "Write a Comment"],
-      "notes": "Best wild-habitat and morphology notes for Lilium. Grassland/scrub ecotones, rocky slopes, winter rosette."
+      "when": {
+        "genera": [
+          "Lilium"
+        ]
+      },
+      "good_for": [
+        "flower",
+        "inflorescence",
+        "leaf",
+        "stem",
+        "habitat",
+        "fruit"
+      ],
+      "stop_at": [
+        "Loading Comments",
+        "Write a Comment"
+      ],
+      "notes": "Best wild-habitat and morphology notes for Lilium. Grassland/scrub ecotones, rocky slopes, winter rosette.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ]
     },
     {
       "id": "go_botany",
@@ -69,36 +239,96 @@
       "home": "https://gobotany.nativeplanttrust.org/",
       "url": "https://gobotany.nativeplanttrust.org/species/{genus_lower}/{epithet_lower}/",
       "fetch": "latin",
-      "when": {"always": true},
-      "good_for": ["habitat", "flower"],
-      "notes": "New England / northeast North America. Useful when a species is naturalized there. 404 is normal for plants absent from the region."
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "habitat",
+        "flower"
+      ],
+      "notes": "New England / northeast North America. Useful when a species is naturalized there. 404 is normal for plants absent from the region.",
+      "kind": "flora",
+      "roles": [
+        "habitat",
+        "morphology"
+      ],
+      "langs": [
+        "en"
+      ]
     },
     {
       "id": "pacific_bulb_society",
       "name": "Pacific Bulb Society wiki",
       "home": "https://www.pacificbulbsociety.org/pbswiki/",
       "fetch": "manual",
-      "when": {"lifeforms": ["bulb", "bulbous", "corm", "tuber"]},
-      "good_for": ["flower", "stem", "leaf", "garden"],
-      "notes": "Bulb genera. Page titles are irregular (section pages, not always the binomial)."
+      "when": {
+        "lifeforms": [
+          "bulb",
+          "bulbous",
+          "corm",
+          "tuber"
+        ]
+      },
+      "good_for": [
+        "flower",
+        "stem",
+        "leaf",
+        "garden"
+      ],
+      "notes": "Bulb genera. Page titles are irregular (section pages, not always the binomial).",
+      "kind": "garden",
+      "roles": [
+        "morphology",
+        "garden"
+      ]
     },
     {
       "id": "flora_israel",
       "name": "Flora of Israel Online",
       "home": "https://flora.org.il/en/plants/",
       "fetch": "manual",
-      "when": {"regions": ["eastern Mediterranean", "Levant"]},
-      "good_for": ["habitat", "flower", "distribution"],
-      "notes": "Good for Balkans / Turkey / Levant plants (e.g. Lilium candidum). URLs use a short code, not the Latin name."
+      "when": {
+        "l3": [
+          "PAL",
+          "LBS",
+          "SIN",
+          "TUR",
+          "CYP",
+          "EAI"
+        ]
+      },
+      "good_for": [
+        "habitat",
+        "flower",
+        "distribution"
+      ],
+      "notes": "Good for Balkans / Turkey / Levant plants (e.g. Lilium candidum). URLs use a short code, not the Latin name.",
+      "kind": "flora",
+      "roles": [
+        "habitat",
+        "morphology",
+        "range"
+      ]
     },
     {
       "id": "minnesota_dnr",
       "name": "Minnesota DNR invasive plants",
       "home": "https://www.dnr.state.mn.us/invasives/terrestrialplants/",
       "fetch": "manual",
-      "when": {"topics": ["invasive", "naturalized North America"]},
-      "good_for": ["habitat"],
-      "notes": "Concrete habitat lists (grassland, prairie, forest edge, yards) for species invasive in the US Midwest. Do not treat noxious-weed status as habitat text."
+      "when": {
+        "topics": [
+          "invasive",
+          "naturalized North America"
+        ]
+      },
+      "good_for": [
+        "habitat"
+      ],
+      "notes": "Concrete habitat lists (grassland, prairie, forest edge, yards) for species invasive in the US Midwest. Do not treat noxious-weed status as habitat text.",
+      "kind": "flora",
+      "roles": [
+        "habitat"
+      ]
     },
     {
       "id": "missouriplants",
@@ -107,11 +337,34 @@
       "url": "https://www.missouriplants.com/{latin_under}_page.html",
       "fetch": "latin",
       "reliable": true,
-      "when": {"always": true},
-      "good_for": ["flower", "inflorescence", "fruit", "leaf", "stem", "habitat"],
-      "start_at": ["Family -", "Habit -"],
-      "stop_at": ["Lookalikes", "Photographs taken"],
-      "notes": "Excellent structured English: habit, stems, leaves, inflorescence, flowers, fruits, flowering months, habitat. Missouri / central US flora; 404 is normal for plants not in that flora. Skip lookalikes so another species is not copied."
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "flower",
+        "inflorescence",
+        "fruit",
+        "leaf",
+        "stem",
+        "habitat"
+      ],
+      "start_at": [
+        "Family -",
+        "Habit -"
+      ],
+      "stop_at": [
+        "Lookalikes",
+        "Photographs taken"
+      ],
+      "notes": "Excellent structured English: habit, stems, leaves, inflorescence, flowers, fruits, flowering months, habitat. Missouri / central US flora; 404 is normal for plants not in that flora. Skip lookalikes so another species is not copied.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "en"
+      ]
     },
     {
       "id": "luontoportti",
@@ -120,9 +373,26 @@
       "url": "https://luontoportti.com/en",
       "fetch": "search",
       "reliable": true,
-      "when": {"always": true},
-      "good_for": ["flower", "inflorescence", "fruit", "leaf", "stem", "habitat"],
-      "notes": "Reliable morphological English: growing form, height, flower, leaf, fruit, habitat. Nordic/Finnish flora — no page is normal (e.g. Digitalis lanata, Lilium candidum). Search scientific name only; ignore article mentions of other species."
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "flower",
+        "inflorescence",
+        "fruit",
+        "leaf",
+        "stem",
+        "habitat"
+      ],
+      "notes": "Reliable morphological English: growing form, height, flower, leaf, fruit, habitat. Nordic/Finnish flora — no page is normal (e.g. Digitalis lanata, Lilium candidum). Search scientific name only; ignore article mentions of other species.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "en"
+      ]
     },
     {
       "id": "eppo",
@@ -131,9 +401,18 @@
       "url": "https://gd.eppo.int/search?k={latin_plus}",
       "fetch": "search",
       "reliable": true,
-      "when": {"always": true},
-      "good_for": ["names"],
-      "notes": "Best multilingual common-name table. Search the preferred scientific name, then use https://gd.eppo.int/taxon/{EPPO-code}. Take only names printed for that language. A miss or an empty table is normal. Do not use a hybrid/group hit (e.g. Lilium candidum hybrids)."
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "names"
+      ],
+      "notes": "Best multilingual common-name table. Search the preferred scientific name, then use https://gd.eppo.int/taxon/{EPPO-code}. Take only names printed for that language. A miss or an empty table is normal. Do not use a hybrid/group hit (e.g. Lilium candidum hybrids).",
+      "kind": "names",
+      "roles": [
+        "names"
+      ],
+      "langs": []
     },
     {
       "id": "botanycz",
@@ -142,8 +421,18 @@
       "url": "https://botany.cz/cs/{latin_dash}/",
       "fetch": "search",
       "reliable": true,
-      "when": {"always": true},
-      "good_for": ["description", "flower", "inflorescence", "fruit", "leaf", "stem", "habitat"],
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "description",
+        "flower",
+        "inflorescence",
+        "fruit",
+        "leaf",
+        "stem",
+        "habitat"
+      ],
       "start_at": [
         "Česká jména",
         "České jména",
@@ -162,16 +451,623 @@
         "Related articles",
         "Navigace příspěvků"
       ],
-      "notes": "Reliable Central European flora. Czech pages have Popis, Ekologie, Rozšíření, and Czech/Slovak names; some species also have English. Latin slug /cs/{genus-epithet}/; try /en/ first. 404 is normal. Skip related-article and prev/next links so another species is not copied."
+      "notes": "Reliable Central European flora. Czech pages have Popis, Ekologie, Rozšíření, and Czech/Slovak names; some species also have English. Latin slug /cs/{genus-epithet}/; try /en/ first. 404 is normal. Skip related-article and prev/next links so another species is not copied.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat",
+        "names"
+      ],
+      "langs": [
+        "cs",
+        "en",
+        "sk"
+      ]
+    },
+    {
+      "id": "flora_slovenska",
+      "name": "Flóra Slovenska",
+      "home": "https://bibdigital.rjb.csic.es/records/item/15084-flora-slovenska",
+      "fetch": "manual",
+      "reliable": true,
+      "when": {
+        "l3": [
+          "CZE"
+        ]
+      },
+      "good_for": [
+        "description",
+        "flower",
+        "inflorescence",
+        "fruit",
+        "leaf",
+        "stem",
+        "habitat",
+        "names"
+      ],
+      "volumes": [
+        {
+          "vol": "I",
+          "year": 1966,
+          "bibdigital_id": 15085,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15085-flora-slovenska-1",
+          "covers": "Všeobecná časť (introductory)",
+          "families": []
+        },
+        {
+          "vol": "II",
+          "year": 1966,
+          "bibdigital_id": 15086,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15086-flora-slovenska-2",
+          "covers": "Pteridophyta, Coniferophytina",
+          "families": [
+            "Pinaceae",
+            "Cupressaceae",
+            "Taxaceae",
+            "Ephedraceae",
+            "Equisetaceae",
+            "Lycopodiaceae",
+            "Dryopteridaceae",
+            "Aspleniaceae",
+            "Polypodiaceae"
+          ]
+        },
+        {
+          "vol": "III",
+          "year": 1982,
+          "bibdigital_id": 15087,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15087-flora-slovenska-3",
+          "covers": "Magnoliales–Polygalales",
+          "families": [
+            "Ranunculaceae",
+            "Berberidaceae",
+            "Aristolochiaceae",
+            "Nymphaeaceae",
+            "Magnoliaceae",
+            "Lauraceae",
+            "Menispermaceae",
+            "Polygalaceae"
+          ]
+        },
+        {
+          "vol": "IV/1",
+          "year": 1984,
+          "bibdigital_id": 15088,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15088-flora-slovenska-4-1",
+          "covers": "Sapindales–Cornales",
+          "families": [
+            "Sapindaceae",
+            "Anacardiaceae",
+            "Rutaceae",
+            "Simaroubaceae",
+            "Cornaceae"
+          ]
+        },
+        {
+          "vol": "IV/2",
+          "year": 1985,
+          "bibdigital_id": 15089,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15089-flora-slovenska-4-2",
+          "covers": "Rubiales–Saxifragales",
+          "families": [
+            "Rubiaceae",
+            "Caprifoliaceae",
+            "Adoxaceae",
+            "Dipsacaceae",
+            "Valerianaceae",
+            "Saxifragaceae",
+            "Crassulaceae",
+            "Grossulariaceae"
+          ]
+        },
+        {
+          "vol": "IV/3",
+          "year": 1992,
+          "bibdigital_id": 15090,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15090-flora-slovenska-4-3",
+          "covers": "Rosales",
+          "families": [
+            "Rosaceae"
+          ]
+        },
+        {
+          "vol": "IV/4",
+          "year": 1988,
+          "bibdigital_id": 15091,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15091-flora-slovenska-4-4",
+          "covers": "Fabales–Convolvulales",
+          "families": [
+            "Fabaceae",
+            "Convolvulaceae",
+            "Polemoniaceae"
+          ]
+        },
+        {
+          "vol": "V/1",
+          "year": 1993,
+          "bibdigital_id": 15092,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15092-flora-slovenska-5-1",
+          "covers": "Boraginales, Lamiales, Solanales",
+          "families": [
+            "Boraginaceae",
+            "Lamiaceae",
+            "Solanaceae"
+          ]
+        },
+        {
+          "vol": "V/2",
+          "year": 1997,
+          "bibdigital_id": 15093,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15093-flora-slovenska-5-2",
+          "covers": "Scrophulariales, Plantaginales",
+          "families": [
+            "Plantaginaceae",
+            "Scrophulariaceae",
+            "Orobanchaceae"
+          ]
+        },
+        {
+          "vol": "V/3",
+          "year": 2006,
+          "bibdigital_id": 15094,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15094-flora-slovenska-5-3",
+          "covers": "Hamamelidales, Urticales, Fagales, Juglandales",
+          "families": [
+            "Fagaceae",
+            "Betulaceae",
+            "Ulmaceae",
+            "Cannabaceae",
+            "Moraceae",
+            "Juglandaceae",
+            "Urticaceae"
+          ]
+        },
+        {
+          "vol": "V/4",
+          "year": 2002,
+          "bibdigital_id": 15095,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15095-flora-slovenska-5-4",
+          "covers": "Papaverales, Capparales",
+          "families": [
+            "Papaveraceae",
+            "Brassicaceae",
+            "Capparaceae",
+            "Resedaceae"
+          ]
+        },
+        {
+          "vol": "VI/1",
+          "year": 2008,
+          "bibdigital_id": 15096,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15096-flora-slovenska-6-1",
+          "covers": "Cistales, Begoniales, Tamaricales, Elatinales, Violales, Cucurbitales, Campanulales",
+          "families": [
+            "Cistaceae",
+            "Violaceae",
+            "Cucurbitaceae",
+            "Campanulaceae",
+            "Begoniaceae"
+          ]
+        },
+        {
+          "vol": "VI/3",
+          "year": 2012,
+          "bibdigital_id": 15668,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15668-flora-slovenska-6-3",
+          "covers": "Caryophyllales (1. časť)",
+          "families": [
+            "Caryophyllaceae"
+          ]
+        },
+        {
+          "vol": "VI/4",
+          "year": 2016,
+          "bibdigital_id": 16577,
+          "record": "https://bibdigital.rjb.csic.es/records/item/16577-flora-slovenska-6-4",
+          "covers": "Caryophyllales (2. časť), Ericales",
+          "families": [
+            "Amaranthaceae",
+            "Polygonaceae",
+            "Primulaceae"
+          ]
+        },
+        {
+          "vol": "X/1",
+          "year": 1995,
+          "bibdigital_id": 14294,
+          "record": "https://bibdigital.rjb.csic.es/records/item/14294-flora-slovenska-10-1",
+          "covers": "Mycota, Erysiphales (powdery mildews) — not vascular plants",
+          "families": [],
+          "vascular": false
+        },
+        {
+          "vol": "X/2",
+          "year": 2010,
+          "bibdigital_id": 15665,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15665-flora-slovenska-10-2",
+          "covers": "Mycota, Taphrinales — not vascular plants",
+          "families": [],
+          "vascular": false
+        }
+      ],
+      "notes": "Slovak Academy of Sciences national flora (Futák, Bertová, Goliašová et al.; VEDA, Bratislava). Slovak morphological treatments and Slovak vernaculars. Cite https://bibdigital.rjb.csic.es/idurl/1/{id} for the volume that actually treats the species; do not invent a page. Viewer/OCR is often behind a captcha — if the box has no text, skip that volume. Not in this library: VI/2 (Asteraceae, 2024–). X/1–X/2 are fungi. Series hub: https://bibdigital.rjb.csic.es/records/item/15084-flora-slovenska. Skip if the plant is absent from the Slovak flora.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat",
+        "names",
+        "body_sk"
+      ],
+      "langs": [
+        "sk"
+      ],
+      "library": "bibdigital",
+      "cite": "https://bibdigital.rjb.csic.es/idurl/1/{bibdigital_id}"
+    },
+    {
+      "id": "flora_iberica",
+      "name": "Flora Iberica",
+      "home": "https://bibdigital.rjb.csic.es/records/item/9895-flora-iberica",
+      "fetch": "manual",
+      "reliable": true,
+      "when": {
+        "l3": [
+          "SPA",
+          "POR",
+          "BAL"
+        ]
+      },
+      "good_for": [
+        "description",
+        "flower",
+        "inflorescence",
+        "fruit",
+        "leaf",
+        "stem",
+        "habitat",
+        "names"
+      ],
+      "volumes": [
+        {
+          "vol": "1",
+          "year": 1986,
+          "bibdigital_id": 9898,
+          "record": "https://bibdigital.rjb.csic.es/records/item/9898-flora-iberica-vol-1-lycopodiaceae-papaveraceae",
+          "covers": "Lycopodiaceae–Papaveraceae",
+          "families": [
+            "Lycopodiaceae",
+            "Selaginellaceae",
+            "Isoetaceae",
+            "Equisetaceae",
+            "Ophioglossaceae",
+            "Polypodiaceae",
+            "Pinaceae",
+            "Cupressaceae",
+            "Taxaceae",
+            "Ephedraceae",
+            "Ranunculaceae",
+            "Papaveraceae",
+            "Fumariaceae"
+          ]
+        },
+        {
+          "vol": "2",
+          "year": 1990,
+          "bibdigital_id": 9899,
+          "record": "https://bibdigital.rjb.csic.es/records/item/9899-flora-iberica-vol-2-platanaceae-plumbaginaceae-partim",
+          "covers": "Platanaceae–Plumbaginaceae (part)",
+          "families": [
+            "Platanaceae",
+            "Plumbaginaceae"
+          ]
+        },
+        {
+          "vol": "3",
+          "year": 2005,
+          "bibdigital_id": 9896,
+          "record": "https://bibdigital.rjb.csic.es/records/item/9896-flora-iberica-vol-3-plumbaginaceae-partim-capparaceae-2-ordf-ed",
+          "covers": "Plumbaginaceae (part)–Capparaceae (2nd ed.)",
+          "families": [
+            "Plumbaginaceae",
+            "Capparaceae"
+          ]
+        },
+        {
+          "vol": "4",
+          "year": 1993,
+          "bibdigital_id": 9900,
+          "record": "https://bibdigital.rjb.csic.es/records/item/9900-flora-iberica-vol-4-cruciferae-monotropaceae",
+          "covers": "Cruciferae–Monotropaceae",
+          "families": [
+            "Brassicaceae",
+            "Cruciferae",
+            "Ericaceae",
+            "Pyrolaceae",
+            "Monotropaceae"
+          ]
+        },
+        {
+          "vol": "5",
+          "year": 1997,
+          "bibdigital_id": 9901,
+          "record": "https://bibdigital.rjb.csic.es/records/item/9901-flora-iberica-vol-5-ebenaceae-saxifragaceae",
+          "covers": "Ebenaceae–Saxifragaceae",
+          "families": [
+            "Ebenaceae",
+            "Saxifragaceae",
+            "Crassulaceae",
+            "Grossulariaceae"
+          ]
+        },
+        {
+          "vol": "6",
+          "year": 1998,
+          "bibdigital_id": 9902,
+          "record": "https://bibdigital.rjb.csic.es/records/item/9902-flora-iberica-vol-6-rosaceae",
+          "covers": "Rosaceae",
+          "families": [
+            "Rosaceae"
+          ]
+        },
+        {
+          "vol": "7/1",
+          "year": 1999,
+          "bibdigital_id": 9903,
+          "record": "https://bibdigital.rjb.csic.es/records/item/9903-flora-iberica-vol-7-1-leguminosae-partim",
+          "covers": "Leguminosae (part 1)",
+          "families": [
+            "Fabaceae",
+            "Leguminosae"
+          ]
+        },
+        {
+          "vol": "7/2",
+          "year": 2000,
+          "bibdigital_id": 9904,
+          "record": "https://bibdigital.rjb.csic.es/records/item/9904-flora-iberica-vol-7-2-leguminosae-partim",
+          "covers": "Leguminosae (part 2)",
+          "families": [
+            "Fabaceae",
+            "Leguminosae"
+          ]
+        },
+        {
+          "vol": "8",
+          "year": 1997,
+          "bibdigital_id": 9905,
+          "record": "https://bibdigital.rjb.csic.es/records/item/9905-flora-iberica-vol-8-haloragaceae-euphorbiaceae",
+          "covers": "Haloragaceae–Euphorbiaceae",
+          "families": [
+            "Haloragaceae",
+            "Euphorbiaceae",
+            "Thymelaeaceae",
+            "Elaeagnaceae"
+          ]
+        },
+        {
+          "vol": "9",
+          "year": 2015,
+          "bibdigital_id": 16359,
+          "record": "https://bibdigital.rjb.csic.es/records/item/16359-flora-iberica-vol-9-rhamnaceae-polygalaceae",
+          "covers": "Rhamnaceae–Polygalaceae",
+          "families": [
+            "Rhamnaceae",
+            "Polygalaceae",
+            "Vitaceae"
+          ]
+        },
+        {
+          "vol": "10",
+          "year": 2003,
+          "bibdigital_id": 9906,
+          "record": "https://bibdigital.rjb.csic.es/records/item/9906-flora-iberica-vol-10-araliaceae-umbelliferae",
+          "covers": "Araliaceae–Umbelliferae",
+          "families": [
+            "Araliaceae",
+            "Apiaceae",
+            "Umbelliferae"
+          ]
+        },
+        {
+          "vol": "11",
+          "year": 2012,
+          "bibdigital_id": 15518,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15518-flora-iberica-vol-11-gentianaceae-boraginaceae",
+          "covers": "Gentianaceae–Boraginaceae",
+          "families": [
+            "Gentianaceae",
+            "Boraginaceae",
+            "Apocynaceae"
+          ]
+        },
+        {
+          "vol": "12",
+          "year": 2010,
+          "bibdigital_id": 15007,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15007-flora-iberica-vol-12-verbenaceae-labiatae-callitrichaceae",
+          "covers": "Verbenaceae–Labiatae–Callitrichaceae",
+          "families": [
+            "Verbenaceae",
+            "Lamiaceae",
+            "Labiatae",
+            "Callitrichaceae"
+          ]
+        },
+        {
+          "vol": "13",
+          "year": 2009,
+          "bibdigital_id": 13746,
+          "record": "https://bibdigital.rjb.csic.es/records/item/13746-flora-iberica-vol-13-plantaginaceae-scrophulariaceae",
+          "covers": "Plantaginaceae–Scrophulariaceae",
+          "families": [
+            "Plantaginaceae",
+            "Scrophulariaceae",
+            "Orobanchaceae"
+          ]
+        },
+        {
+          "vol": "14",
+          "year": 2001,
+          "bibdigital_id": 9907,
+          "record": "https://bibdigital.rjb.csic.es/records/item/9907-flora-iberica-vol-14-myoporaceae-campanulaceae",
+          "covers": "Myoporaceae–Campanulaceae",
+          "families": [
+            "Myoporaceae",
+            "Campanulaceae"
+          ]
+        },
+        {
+          "vol": "15",
+          "year": 2007,
+          "bibdigital_id": 12957,
+          "record": "https://bibdigital.rjb.csic.es/records/item/12957-flora-iberica-vol-15-rubiaceae-dipsacaceae",
+          "covers": "Rubiaceae–Dipsacaceae",
+          "families": [
+            "Rubiaceae",
+            "Caprifoliaceae",
+            "Adoxaceae",
+            "Dipsacaceae",
+            "Valerianaceae"
+          ]
+        },
+        {
+          "vol": "16/1",
+          "year": 2014,
+          "bibdigital_id": 16360,
+          "record": "https://bibdigital.rjb.csic.es/records/item/16360-flora-iberica-vol-16-1-compositae-partim",
+          "covers": "Compositae (part 1)",
+          "families": [
+            "Asteraceae",
+            "Compositae"
+          ]
+        },
+        {
+          "vol": "16/2",
+          "year": 2017,
+          "bibdigital_id": 16361,
+          "record": "https://bibdigital.rjb.csic.es/records/item/16361-flora-iberica-vol-16-2-compositae-partim",
+          "covers": "Compositae (part 2)",
+          "families": [
+            "Asteraceae",
+            "Compositae"
+          ]
+        },
+        {
+          "vol": "16/3",
+          "year": 2019,
+          "bibdigital_id": 1765119,
+          "record": "https://bibdigital.rjb.csic.es/records/item/1765119-flora-iberica-vol-16-3-compositae-partim",
+          "covers": "Compositae (part 3)",
+          "families": [
+            "Asteraceae",
+            "Compositae"
+          ]
+        },
+        {
+          "vol": "17",
+          "year": 2010,
+          "bibdigital_id": 14630,
+          "record": "https://bibdigital.rjb.csic.es/records/item/14630-flora-iberica-vol-17-butomaceae-juncaceae",
+          "covers": "Butomaceae–Juncaceae",
+          "families": [
+            "Butomaceae",
+            "Juncaceae",
+            "Alismataceae"
+          ]
+        },
+        {
+          "vol": "18",
+          "year": 2010,
+          "bibdigital_id": 12958,
+          "record": "https://bibdigital.rjb.csic.es/records/item/12958-flora-iberica-vol-18-cyperaceae-pontederiaceae",
+          "covers": "Cyperaceae–Pontederiaceae",
+          "families": [
+            "Cyperaceae",
+            "Pontederiaceae",
+            "Iridaceae"
+          ]
+        },
+        {
+          "vol": "19/1",
+          "year": 2020,
+          "bibdigital_id": 1765438,
+          "record": "https://bibdigital.rjb.csic.es/records/item/1765438-flora-iberica-vol-19-1-gramineae-partim",
+          "covers": "Gramineae (part 1)",
+          "families": [
+            "Poaceae",
+            "Gramineae"
+          ]
+        },
+        {
+          "vol": "19/2",
+          "year": 2021,
+          "bibdigital_id": 1767961,
+          "record": "https://bibdigital.rjb.csic.es/records/item/1767961-flora-iberica-vol-19-2-gramineae-partim",
+          "covers": "Gramineae (part 2)",
+          "families": [
+            "Poaceae",
+            "Gramineae"
+          ]
+        },
+        {
+          "vol": "20",
+          "year": 2013,
+          "bibdigital_id": 15802,
+          "record": "https://bibdigital.rjb.csic.es/records/item/15802-flora-iberica-vol-20-liliaceae-agavaceae",
+          "covers": "Liliaceae–Agavaceae",
+          "families": [
+            "Liliaceae",
+            "Amaryllidaceae",
+            "Asparagaceae",
+            "Agavaceae"
+          ]
+        },
+        {
+          "vol": "21",
+          "year": 2005,
+          "bibdigital_id": 9897,
+          "record": "https://bibdigital.rjb.csic.es/records/item/9897-flora-iberica-vol-21-smilacaceae-orchidaceae",
+          "covers": "Smilacaceae–Orchidaceae",
+          "families": [
+            "Smilacaceae",
+            "Orchidaceae"
+          ]
+        }
+      ],
+      "notes": "Modern vascular flora of the Iberian Peninsula and Balearic Islands (Castroviejo et al., RJB-CSIC). Spanish keys and descriptions. Cite the volume that treats the family. Official PDFs also at http://www.floraiberica.es/ — prefer a page that actually covers this plant. Skip if the species is absent from Iberia/Balearics.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat",
+        "names"
+      ],
+      "langs": [
+        "es"
+      ],
+      "library": "bibdigital",
+      "cite": "https://bibdigital.rjb.csic.es/idurl/1/{bibdigital_id}"
     },
     {
       "id": "efloras",
       "name": "eFloras (FOC, FNA and others)",
       "home": "http://www.efloras.org/",
       "fetch": "manual",
-      "when": {"always": true},
-      "good_for": ["flower", "fruit", "leaf", "stem", "habitat"],
-      "notes": "Already used in the live catalog. Flora of China and Flora of North America treatments."
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "flower",
+        "fruit",
+        "leaf",
+        "stem",
+        "habitat"
+      ],
+      "notes": "Already used in the live catalog. Flora of China and Flora of North America treatments.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ]
     },
     {
       "id": "burke",
@@ -180,18 +1076,47 @@
       "url": "https://burkeherbarium.org/imagecollection/taxon.php?Taxon={latin}",
       "fetch": "latin",
       "reliable": true,
-      "when": {"always": true},
-      "good_for": ["flower", "inflorescence", "leaf", "stem", "habitat"],
-      "notes": "Washington / Pacific Northwest flora. Habitat, flowering months, and a concise morphological treatment; often embeds the FNA description. URL uses a space-separated Latin name. 404 is normal for plants absent from that flora."
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "flower",
+        "inflorescence",
+        "leaf",
+        "stem",
+        "habitat"
+      ],
+      "notes": "Washington / Pacific Northwest flora. Habitat, flowering months, and a concise morphological treatment; often embeds the FNA description. URL uses a space-separated Latin name. 404 is normal for plants absent from that flora.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "en"
+      ]
     },
     {
       "id": "onrockgarden",
       "name": "Ontario Rock Garden & Hardy Plant Society",
       "home": "https://onrockgarden.com/",
       "fetch": "manual",
-      "when": {"topics": ["rock garden", "hardy perennial"]},
-      "good_for": ["habitat", "garden"],
-      "notes": "Occasional habitat one-liners (grassland, woodland edge). Pages can be thin or empty."
+      "when": {
+        "topics": [
+          "rock garden",
+          "hardy perennial"
+        ]
+      },
+      "good_for": [
+        "habitat",
+        "garden"
+      ],
+      "notes": "Occasional habitat one-liners (grassland, woodland edge). Pages can be thin or empty.",
+      "kind": "garden",
+      "roles": [
+        "habitat",
+        "garden"
+      ]
     }
   ]
 }

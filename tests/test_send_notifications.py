@@ -2,7 +2,7 @@
 
 import unittest
 
-import send_notifications as sn
+from scripts import send_notifications as sn
 
 
 class PathAndCountTests(unittest.TestCase):

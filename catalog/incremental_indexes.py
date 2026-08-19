@@ -1,7 +1,7 @@
 """Build a one-plant index patch. Does not write Firebase."""
 
-import catalog_indexes
-import web_catalog
+from catalog import catalog_indexes
+from catalog import web_catalog
 
 
 def filter_patch(plant_id, header):

@@ -4,8 +4,8 @@ import shutil
 import tempfile
 import unittest
 
-import catalog_indexes
-import refresh_indexes
+from catalog import catalog_indexes
+from catalog import refresh as refresh_indexes
 
 
 ACER = {
@@ -115,13 +115,13 @@ class SearchTests(unittest.TestCase):
         self.assertEqual({}, search)
         self.assertEqual([], warnings)
 
-    def test_illegal_keys_are_kept_and_logged(self):
+    def test_illegal_keys_are_skipped_and_logged(self):
         search, warnings = catalog_indexes.build_search_language(
             {"Acer campestre": 0},
             {"Acer campestre": {"label": "St. Maple"}},
         )
         self.assertTrue(any("st. maple" in warning for warning in warnings))
-        self.assertIn("st. maple", search)
+        self.assertNotIn("st. maple", search)
 
     def test_latin_skips_dotted_synonyms(self):
         plants = {

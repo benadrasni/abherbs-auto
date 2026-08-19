@@ -4,8 +4,8 @@ Does not call publish.publish() and does not touch plants_to_update.
 Filter index changes are a remove-old / add-new diff so counts do not double.
 
 Usage (from ingest, venv python):
-  python apply_accuracy_patches.py --dir DIR            # dry-run
-  python apply_accuracy_patches.py --dir DIR --apply    # write live
+  python -m scripts.apply_accuracy_patches --dir DIR            # dry-run
+  python -m scripts.apply_accuracy_patches --dir DIR --apply    # write live
 """
 
 from __future__ import print_function
@@ -16,7 +16,7 @@ import os
 import sys
 from datetime import date
 
-import catalog_indexes
+from catalog import catalog_indexes
 import constants
 
 

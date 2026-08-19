@@ -1,7 +1,8 @@
 """Remembered botanical web sources for English drafting.
 
-The registry is ingest/data/botanical_sources.json. Add a source there
-when a site proves useful for a plant; later jobs reuse it. No Firebase.
+The registry is ingest/data/botanical_sources.json: libraries (hosts)
+plus works (floras, garden sites, name tables). Add a work when a site
+proves useful; later jobs reuse it. No Firebase.
 """
 
 import json
@@ -44,16 +45,44 @@ class _HTMLText(HTMLParser):
             self.parts.append(data)
 
 
-def load(path=None):
+FAMILY_ALIASES = {
+    "labiatae": "lamiaceae",
+    "cruciferae": "brassicaceae",
+    "umbelliferae": "apiaceae",
+    "compositae": "asteraceae",
+    "gramineae": "poaceae",
+    "leguminosae": "fabaceae",
+    "palmae": "arecaceae",
+    "aceraceae": "sapindaceae",
+    "hippocastanaceae": "sapindaceae",
+    "agavaceae": "asparagaceae",
+}
+
+
+def load_registry(path=None):
     with open(path or REGISTRY, encoding="utf-8") as handle:
-        payload = json.load(handle)
-    return list(payload.get("sources") or [])
+        return json.load(handle)
 
 
-def save(sources, path=None):
+def load(path=None):
+    return list(load_registry(path).get("sources") or [])
+
+
+def libraries(path=None):
+    return dict(load_registry(path).get("libraries") or {})
+
+
+def save(sources, path=None, registry=None):
     dest = path or REGISTRY
+    if registry is not None:
+        payload = registry
+    elif os.path.isfile(dest):
+        payload = load_registry(dest)
+    else:
+        payload = {}
+    payload["sources"] = sources
     with open(dest, "w", encoding="utf-8") as handle:
-        json.dump({"sources": sources}, handle, indent=2)
+        json.dump(payload, handle, indent=2, ensure_ascii=False)
         handle.write("\n")
 
 
@@ -74,30 +103,114 @@ def _parts(accepted_name):
     }
 
 
-def url_for(source, accepted_name):
-    template = (source or {}).get("url") or ""
-    if not template or "{" not in template:
-        return template or None
-    return template.format(**_parts(accepted_name))
+def _norm_family(name):
+    token = re.sub(r"[^a-z]", "", (name or "").lower())
+    return FAMILY_ALIASES.get(token, token)
 
 
-def applies(source, accepted_name=None, genus=None, family=None, lifeform=None):
+def url_for(source, accepted_name, volume=None):
+    source = source or {}
+    if volume:
+        if volume.get("record"):
+            return volume["record"]
+        bid = volume.get("bibdigital_id")
+        cite = source.get("cite") or ""
+        if bid and "{bibdigital_id}" in cite:
+            return cite.format(bibdigital_id=bid)
+    template = source.get("url") or ""
+    if not template:
+        return None
+    if "{" not in template:
+        return template
+    try:
+        return template.format(**_parts(accepted_name))
+    except KeyError:
+        return source.get("home")
+
+
+def pick_volume(source, family=None):
+    """Volume that lists this family, else None (use the series hub)."""
+    volumes = [
+        item
+        for item in (source or {}).get("volumes") or []
+        if item.get("vascular") is not False
+    ]
+    if not volumes or not family:
+        return None
+    want = _norm_family(family)
+    if not want:
+        return None
+    for volume in volumes:
+        names = [_norm_family(item) for item in volume.get("families") or []]
+        if want in names:
+            return volume
+        covers = volume.get("covers") or ""
+        for token in re.split(r"[–—,;/()]+", covers):
+            if _norm_family(token) == want:
+                return volume
+    return None
+
+
+def _distribution(accepted_name, native_l2=None, native_l3=None):
+    if native_l2 is not None or native_l3 is not None:
+        return list(native_l2 or []), [str(code).upper() for code in (native_l3 or [])]
+    if not accepted_name:
+        return [], []
+    try:
+        from . import wcvp
+
+        row = wcvp.lookup(accepted_name, include_introduced=False)
+    except Exception:
+        row = None
+    if not row:
+        return [], []
+    return list(row.get("native_l2") or []), [
+        str(code).upper() for code in (row.get("native_l3") or [])
+    ]
+
+
+def applies(
+    source,
+    accepted_name=None,
+    genus=None,
+    family=None,
+    lifeform=None,
+    native_l2=None,
+    native_l3=None,
+):
     when = (source or {}).get("when") or {}
     if when.get("always"):
         return True
     genus = (genus or _parts(accepted_name)["genus"] or "").lower()
-    family = (family or "").lower()
+    family = _norm_family(family)
     lifeform = (lifeform or "").lower()
+    matched = False
+    needed = False
     genera = [item.lower() for item in when.get("genera") or []]
-    families = [item.lower() for item in when.get("families") or []]
+    families = [_norm_family(item) for item in when.get("families") or []]
     lifeforms = [item.lower() for item in when.get("lifeforms") or []]
-    if genera and genus in genera:
-        return True
-    if families and family in families:
-        return True
-    if lifeforms and any(token in lifeform for token in lifeforms):
-        return True
-    return False
+    if genera:
+        needed = True
+        if genus in genera:
+            matched = True
+    if families:
+        needed = True
+        if family in families:
+            matched = True
+    if lifeforms:
+        needed = True
+        if any(token in lifeform for token in lifeforms):
+            matched = True
+    wanted_l2 = when.get("wcvp_l2") or []
+    wanted_l3 = [str(code).upper() for code in (when.get("l3") or [])]
+    if wanted_l2 or wanted_l3:
+        needed = True
+        have_l2, have_l3 = _distribution(accepted_name, native_l2, native_l3)
+        if wanted_l2 and set(int(code) for code in wanted_l2).intersection(have_l2):
+            matched = True
+        if wanted_l3 and set(wanted_l3).intersection(have_l3):
+            matched = True
+    return matched if needed else False
 
 
 def html_to_text(html):
@@ -156,34 +269,84 @@ def _decode(raw):
     return raw.decode("utf-8", errors="replace")
 
 
-def hints_for(accepted_name, genus=None, family=None, lifeform=None, sources=None):
+def hints_for(
+    accepted_name,
+    genus=None,
+    family=None,
+    lifeform=None,
+    sources=None,
+    native_l2=None,
+    native_l3=None,
+):
     """Sources an editor should open for this plant, with a concrete URL when known."""
     hints = []
+    have_l2, have_l3 = _distribution(accepted_name, native_l2, native_l3)
     for source in sources or load():
-        if source.get("fetch") == "pipeline":
+        if source.get("fetch") == "pipeline" or source.get("kind") == "library":
             continue
-        if not applies(source, accepted_name, genus, family, lifeform):
+        if not applies(
+            source,
+            accepted_name,
+            genus,
+            family,
+            lifeform,
+            native_l2=have_l2,
+            native_l3=have_l3,
+        ):
             continue
+        volume = pick_volume(source, family)
+        url = url_for(source, accepted_name, volume=volume) or source.get("home")
+        name = source["name"]
+        notes = source.get("notes") or ""
+        if volume:
+            name = "%s %s" % (source["name"], volume.get("vol") or "")
+            covers = volume.get("covers") or ""
+            if covers:
+                notes = covers
+            bid = volume.get("bibdigital_id")
+            cite = source.get("cite") or ""
+            if bid and "{bibdigital_id}" in cite:
+                url = cite.format(bibdigital_id=bid)
         hints.append(
             {
                 "id": source["id"],
-                "name": source["name"],
-                "url": url_for(source, accepted_name) or source.get("home"),
+                "name": name.strip(),
+                "url": url,
                 "fetch": source.get("fetch"),
                 "reliable": bool(source.get("reliable")),
-                "notes": source.get("notes") or "",
-                "good_for": list(source.get("good_for") or []),
+                "notes": notes,
+                "good_for": list(source.get("roles") or source.get("good_for") or []),
+                "volume": (volume or {}).get("vol"),
             }
         )
     hints.sort(key=lambda item: (0 if item.get("reliable") else 1, item["name"]))
     return hints
 
 
-def fetch_for(accepted_name, genus=None, family=None, lifeform=None, sources=None):
+def fetch_for(
+    accepted_name,
+    genus=None,
+    family=None,
+    lifeform=None,
+    sources=None,
+    native_l2=None,
+    native_l3=None,
+):
     """Download Latin-name lookup pages. Failures are skipped."""
     found = []
+    have_l2, have_l3 = _distribution(accepted_name, native_l2, native_l3)
     for source in sources or load():
-        if not applies(source, accepted_name, genus, family, lifeform):
+        if source.get("kind") == "library":
+            continue
+        if not applies(
+            source,
+            accepted_name,
+            genus,
+            family,
+            lifeform,
+            native_l2=have_l2,
+            native_l3=have_l3,
+        ):
             continue
         kind = source.get("fetch")
         if kind == "search" and source.get("id") == "luontoportti":

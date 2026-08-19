@@ -17,8 +17,8 @@ from sources import wcvp
 from sources import wikidata
 
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-FIXTURES = os.path.join(HERE, "fixtures")
+INGEST_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FIXTURES = os.path.join(INGEST_ROOT, "fixtures")
 
 
 def _load_json(name):
@@ -247,6 +247,60 @@ class BotanicalRegistryTests(unittest.TestCase):
         self.assertEqual(
             "https://botany.cz/cs/digitalis-lanata/",
             botany["url"],
+        )
+        self.assertNotIn("flora_iberica", ids)
+        self.assertNotIn("flora_slovenska", ids)
+        self.assertNotIn("bibdigital_floras", ids)
+
+    def test_regional_flora_volume_and_l3(self):
+        iberica = next(item for item in botanical.load() if item["id"] == "flora_iberica")
+        self.assertTrue(
+            botanical.applies(
+                iberica,
+                "Potentilla anserina",
+                family="Rosaceae",
+                native_l3=["SPA"],
+            )
+        )
+        self.assertFalse(
+            botanical.applies(
+                iberica,
+                "Potentilla anserina",
+                family="Rosaceae",
+                native_l2=[],
+                native_l3=["CZE"],
+            )
+        )
+        vol = botanical.pick_volume(iberica, "Rosaceae")
+        self.assertEqual("6", vol["vol"])
+        self.assertEqual(9902, vol["bibdigital_id"])
+        orchid = botanical.pick_volume(iberica, "Orchidaceae")
+        self.assertEqual("21", orchid["vol"])
+        fungi = botanical.pick_volume(
+            next(item for item in botanical.load() if item["id"] == "flora_slovenska"),
+            "Erysiphaceae",
+        )
+        self.assertIsNone(fungi)
+        hints = botanical.hints_for(
+            "Potentilla anserina",
+            family="Rosaceae",
+            native_l3=["SPA"],
+        )
+        iberica_hint = next(item for item in hints if item["id"] == "flora_iberica")
+        self.assertEqual("Flora Iberica 6", iberica_hint["name"])
+        self.assertEqual(
+            "https://bibdigital.rjb.csic.es/idurl/1/9902",
+            iberica_hint["url"],
+        )
+        slovenska = next(
+            item for item in botanical.load() if item["id"] == "flora_slovenska"
+        )
+        self.assertTrue(
+            botanical.applies(slovenska, "Alchemilla vulgaris", native_l3=["CZE"])
+        )
+        self.assertEqual(
+            "IV/3",
+            botanical.pick_volume(slovenska, "Rosaceae")["vol"],
         )
 
 

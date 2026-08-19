@@ -5,8 +5,8 @@ import json
 import os
 import sys
 
-import refresh_indexes
-import web_catalog
+from catalog import refresh as refresh_indexes
+from catalog import web_catalog
 from sources import catalog_rest
 
 
@@ -142,7 +142,7 @@ def main(argv=None):
         return 2
 
     _init_admin()
-    import publish
+    from catalog import publish
 
     result = publish.apply_web_catalog(catalog, labels)
     print("applied web/catalog (%s) and web/labels (%s languages)" % (

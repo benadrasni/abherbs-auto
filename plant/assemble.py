@@ -4,7 +4,7 @@ import json
 import os
 from datetime import date
 
-import common_names
+from plant import common_names
 import constants
 from sources import catalog_rest
 
@@ -233,10 +233,13 @@ def write_review(path, packet):
         lines.append("- (none yet; use Latin)")
     from sources import botanical
 
+    resolved = packet.get("resolved") or {}
     hints = botanical.hints_for(
         job.get("accepted_name") or header.get("name"),
         family=header.get("family"),
         lifeform=job.get("lifeform") or "",
+        native_l2=resolved.get("native_l2"),
+        native_l3=resolved.get("native_l3"),
     )
     if hints:
         lines.append("")

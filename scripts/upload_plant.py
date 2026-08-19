@@ -1,6 +1,6 @@
 import os
-import storage_upload_file
-import storage_make_public
+from storage import upload as storage_upload_file
+from storage import public as storage_make_public
 import constants
 
 

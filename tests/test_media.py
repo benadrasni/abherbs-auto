@@ -6,14 +6,14 @@ import unittest
 
 from PIL import Image
 
-import media
-import photo_roles
+from plant import media
+from plant import photo_roles
 from sources import botanical_illustrations
 from sources import commons
 
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-BOT = os.path.join(HERE, "fixtures", "botanical")
+INGEST_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BOT = os.path.join(INGEST_ROOT, "fixtures", "botanical")
 
 
 class BotanicalParseTests(unittest.TestCase):

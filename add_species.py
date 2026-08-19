@@ -4,16 +4,16 @@ import argparse
 import os
 import sys
 
-import apg_tree
-import assemble
-import common_names
-import draft_text
-import fetch_media
-import incremental_indexes
-import infer_traits
-import media
-import resolve
-import validate
+from catalog import apg_tree
+from plant import assemble
+from plant import common_names
+from plant import draft_text
+from plant import fetch_media
+from catalog import incremental_indexes
+from plant import infer_traits
+from plant import media
+from plant import resolve
+from plant import validate
 from sources import botanical
 from sources import catalog_rest
 from sources import wikipedia as wiki_api
@@ -86,6 +86,8 @@ def run_dry(
             genus=resolved.get("genus"),
             family=resolved.get("family"),
             lifeform=resolved.get("lifeform"),
+            native_l2=resolved.get("native_l2"),
+            native_l3=resolved.get("native_l3"),
         )
     except Exception as exc:
         packet["job"].setdefault("warnings", []).append("botanical: %s" % exc)
@@ -200,7 +202,7 @@ def main(argv=None):
         import firebase_admin
         from firebase_admin import credentials
         import constants
-        import publish
+        from catalog import publish
 
         report = publish.refuse(packet)
         if not report["ok"]:
@@ -214,7 +216,10 @@ def main(argv=None):
         result = publish.publish(packet)
         print("published: %s" % result.get("published"))
         return 0
-    print("Firebase untouched. Next: promote_indexes.py --patch %s/index_patch.json" % packet["dir"])
+    print(
+        "Firebase untouched. Next: python -m catalog.promote --patch %s/index_patch.json"
+        % packet["dir"]
+    )
     return 0
 
 

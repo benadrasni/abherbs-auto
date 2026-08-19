@@ -2,9 +2,9 @@
 
 import unittest
 
-import draft_text
-import infer_traits
-import validate
+from plant import draft_text
+from plant import infer_traits
+from plant import validate
 from sources import wikipedia as wiki_api
 
 ACER_EXTRACT = """Acer campestre, known as the field maple, is a flowering plant species in the family Sapindaceae.

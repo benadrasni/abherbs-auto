@@ -6,9 +6,9 @@ import shutil
 import tempfile
 import unittest
 
-import incremental_indexes
-import refresh_indexes
-import web_catalog
+from catalog import incremental_indexes
+from catalog import refresh as refresh_indexes
+from catalog import web_catalog
 
 
 ACER_HEADER = {

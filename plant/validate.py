@@ -74,7 +74,7 @@ def validate(packet):
 
     sourced = job.get("sourced_names")
     if sourced is not None:
-        import common_names
+        from plant import common_names
 
         unsourced = common_names.unsourced_names(
             translations,

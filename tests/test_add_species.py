@@ -4,8 +4,8 @@ import os
 import tempfile
 import unittest
 
-import assemble
-import resolve
+from plant import assemble
+from plant import resolve
 from sources import catalog_rest
 
 

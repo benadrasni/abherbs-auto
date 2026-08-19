@@ -4,8 +4,8 @@ Does not call publish.publish() and does not touch plants_v2 or filter indexes.
 Search name changes are a remove-old / add-new diff.
 
 Usage (from ingest, venv python):
-  python apply_slovak_translations.py --dir DIR
-  python apply_slovak_translations.py --dir DIR --apply
+  python -m scripts.apply_slovak_translations --dir DIR
+  python -m scripts.apply_slovak_translations --dir DIR --apply
 """
 
 from __future__ import print_function
@@ -16,7 +16,7 @@ import os
 import sys
 from datetime import date
 
-import catalog_indexes
+from catalog import catalog_indexes
 import constants
 
 BODY = (

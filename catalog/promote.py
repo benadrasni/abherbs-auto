@@ -94,7 +94,7 @@ def parse_args(argv):
 def main(argv=None):
     args = parse_args(argv if argv is not None else sys.argv[1:])
     if not args.patch:
-        print("usage: promote_indexes.py --patch /path/to/index_patch.json", file=sys.stderr)
+        print("usage: python -m catalog.promote --patch /path/to/index_patch.json", file=sys.stderr)
         return 2
     patch = load_patch(args.patch)
     summary = summarize(patch)

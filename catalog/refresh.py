@@ -10,8 +10,8 @@ import json
 import os
 import sys
 
-import catalog_indexes
-import web_catalog
+from catalog import catalog_indexes
+from catalog import web_catalog
 
 
 STAGES = ("counts", "search", "photo", "web")

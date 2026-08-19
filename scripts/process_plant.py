@@ -8,9 +8,9 @@ import tkinter as tk
 from tkinter import ttk
 
 import constants
-import utils
-from upload_plant import upload_plant
-from add_plant import add_plant
+from storage import utils
+from scripts.upload_plant import upload_plant
+from scripts.add_plant import add_plant
 
 def process_plant(order, family, plant):
     origin = os.path.join(constants.plantsdir, family, plant)

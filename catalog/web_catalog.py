@@ -4,7 +4,7 @@ Published at web/catalog/{id} and web/labels/{lang}/{id}. Does not talk
 to Firebase. Do not invert search_v3; labels come from translations only.
 """
 
-from catalog_indexes import SEARCH_LANGUAGES, header_at
+from catalog.catalog_indexes import SEARCH_LANGUAGES, header_at
 
 
 CATALOG_NODE = "web/catalog"

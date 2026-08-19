@@ -2,9 +2,9 @@
 
 import unittest
 
-import apg_tree
-import catalog_indexes
-import incremental_indexes
+from catalog import apg_tree
+from catalog import catalog_indexes
+from catalog import incremental_indexes
 
 
 class FilterPatchTests(unittest.TestCase):

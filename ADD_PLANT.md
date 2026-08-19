@@ -5,9 +5,9 @@ Follow this pipeline whenever the user asks to add a species (usually
 to the database” is an explicit Firebase + GCS write after the packet
 is reviewed.
 
-Do **not** run a full index promote (`promote_indexes.py --apply`) unless
+Do **not** run a full index promote (`python -m catalog.promote --apply`) unless
 asked. One-plant adds are incremental on live. Do **not** call
-`publish.publish()` twice (counts would double).
+`catalog.publish.publish()` twice (counts would double).
 
 Python: `/Users/adrianbenko/PycharmProjects/abherbs-auto/.venv/bin/python`
 (system `/usr/bin/python3` lacks BeautifulSoup). GCS uploads need
@@ -16,6 +16,9 @@ Python: `/Users/adrianbenko/PycharmProjects/abherbs-auto/.venv/bin/python`
 
 Job packets: `~/whatsthatflower/plants/_jobs/{Genus_epithet}/`.
 Latin name is the Firebase key (`plants_v2/{Latin name}`).
+
+Layout: `plant/` (job packets, media), `catalog/` (indexes, publish),
+`sources/`, `storage/`, `scripts/` (operator CLIs). See [README.md](README.md).
 
 ## 1. Dry-run packet
 
@@ -49,7 +52,7 @@ this species (binomial gate). Review every candidate — auto-pick is
 often a macro, the wrong organ, or insect-damaged.
 
 Typical set: flower, habit, leaf, fruit (if sourced). Process with
-`media.process_photo` (512 WebP + thumbnail).
+`plant.media.process_photo` (512 WebP + thumbnail).
 
 ## 4. Traits (best guess from sources, then an editorial pass)
 
@@ -113,9 +116,19 @@ Rewrite the auto-draft. Rules:
 - `sourceUrls` on the English record: Wikipedia + the floras actually used.
 
 Reliable sources (see `data/botanical_sources.json`): Wikipedia, PFAF,
-RHS, Luontoportti, Missouri Plants, BOTANY.cz, EPPO (names). POWO is
-Cloudflare-blocked; use local WCVP. When a new site is useful, add it to
-the registry (`reliable: true` if it is a real flora).
+RHS, Luontoportti, Missouri Plants, BOTANY.cz, Flóra Slovenska (Slovak
+body text; bibdigital volumes under `flora_slovenska`), Flora Iberica
+(Iberian/Balearic), EPPO (names).
+POWO is Cloudflare-blocked; use local WCVP. When a new site is useful,
+add it to the registry (`reliable: true` if it is a real flora).
+
+Registry shape: `libraries` (bibdigital cite/browse) and `sources`
+(works). A work has `kind` (flora / encyclopedia / checklist / garden /
+names), `roles`, `fetch` (pipeline / latin / search / manual), and
+`when` (`always`, `genera`, `l3`, `wcvp_l2`). Multi-volume floras list
+`volumes` with `families`; job review hints the matching volume’s
+`idurl`, not the whole series. Do not add the 1000+ bibdigital Flora
+search hits as sources.
 
 ## 7. Common names
 
@@ -124,7 +137,7 @@ Never translate an English common name. `label` / `names` only from:
 - Wikidata label/alias (skip if it is the Latin name or a Latin synonym)
 - that language’s Wikipedia title (if not Latin)
 - EPPO Global Database common-name table (`https://gd.eppo.int/taxon/{code}`)
-- a flora line such as BOTANY.cz *Česká / Slovenská jména*
+- a flora line such as BOTANY.cz *Česká / Slovenská jména* or Flóra Slovenska
 
 If a language has no sourced name, **omit `label`**. The app shows Latin.
 Do not draft CS/RU/DE/FR/PL/JA/ES body texts unless asked.
@@ -134,7 +147,7 @@ Do not draft CS/RU/DE/FR/PL/JA/ES body texts unless asked.
 After English is rewritten, write `translations/sk.json` with the same
 seven fields from the same sourced facts. `label` / `names` only from a
 Slovak source (Wikidata, sk.wikipedia title, EPPO, BOTANY.cz *Slovenská
-jména*). Omit `label` if none. Do not translate an English vernacular.
+jména*, Flóra Slovenska). Omit `label` if none. Do not translate an English vernacular.
 Diagnostic contrasts may use `<b>…</b>`. `sourceUrls` are the pages
 actually used. The file goes live only with incremental publish.
 
@@ -143,8 +156,8 @@ actually used. The file goes live only with incremental publish.
 Plate-only replacement for a species already in the catalog is
 `/add-illustrations` (ship), not this full publish.
 
-`validate.validate` must be ok. Then incremental live publish
-(`publish.publish`):
+`plant.validate.validate` must be ok. Then incremental live publish
+(`catalog.publish.publish`):
 
 1. Upload official WebP + thumbnails to
    `gs://abherbs-resources/photos/{order}/{family}/{slug}/`.
@@ -179,13 +192,13 @@ Same-day `versions/db_update` can leave the mobile app on yesterday’s
 
 Other languages, FCM, family icons, and a full promote are separate
 asks. Rebuild the slim website catalog locally with
-`publish_web_catalog.py --from-live`; add `--apply` only when asked to
+`python -m scripts.publish_web_catalog --from-live`; add `--apply` only when asked to
 write `web/catalog` and `web/labels`. If publish crashes after media +
 records but during search, finish search/photo only — do not
 re-increment counts.
 
 To patch live English/Slovak/`plants_v2` after a first publish, update
-those nodes only. Do **not** call `publish.publish()` again (counts and
+those nodes only. Do **not** call `catalog.publish.publish()` again (counts and
 `plants_to_update` would double). Set `versions/db_update` if the app
 should refresh. Filter keys change only when color/habitat/petal/L2
 change.

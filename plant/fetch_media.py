@@ -4,8 +4,8 @@ import os
 import shutil
 import urllib.request
 
-import media
-import photo_roles
+from plant import media
+from plant import photo_roles
 from sources import botanical_illustrations
 from sources import commons
 from sources import gbif

@@ -2,9 +2,9 @@
 
 import unittest
 
-import assemble
-import common_names
-import validate
+from plant import assemble
+from plant import common_names
+from plant import validate
 
 
 class CommonNameSourceTests(unittest.TestCase):
