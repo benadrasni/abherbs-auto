@@ -47,6 +47,7 @@ STYLE = r"""
  *   .us-or         Oregon    (parent .us = all states)
  *   .ca-ab         Alberta   (parent .ca = all provinces + territories)
  *   .cn-xj         Xinjiang  (parent .cn = all mainland provinces + HK/MO)
+ *   .nz-s          New Zealand South Island + Stewart I. (WCVP NZS; parent .nz = both)
  *
  * Example:
  *   .us-or, .ca-on, .cn-xj, .ru-sib, .de { fill: #7a9855; stroke: #5e7840; }
@@ -175,6 +176,26 @@ def add_iso_classes(svg: str) -> str:
         return f'id="{ident}" class="{extra}"{rest}>'
 
     svg = re.sub(r'id="(CA-[A-Z]{2})"([^>]*)>', ca_repl, svg)
+    return svg
+
+
+def tag_new_zealand_islands(svg: str) -> str:
+    """Expose WCVP NZS / NZN as .nz-s / .nz-n without filling the other island."""
+    svg = svg.replace(
+        'id="New_Zealand_Stewart_Island"\n       d="',
+        'id="New_Zealand_Stewart_Island"\n       class="nz-s"\n       d="',
+        1,
+    )
+    svg = svg.replace(
+        'id="New_Zealand_South_Island"\n       d="',
+        'id="New_Zealand_South_Island"\n       class="nz-s"\n       d="',
+        1,
+    )
+    svg = svg.replace(
+        'id="New_Zealand_North_Island"\n       d="',
+        'id="New_Zealand_North_Island"\n       class="nz-n"\n       d="',
+        1,
+    )
     return svg
 
 
@@ -503,6 +524,7 @@ def main() -> None:
     svg = replace_style(svg)
     svg = add_iso_classes(svg)
     svg = retarget_france_netherlands_norway(svg)
+    svg = tag_new_zealand_islands(svg)
     svg = hide_old_china_outline(svg)
     svg = insert_china(svg, cn)
     svg = mark_us_ca_parents(svg)

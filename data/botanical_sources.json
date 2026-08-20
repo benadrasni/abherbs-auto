@@ -465,6 +465,38 @@
       ]
     },
     {
+      "id": "pladias",
+      "name": "Pladias (Czech flora and vegetation)",
+      "home": "https://pladias.cz/en/",
+      "url": "https://pladias.cz/en/taxon/data/{latin_plus}",
+      "fetch": "latin",
+      "reliable": true,
+      "when": {
+        "l3": [
+          "CZE"
+        ]
+      },
+      "good_for": [
+        "description",
+        "flower",
+        "inflorescence",
+        "fruit",
+        "leaf",
+        "stem",
+        "habitat"
+      ],
+      "notes": "Czech flora trait database (Kaplan et al. height and flowering months; habitat optima; forest affinity). Latin URL /en/taxon/data/{Genus%20epithet}. Reliable for native Czech species. Skip Ellenberg numbers in user-facing English.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "en",
+        "cs"
+      ]
+    },
+    {
       "id": "flora_slovenska",
       "name": "Flóra Slovenska",
       "home": "https://bibdigital.rjb.csic.es/records/item/15084-flora-slovenska",
@@ -746,6 +778,7 @@
             "Taxaceae",
             "Ephedraceae",
             "Ranunculaceae",
+            "Berberidaceae",
             "Papaveraceae",
             "Fumariaceae"
           ]
@@ -1116,6 +1149,62 @@
       "roles": [
         "habitat",
         "garden"
+      ]
+    },
+    {
+      "id": "bsbi",
+      "name": "BSBI / Plant Atlas 2020",
+      "home": "https://bsbi.org/",
+      "url": "https://bsbi.org/",
+      "fetch": "manual",
+      "reliable": true,
+      "when": {
+        "l3": [
+          "GRB",
+          "IRE"
+        ]
+      },
+      "good_for": [
+        "habitat",
+        "names"
+      ],
+      "notes": "British and Irish flora. Search the Latin name on bsbi.org; Plant Atlas 2020 has habitat, status and biogeography. No page is normal outside Britain and Ireland. Do not copy Vice-County lists into user English.",
+      "kind": "flora",
+      "roles": [
+        "habitat",
+        "names"
+      ],
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "id": "infoflora",
+      "name": "Info Flora (Switzerland)",
+      "home": "https://www.infoflora.ch/en/",
+      "url": "https://www.infoflora.ch/en/flora/",
+      "fetch": "manual",
+      "reliable": true,
+      "when": {
+        "l3": [
+          "SWI"
+        ]
+      },
+      "good_for": [
+        "morphology",
+        "habitat"
+      ],
+      "notes": "Swiss flora. Species pages often embed Flora Helvetica height, flowering months, head and fruit measurements. URLs use a vernacular slug, not the Latin name. Skip ecological indicator numbers in user-facing English.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "en",
+        "de",
+        "fr",
+        "it"
       ]
     }
   ]
