@@ -788,10 +788,11 @@
           "year": 1990,
           "bibdigital_id": 9899,
           "record": "https://bibdigital.rjb.csic.es/records/item/9899-flora-iberica-vol-2-platanaceae-plumbaginaceae-partim",
-          "covers": "Platanaceae–Plumbaginaceae (part)",
+          "covers": "Platanaceae–Plumbaginaceae (part); includes Polygonaceae",
           "families": [
             "Platanaceae",
-            "Plumbaginaceae"
+            "Plumbaginaceae",
+            "Polygonaceae"
           ]
         },
         {
