@@ -1,6 +1,7 @@
 """Send per-language FCM. Default is dry-run; pass --apply to send."""
 
 import argparse
+import json
 import re
 import sys
 
@@ -40,6 +41,9 @@ DEFAULT_LIST_BODY_ONE = "1 species was added. Tap to browse it."
 DEFAULT_LIST_BODY_MANY = "{count} species were added. Tap to browse them."
 DEFAULT_PLANT_TITLE = "New video available for {label}"
 DEFAULT_PLANT_BODY = "Click here to see the video."
+DEFAULT_BROWSE_TITLE = "New website"
+DEFAULT_BROWSE_BODY = "whatsthatflower.com has been rebuilt. Tap to take a look."
+URL_RE = re.compile(r"^https?://", re.I)
 
 # Official launcher / store names from android/app/src/main/res/values*/strings.xml
 APP_NAMES = {
@@ -120,6 +124,66 @@ def list_data(path):
     }
 
 
+def browse_data(uri):
+    return {
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        "action": "browse",
+        "uri": uri,
+    }
+
+
+def web_lang(code):
+    if code == "zh-TW":
+        return "zh"
+    if code == "nb":
+        return "no"
+    return code.split("-", 1)[0]
+
+
+def browse_uri(base, code):
+    if "lang=" in base:
+        return base
+    joiner = "&" if "?" in base else "?"
+    return "%s%slang=%s" % (base, joiner, web_lang(code))
+
+
+def load_copy(path):
+    try:
+        with open(path, encoding="utf-8") as handle:
+            data = json.load(handle)
+    except OSError as exc:
+        raise ValueError("cannot read %s: %s" % (path, exc))
+    except json.JSONDecodeError as exc:
+        raise ValueError("%s is not JSON: %s" % (path, exc))
+    if not isinstance(data, dict) or not data:
+        raise ValueError("%s is not a language copy map" % path)
+    out = {}
+    for code, item in data.items():
+        if not isinstance(item, dict):
+            raise ValueError("%s: %s must be {title, body}" % (path, code))
+        title = item.get("title")
+        body = item.get("body")
+        if not title or not body:
+            raise ValueError("%s: %s needs title and body" % (path, code))
+        out[code] = (title, body)
+    return out
+
+
+def missing_copy(copy, languages):
+    return [code for code in languages.values() if code not in copy]
+
+
+# App topic is notifications-{Locale.languageCode}. nb_NO -> nb, zh_TW -> zh.
+TOPIC_ALIASES = {
+    "no": ("no", "nb"),
+    "zh-TW": ("zh-TW", "zh"),
+}
+
+
+def topics_for(code):
+    return TOPIC_ALIASES.get(code, (code,))
+
+
 def selected_languages(codes):
     if not codes:
         return dict(language_map)
@@ -194,8 +258,18 @@ def parse_args(argv):
         metavar="NAME",
         help="Open one species page (Latin name)",
     )
+    group.add_argument(
+        "--browse",
+        metavar="URL",
+        help="Open this URL (https://whatsthatflower.com/)",
+    )
     parser.add_argument("--title", help="English title. Plant: {label}.")
     parser.add_argument("--body", help="English body. List: {count} is replaced.")
+    parser.add_argument(
+        "--copy",
+        metavar="FILE",
+        help="JSON map of lang code -> {title, body}. Skips Google Translate.",
+    )
     parser.add_argument(
         "--lang",
         action="append",
@@ -216,11 +290,41 @@ def parse_args(argv):
     args = parser.parse_args(argv)
     if args.list_date and not DATE_RE.match(args.list_date):
         parser.error("--list must be YYYY-MM-DD")
+    if args.browse and not URL_RE.match(args.browse):
+        parser.error("--browse must be an http(s) URL")
     return args
+
+
+def english_from_copy(copy, title, body):
+    if copy and "en" in copy:
+        copied_title, copied_body = copy["en"]
+        return title or copied_title, body or copied_body
+    return title, body
+
+
+def copy_for_language(job, code):
+    copies = job.get("copy")
+    if copies and code in copies:
+        title, body = copies[code]
+    elif job["kind"] == "plant":
+        label = get_translated_label(code, job["plant"])
+        title, body = translate_copy(job["title_template"].format(label=label), job["body"], code)
+    else:
+        title, body = translate_copy(job["title"], job["body"], code)
+    if job["kind"] in ("list-drop", "browse"):
+        title = title_with_app_name(title, code)
+    return title, body
+
+
+def payload_for_language(job, code):
+    if job["kind"] == "browse":
+        return browse_data(browse_uri(job["uri"], code))
+    return job["data"]
 
 
 def prepare_job(args):
     languages = selected_languages(args.langs)
+    copy = load_copy(args.copy) if args.copy else None
     if args.list_date:
         count = load_new_list_count(args.list_date)
         path = list_path(args.list_date)
@@ -233,7 +337,7 @@ def prepare_job(args):
             "data": list_data(path),
             "languages": languages,
         }
-    else:
+    elif args.plant:
         title_template, body = plant_copy("{label}", args.title, args.body)
         job = {
             "kind": "plant",
@@ -244,6 +348,21 @@ def prepare_job(args):
             "languages": languages,
             "plant": args.plant,
         }
+    else:
+        title, body = english_from_copy(copy, args.title, args.body)
+        title = title or DEFAULT_BROWSE_TITLE
+        body = body or DEFAULT_BROWSE_BODY
+        job = {
+            "kind": "browse",
+            "label": args.browse,
+            "uri": args.browse,
+            "title": title,
+            "body": body,
+            "data": browse_data(args.browse),
+            "languages": languages,
+        }
+    if copy:
+        job["copy"] = copy
     if args.uid:
         job["token"] = load_user_token(args.uid)
         job["uid"] = args.uid
@@ -252,46 +371,63 @@ def prepare_job(args):
 
 def send_language(job, language, code, apply):
     try:
-        if job["kind"] == "plant":
-            label = get_translated_label(code, job["plant"])
-            title_en = job["title_template"].format(label=label)
-            body_en = job["body"]
-        else:
-            title_en = job["title"]
-            body_en = job["body"]
-        title, body = translate_copy(title_en, body_en, code)
-        if job["kind"] == "list-drop":
-            title = title_with_app_name(title, code)
+        title, body = copy_for_language(job, code)
+        data = payload_for_language(job, code)
     except Exception as exc:
         print("Translation failed for %s: %s" % (language, exc))
         return False
 
     token = job.get("token")
-    target = "token %s" % mask_token(token) if token else "notifications-%s" % code
+    topics = topics_for(code)
+    target = "token %s" % mask_token(token) if token else ", ".join("notifications-%s" % topic for topic in topics)
     print("%s  %s" % (code, target))
     print("  title: %s" % title)
     print("  body: %s" % body)
+    if job["kind"] == "browse":
+        print("  uri: %s" % data["uri"])
     if not apply:
         return True
 
-    kwargs = {"token": token} if token else {"topic": "notifications-%s" % code}
-    message = messaging.Message(
-        notification=messaging.Notification(title=title, body=body),
-        data=job["data"],
-        android=messaging.AndroidConfig(priority="high"),
-        apns=messaging.APNSConfig(
-            headers={"apns-priority": "10", "apns-push-type": "alert"},
-            payload=messaging.APNSPayload(aps=messaging.Aps(sound="default")),
-        ),
-        **kwargs,
-    )
-    try:
-        response = messaging.send(message)
-        print("  sent %s-%s: %s" % (job["kind"], language, response))
-        return True
-    except Exception as exc:
-        print("  failed %s: %s" % (language, exc))
-        return False
+    payload = dict(data)
+    payload["title"] = title
+    payload["body"] = body
+    ok = True
+    targets = [{"token": token}] if token else [{"topic": "notifications-%s" % topic} for topic in topics]
+    for kwargs in targets:
+        message = messaging.Message(
+            notification=messaging.Notification(title=title, body=body),
+            data=payload,
+            android=messaging.AndroidConfig(
+                priority="high",
+                notification=messaging.AndroidNotification(
+                    title=title,
+                    body=body,
+                    sound="default",
+                    click_action="FLUTTER_NOTIFICATION_CLICK",
+                ),
+            ),
+            apns=messaging.APNSConfig(
+                headers={"apns-priority": "10", "apns-push-type": "alert"},
+                payload=messaging.APNSPayload(
+                    aps=messaging.Aps(
+                        alert=messaging.ApsAlert(title=title, body=body),
+                        sound="default",
+                    )
+                ),
+            ),
+            **kwargs,
+        )
+        try:
+            response = messaging.send(message)
+            print("  sent %s-%s: %s" % (job["kind"], language, response))
+        except Exception as exc:
+            print("  failed %s: %s" % (language, exc))
+            ok = False
+    return ok
+
+
+def needs_firebase(args):
+    return bool(args.apply or args.uid or args.list_date or args.plant)
 
 
 def main(argv=None):
@@ -302,12 +438,19 @@ def main(argv=None):
         print(exc, file=sys.stderr)
         return 2
 
-    init_firebase()
+    if needs_firebase(args):
+        init_firebase()
     try:
         job = prepare_job(args)
     except ValueError as exc:
         print(exc, file=sys.stderr)
         return 2
+
+    if args.copy:
+        missing = missing_copy(job.get("copy") or {}, languages)
+        if missing:
+            print("copy missing languages: %s" % ",".join(missing), file=sys.stderr)
+            return 2
 
     print("%s  %s" % (job["kind"], job["label"]))
     print("data: %s" % job["data"])
