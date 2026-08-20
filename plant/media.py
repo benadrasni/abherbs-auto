@@ -136,12 +136,30 @@ def process_photo(src, dest_512, dest_128):
 
 
 def plate_stem(name):
-    stem, ext = os.path.splitext(os.path.basename(name))
+    stem, ext = os.path.splitext(os.path.basename(name).split("?")[0])
     for suffix in ("@1600", "@400"):
         if stem.endswith(suffix):
             stem = stem[: -len(suffix)]
             break
     return stem, ext or ".webp"
+
+
+def distribution_map_name(illustration_url, latin_name=None):
+    """WebP basename the website derives from illustrationUrl (`distributionRel`)."""
+    base = os.path.basename(illustration_url or "").split("?")[0]
+    if not base and latin_name:
+        base = latin_name.replace(" ", "_") + ".webp"
+    stem, ext = plate_stem(base)
+    if not stem:
+        return ""
+    return stem + "_distribution" + ext
+
+
+def distribution_map_path(job_dir, illustration_url, latin_name=None):
+    name = distribution_map_name(illustration_url, latin_name)
+    if not job_dir or not name:
+        return ""
+    return os.path.join(job_dir, "media", name)
 
 
 def official_plate_paths(dest):

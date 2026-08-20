@@ -3,7 +3,7 @@
 Follow this pipeline whenever the user asks to add a species (usually
 “add *Latin name*” and optionally “with illustration *id*”). “Add it
 to the database” is an explicit Firebase + GCS write after the packet
-is reviewed.
+is reviewed. The packet includes a WCVP distribution map (see §2a).
 
 Do **not** run a full index promote (`python -m catalog.promote --apply`) unless
 asked. One-plant adds are incremental on live. Do **not** call
@@ -43,6 +43,17 @@ Follow `/add-illustrations` (skill
 procedure: pick, clean / colorize / generate, install official WebPs,
 review grid, ship. Locked look: `ILLUSTRATION.md`. A new-species add
 still needs the official plate in the job before §8.
+
+## 2a. Distribution map
+
+Follow `/add-distribution-map` (skill
+`.grok/skills/add-distribution-map/SKILL.md`). Build
+`{slug}_distribution.webp` into the job `media/` from WCVP L3 (same
+basename as the plate stem). Show the WebP in the review. A
+new-species add needs that file in the job before §8; `plant.validate`
+refuses publish without it. Incremental publish uploads it next to the
+plate. The website derives the path from `illustrationUrl`
+(`distributionRel`) — do not add `distributionUrl`.
 
 ## 3. Photos
 
@@ -159,7 +170,8 @@ Plate-only replacement for a species already in the catalog is
 `plant.validate.validate` must be ok. Then incremental live publish
 (`catalog.publish.publish`):
 
-1. Upload official WebP + thumbnails to
+1. Upload official plate WebPs, `{slug}_distribution.webp`, and photo
+   thumbnails to
    `gs://abherbs-resources/photos/{order}/{family}/{slug}/`.
 2. Write `plants_v2`, `plants_headers/{id}`, `synonyms`, `translations`.
 3. `plants_to_update/list/{id} = Latin`, `count = id + 1`.
@@ -180,7 +192,7 @@ rebuilds.
 - `web/catalog/{id}` has the same id, Latin name, and `illustrationUrl`
 - `web/labels/en/{id}` matches the sourced English `label` (absent if none)
 - English seven fields present
-- photos and illustration publicly readable on GCS
+- photos, illustration, and `{stem}_distribution.webp` publicly readable on GCS
 - APG nested node includes the id; no stray sibling genus
 - `search_v3/la/{latin lower}` has the id
 - `plants_to_update/count` is next id

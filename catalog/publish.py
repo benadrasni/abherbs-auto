@@ -46,10 +46,16 @@ def refuse(packet):
 
 def _official_files(packet):
     media_dir = os.path.join(packet["dir"], "media")
-    names = [os.path.basename(packet["plants_v2"]["illustrationUrl"])]
+    names = [os.path.basename(packet["plants_v2"]["illustrationUrl"]).split("?")[0]]
     names.extend(media.sibling_plate_filenames(names[0]))
+    map_name = media.distribution_map_name(
+        packet["plants_v2"].get("illustrationUrl"),
+        (packet.get("job") or {}).get("accepted_name"),
+    )
+    if map_name:
+        names.append(map_name)
     for url in packet["plants_v2"].get("photoUrls") or []:
-        names.append(os.path.basename(url))
+        names.append(os.path.basename(url).split("?")[0])
     files = []
     for name in names:
         path = os.path.join(media_dir, name)

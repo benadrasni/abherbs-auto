@@ -5,6 +5,7 @@ import os
 from datetime import date
 
 from plant import common_names
+from plant import media
 import constants
 from sources import catalog_rest
 
@@ -125,6 +126,17 @@ def build_records(resolved, plant_id, already_in_catalog):
     }
 
 
+def _distribution_map_ok(packet):
+    job = packet.get("job") or {}
+    v2 = packet.get("plants_v2") or {}
+    path = media.distribution_map_path(
+        packet.get("dir"),
+        v2.get("illustrationUrl"),
+        job.get("accepted_name"),
+    )
+    return bool(path) and os.path.isfile(path)
+
+
 def write_json(path, payload):
     directory = os.path.dirname(path)
     if directory:
@@ -156,6 +168,9 @@ def write_review(path, packet):
         "- flowering: %s–%s" % (v2.get("floweringFrom"), v2.get("floweringTo")),
         "- toxicityClass: %s" % v2.get("toxicityClass"),
         "- illustration: %s" % (job.get("illustration") or {}),
+        "- distribution map: %s" % (
+            "ok" if _distribution_map_ok(packet) else "missing"
+        ),
         "- photos: %s" % (job.get("photos") or {}),
         "",
         "## Photos",

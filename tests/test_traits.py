@@ -1,5 +1,7 @@
 """Trait inference and English draft tests. No network, no Firebase."""
 
+import os
+import tempfile
 import unittest
 
 from plant import draft_text
@@ -311,6 +313,54 @@ class ValidateTests(unittest.TestCase):
         report = validate.validate(packet)
         self.assertFalse(report["ok"])
         self.assertTrue(any("photo" in item for item in report["errors"]))
+
+    def test_distribution_map_required_when_job_dir_present(self):
+        packet = {
+            "job": {
+                "accepted_name": "Acer campestre",
+                "id": 0,
+                "warnings": [],
+                "photos": {"status": "ok", "roles": ["flower", "leaf", "fruit"]},
+                "illustration": {"ok": True},
+            },
+            "plants_header": {
+                "filterColor": [5],
+                "filterHabitat": [6],
+                "filterPetal": [2],
+                "filterDistribution": [10],
+            },
+            "plants_v2": {
+                "ipniId": "781250-1",
+                "illustrationUrl": "Sapindales/Sapindaceae/Acer_campestre/Acer_campestre.webp",
+            },
+            "translations": {
+                "en": {
+                    "description": "x",
+                    "flower": "x",
+                    "inflorescence": "x",
+                    "fruit": "x",
+                    "leaf": "x",
+                    "stem": "x",
+                    "habitat": "x",
+                }
+            },
+        }
+        tmp = tempfile.TemporaryDirectory()
+        try:
+            dest = tmp.name
+            os.makedirs(os.path.join(dest, "media"))
+            packet["dir"] = dest
+            report = validate.validate(packet)
+            self.assertFalse(report["ok"])
+            self.assertTrue(any("distribution map" in item for item in report["errors"]))
+            open(
+                os.path.join(dest, "media", "Acer_campestre_distribution.webp"),
+                "w",
+            ).close()
+            report = validate.validate(packet)
+            self.assertTrue(report["ok"], report["errors"])
+        finally:
+            tmp.cleanup()
 
 
 if __name__ == "__main__":

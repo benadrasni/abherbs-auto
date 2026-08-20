@@ -173,6 +173,20 @@ class CleanIllustrationTests(unittest.TestCase):
             ["Acer_campestre@1600.webp", "Acer_campestre@400.webp"],
             media.sibling_plate_filenames("Acer_campestre.webp"),
         )
+        self.assertEqual(
+            "Acer_campestre_distribution.webp",
+            media.distribution_map_name(
+                "Sapindales/Sapindaceae/Acer_campestre/Acer_campestre.webp"
+            ),
+        )
+        self.assertEqual(
+            "Acer_campestre_distribution.webp",
+            media.distribution_map_name("Acer_campestre@1600.webp"),
+        )
+        self.assertEqual(
+            "Bellis_perennis_distribution.webp",
+            media.distribution_map_name("", "Bellis perennis"),
+        )
 
     def test_cream_paper_becomes_2x3_plates(self):
         tmp = tempfile.TemporaryDirectory()

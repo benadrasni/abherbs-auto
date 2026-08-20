@@ -1,5 +1,8 @@
 """Validate a job packet before publish. No Firebase writes."""
 
+import os
+
+from plant import media
 from sources import tdwg
 
 COLOR_OK = set(range(1, 6))
@@ -63,6 +66,14 @@ def validate(packet):
     illustration = job.get("illustration") or {}
     if not illustration.get("ok"):
         errors.append("illustration required")
+
+    dest = packet.get("dir")
+    if dest:
+        map_path = media.distribution_map_path(
+            dest, v2.get("illustrationUrl"), job.get("accepted_name")
+        )
+        if not map_path or not os.path.isfile(map_path):
+            errors.append("distribution map required")
 
     if not v2.get("ipniId"):
         warnings.append("missing ipniId")
