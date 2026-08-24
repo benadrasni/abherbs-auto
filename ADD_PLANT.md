@@ -132,6 +132,9 @@ body text; bibdigital volumes under `flora_slovenska`), Flora Iberica
 (Iberian/Balearic), EPPO (names).
 POWO is Cloudflare-blocked; use local WCVP. When a new site is useful,
 add it to the registry (`reliable: true` if it is a real flora).
+Central Europe / Poland scans: RCIN dLibra (`libraries.rcin`); the
+Flora Polska work (`flora_polska`) is a hint only until a volume is
+used.
 
 Registry shape: `libraries` (bibdigital cite/browse) and `sources`
 (works). A work has `kind` (flora / encyclopedia / checklist / garden /

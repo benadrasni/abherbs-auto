@@ -303,6 +303,37 @@ class BotanicalRegistryTests(unittest.TestCase):
             botanical.pick_volume(slovenska, "Rosaceae")["vol"],
         )
 
+    def test_rcin_library_and_flora_polska_hint(self):
+        libs = botanical.libraries()
+        self.assertIn("rcin", libs)
+        self.assertEqual("https://rcin.org.pl/dlibra", libs["rcin"]["home"])
+        flora = next(item for item in botanical.load() if item["id"] == "flora_polska")
+        self.assertFalse(flora.get("reliable"))
+        self.assertEqual("rcin", flora.get("library"))
+        self.assertTrue(
+            botanical.applies(
+                flora, "Galium album", family="Rubiaceae", native_l3=["POL"]
+            )
+        )
+        self.assertFalse(
+            botanical.applies(
+                flora,
+                "Galium album",
+                family="Rubiaceae",
+                native_l2=[],
+                native_l3=["SPA"],
+            )
+        )
+        hints = botanical.hints_for(
+            "Galium album",
+            family="Rubiaceae",
+            native_l3=["POL"],
+        )
+        polska = next(item for item in hints if item["id"] == "flora_polska")
+        self.assertIn("rcin.org.pl/dlibra/results", polska["url"])
+        self.assertIn("Galium+album", polska["url"])
+        self.assertFalse(polska["reliable"])
+
 
 class EppoTests(unittest.TestCase):
     def test_pick_exact_plant_not_hybrid(self):

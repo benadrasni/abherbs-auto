@@ -72,6 +72,35 @@
         }
       ],
       "notes": "Host for scanned floras. Works are flora_iberica and flora_slovenska. Browse the Flora category only when no registered work treated the species. Cite idurl/1/{id}. Skip pamphlets, exsiccata, red lists, and fungi."
+    },
+    "rcin": {
+      "home": "https://rcin.org.pl/dlibra",
+      "cite": "https://rcin.org.pl/dlibra/publication/{publication_id}",
+      "browse_flora": "https://rcin.org.pl/dlibra/results?q=Flora%20Polska&action=SimpleSearchAction&type=-6",
+      "search": "https://rcin.org.pl/dlibra/results?q={latin_plus}&action=SimpleSearchAction&type=-6",
+      "series": [
+        {
+          "name": "Flora Polska jawnokwiatowych rodzajów (Waga)",
+          "hub": "https://rcin.org.pl/dlibra/publication/3349/edition/19070",
+          "when": "Kingdom of Poland; 1847–48 vascular flora (T. 1 on RCIN)"
+        },
+        {
+          "name": "W. Szafer Institute of Botany — library collections",
+          "hub": "https://rcin.org.pl/dlibra/collectiondescription/514",
+          "when": "IB PAN library scans: floras, keys, monographs"
+        },
+        {
+          "name": "W. Szafer Institute of Botany — own editions",
+          "hub": "https://rcin.org.pl/dlibra/collectiondescription/524",
+          "when": "Polish Botanical Studies, guidebooks, stand-alone monographs"
+        },
+        {
+          "name": "W. Szafer Institute of Botany",
+          "hub": "https://rcin.org.pl/dlibra/collectiondescription/428",
+          "when": "Institute hub; mix of literature and collections"
+        }
+      ],
+      "notes": "Digital Repository of Scientific Institutes (Polish Academy of Sciences). Host for scanned Polish and Central European floras and Szafer Institute papers. Work is flora_polska. Search the Latin name; cite publication/{id}. Skip herbarium specimens (vascular plants / botanical collections), fungi, palaeobotany, and red lists."
     }
   },
   "sources": [
@@ -735,6 +764,40 @@
       ],
       "library": "bibdigital",
       "cite": "https://bibdigital.rjb.csic.es/idurl/1/{bibdigital_id}"
+    },
+    {
+      "id": "flora_polska",
+      "name": "Flora Polska",
+      "home": "https://rcin.org.pl/dlibra",
+      "url": "https://rcin.org.pl/dlibra/results?q={latin_plus}&action=SimpleSearchAction&type=-6",
+      "fetch": "manual",
+      "when": {
+        "l3": [
+          "POL"
+        ]
+      },
+      "good_for": [
+        "description",
+        "flower",
+        "inflorescence",
+        "fruit",
+        "leaf",
+        "stem",
+        "habitat",
+        "names"
+      ],
+      "notes": "Polish vascular flora of Poland and adjacent lands (Szafer / Pawłowski, 1919–1980, 14 vols.; Waga 1847 on RCIN as publication 3349). Polish text. Search the Latin name on RCIN dLibra and open a page that actually treats that plant. Do not mark reliable until a volume is used. Skip herbarium specimens, fungi, and spore-plant volumes. Polish vernaculars are for pl names only — never as English labels.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat",
+        "names"
+      ],
+      "langs": [
+        "pl"
+      ],
+      "library": "rcin",
+      "cite": "https://rcin.org.pl/dlibra/publication/{publication_id}"
     },
     {
       "id": "flora_iberica",
