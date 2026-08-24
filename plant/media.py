@@ -6,20 +6,29 @@ from PIL import Image, ImageChops, ImageFile, ExifTags
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 RESAMPLE = getattr(getattr(Image, "Resampling", Image), "LANCZOS", Image.LANCZOS)
+BOX = getattr(getattr(Image, "Resampling", Image), "BOX", Image.BILINEAR)
 
 PHOTO_SIZE = 512
 THUMB_SIZE = 128
 
 PLATE_SIZE = (1600, 2400)
 GRID_SIZE = (400, 600)
+IMAGINE_PAD = (1067, 1600)  # 2:3 input for image_edit
 WEBP_QUALITY = 90
 CREAM = (244, 239, 228)  # #f4efe4
 CREAM_EDGE = (214, 200, 176)
+PALE_BAR = 228  # flat letterbox (cream page edges are darker + noisier)
+DARK_BAR = 40  # black surround
+FLAT_SD = 2.5
 
-PAGE_TREATMENT = (
-    "Set the field to an aged cream 19th-century book page: warm ivory about "
-    "#f4efe4, soft vignette so edges and corners are a little darker and oxidized, "
-    "faint even paper tooth. Remove foxing, stains, dust specks, and scan noise; "
+_INGEST_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PLATE_BACKGROUND = os.path.join(_INGEST_DIR, "data", "background.webp")
+
+PAGE_BACKGROUND = (
+    "Use the last image as the page background. "
+)
+PAGE_CLEANUP = (
+    "Remove foxing, stains, dust specks, and scan noise; "
     "do not leave blotches. No frame, no rule, no mount, no laid-line grid, no plate-mark. "
     "Portrait 2:3. Remove all labels, captions, plate numbers, and titles. "
     "Keep the original composition; do not rearrange or restack parts."
@@ -49,7 +58,8 @@ def imagine_prompt(kind="clean", author=""):
             "Colour this botanical plate from the photographs. Keep the engraving’s "
             "line work and composition. Take flower and foliage colour only from the "
             "photographs; do not invent colour. Do not paste photo parts onto the drawing. "
-            + PAGE_TREATMENT
+            + PAGE_BACKGROUND
+            + PAGE_CLEANUP
             + _site_author_clause(author)
             + " Next to that author mark, add a second discreet script signature that "
             "reads exactly colored by Grok Imagine. If there is no author mark, still "
@@ -59,14 +69,17 @@ def imagine_prompt(kind="clean", author=""):
         return (
             "Paint a 19th-century colour botanical plate from the photographs. "
             "Match habit, flower, and leaf to the photos. "
-            + PAGE_TREATMENT
-            + " This plate is generated entirely by Imagine. Add only one signature, "
-            "bottom right, small brown ink, stylish script, discreet, not a logo, "
-            "that reads exactly Grok Imagine. Do not invent a historic artist mark."
+            + PAGE_BACKGROUND
+            + "Portrait 2:3. No frame, no rule, no mount, no labels, captions, "
+            "plate numbers, or titles. "
+            "Add only one signature, bottom right, "
+            "small brown ink, stylish script, discreet, not a logo, that reads "
+            "exactly Grok Imagine. Do not invent a historic artist mark."
         )
     return (
         "Clean up this botanical plate. "
-        + PAGE_TREATMENT
+        + PAGE_BACKGROUND
+        + PAGE_CLEANUP
         + " Cleaning is not a meaningful change of authorship. Do not add a Grok "
         "signature."
         + _site_author_clause(author)
@@ -329,6 +342,288 @@ def apply_vignette(image, paper=CREAM, edge=CREAM_EDGE):
     mask = small.resize((width, height), RESAMPLE)
     overlay = Image.new("RGB", (width, height), edge)
     return Image.composite(overlay, as_rgb(image, paper), mask)
+
+
+def _luma(r, g, b):
+    return (299 * r + 587 * g + 114 * b) // 1000
+
+
+def is_paper_pixel(r, g, b):
+    """Cream/ivory field, not leaf, flower, or ink."""
+    chroma = max(r, g, b) - min(r, g, b)
+    if chroma > 64:
+        return False
+    if min(r, g, b) < 70:
+        return False
+    if g > r + 12:
+        return False
+    if b > r + 8:
+        return False
+    return True
+
+
+def _axis_mean_sd(gray, axis):
+    """Mean and stdev along rows (axis=0) or columns (axis=1)."""
+    width, height = gray.size
+    if axis == 0:
+        sample = gray.resize((min(80, width), height), BOX)
+        sw, count = sample.size
+    else:
+        sample = gray.resize((width, min(80, height)), BOX)
+        count, sw = sample.size
+    pixels = sample.load()
+    means = []
+    sds = []
+    for i in range(count):
+        if axis == 0:
+            vals = [pixels[x, i] for x in range(sw)]
+        else:
+            vals = [pixels[i, y] for y in range(sw)]
+        mean = sum(vals) / float(sw)
+        var = sum((value - mean) ** 2 for value in vals) / float(sw)
+        means.append(mean)
+        sds.append(var ** 0.5)
+    return means, sds
+
+
+def _flat_bar_run(means, sds, pale=PALE_BAR, dark=DARK_BAR, max_sd=FLAT_SD, min_run=4, cap=0):
+    n = 0
+    for mean, sd in zip(means, sds):
+        pale_bar = mean >= pale and sd <= max_sd
+        dark_bar = mean <= dark
+        if pale_bar or dark_bar:
+            n += 1
+        else:
+            break
+    if n < min_run:
+        return 0
+    if cap:
+        n = min(n, cap)
+    return n
+
+
+def crop_letterbox(image, pale=PALE_BAR, dark=DARK_BAR, max_frac=0.22):
+    """Crop flat pale letterbox or dark surround. Cream vignette stays."""
+    rgb = as_rgb(image)
+    width, height = rgb.size
+    gray = rgb.convert("L")
+    max_w = int(width * max_frac)
+    max_h = int(height * max_frac)
+    row_m, row_sd = _axis_mean_sd(gray, 0)
+    col_m, col_sd = _axis_mean_sd(gray, 1)
+    top = _flat_bar_run(row_m, row_sd, pale, dark, cap=max_h)
+    bottom = _flat_bar_run(list(reversed(row_m)), list(reversed(row_sd)), pale, dark, cap=max_h)
+    left = _flat_bar_run(col_m, col_sd, pale, dark, cap=max_w)
+    right = _flat_bar_run(list(reversed(col_m)), list(reversed(col_sd)), pale, dark, cap=max_w)
+    if top + bottom >= height - 8 or left + right >= width - 8:
+        return rgb, (0, 0, 0, 0)
+    if not (left or top or right or bottom):
+        return rgb, (0, 0, 0, 0)
+    cropped = rgb.crop((left, top, width - right, height - bottom))
+    return cropped, (left, top, right, bottom)
+
+
+def _region_is_paper(image, box, min_frac=0.88):
+    left, top, right, bottom = box
+    if right <= left or bottom <= top:
+        return True
+    crop = as_rgb(image).crop(box)
+    sample = crop.resize(
+        (max(1, crop.size[0] // 4), max(1, crop.size[1] // 4)),
+        BOX,
+    )
+    pixels = sample.load()
+    width, height = sample.size
+    ok = 0
+    total = width * height
+    for y in range(height):
+        for x in range(width):
+            if is_paper_pixel(*pixels[x, y]):
+                ok += 1
+    return ok / float(total) >= min_frac
+
+
+def fit_full_frame(image, size, paper=CREAM):
+    """Fill 2:3. Cover-crop only when the overflow strips are paper; else pad."""
+    rgb = as_rgb(image, paper)
+    target_w, target_h = size
+    width, height = rgb.size
+    scale = max(target_w / float(width), target_h / float(height))
+    new_w = max(1, int(round(width * scale)))
+    new_h = max(1, int(round(height * scale)))
+    fitted = rgb.resize((new_w, new_h), RESAMPLE)
+    left = max(0, (new_w - target_w) // 2)
+    top = max(0, (new_h - target_h) // 2)
+    strips = []
+    if new_w > target_w:
+        strips.append((0, 0, left, new_h))
+        strips.append((left + target_w, 0, new_w, new_h))
+    if new_h > target_h:
+        strips.append((0, 0, new_w, top))
+        strips.append((0, top + target_h, new_w, new_h))
+    if strips and all(_region_is_paper(fitted, box) for box in strips):
+        return fitted.crop((left, top, left + target_w, top + target_h))
+    return pad_to_plate(rgb, size, paper)
+
+
+def even_cream_border(image, band=0.14, paper=CREAM):
+    """Pull paper-like edge pixels toward cream. Does not lighten the plant."""
+    rgb = as_rgb(image, paper)
+    width, height = rgb.size
+    bx = max(8, int(width * band))
+    by = max(8, int(height * band))
+    out = rgb.copy()
+    src = rgb.load()
+    dest = out.load()
+    pr, pg, pb = paper
+
+    sig_x = int(width * 0.64)
+    sig_y = int(height * 0.88)
+
+    def blend_rect(x0, y0, x1, y1):
+        for y in range(y0, y1):
+            ny = min(y, height - 1 - y) / float(by)
+            for x in range(x0, x1):
+                nx = min(x, width - 1 - x) / float(bx)
+                edge = min(nx, ny)
+                if edge >= 1:
+                    continue
+                r, g, b = src[x, y]
+                if x >= sig_x and y >= sig_y and _is_brown_ink(r, g, b, lum_max=160):
+                    continue
+                if not is_paper_pixel(r, g, b):
+                    continue
+                t = 1 - edge
+                t = t * t * (3 - 2 * t) * 0.85
+                dest[x, y] = (
+                    int(r + (pr - r) * t),
+                    int(g + (pg - g) * t),
+                    int(b + (pb - b) * t),
+                )
+
+    blend_rect(0, 0, width, by)
+    blend_rect(0, height - by, width, height)
+    blend_rect(0, by, bx, height - by)
+    blend_rect(width - bx, by, width, height - by)
+    return out
+
+
+def _is_brown_ink(r, g, b, lum_max=145):
+    lum = _luma(r, g, b)
+    chroma = max(r, g, b) - min(r, g, b)
+    if lum >= lum_max or chroma > 65:
+        return False
+    if g > r + 10 or r < b + 8:
+        return False
+    return True
+
+
+def extract_signature(image, right=0.34, bottom=0.08, lum_max=145):
+    """RGBA crop of brown script in the bottom-right, or None if it looks like plant."""
+    rgb = as_rgb(image)
+    width, height = rgb.size
+    x0 = int(width * (1 - right))
+    y0 = int(height * (1 - bottom))
+    crop = rgb.crop((x0, y0, width, height))
+    cw, ch = crop.size
+    pixels = crop.load()
+    alpha = Image.new("L", crop.size, 0)
+    mask = alpha.load()
+    for y in range(ch):
+        for x in range(cw):
+            r, g, b = pixels[x, y]
+            if not _is_brown_ink(r, g, b, lum_max):
+                continue
+            a = int(max(0, min(255, (lum_max - _luma(r, g, b)) * 2.4)))
+            if a > 16:
+                mask[x, y] = a
+    bbox = alpha.getbbox()
+    if not bbox:
+        return None
+    bw = bbox[2] - bbox[0]
+    bh = bbox[3] - bbox[1]
+    if bh > height * 0.07 or bw < width * 0.03 or bw > width * 0.26:
+        return None
+    if bbox[1] <= 1 and bh > ch * 0.55:
+        return None
+    mark = crop.crop(bbox).convert("RGBA")
+    mark.putalpha(alpha.crop(bbox))
+    return mark
+
+
+def erase_br_ink(image, right=0.36, bottom=0.14, paper=CREAM):
+    """Replace brown ink in the bottom-right with cream. Leaves plant pixels."""
+    rgb = as_rgb(image, paper).copy()
+    width, height = rgb.size
+    x0 = int(width * (1 - right))
+    y0 = int(height * (1 - bottom))
+    pixels = rgb.load()
+    for y in range(y0, height):
+        for x in range(x0, width):
+            r, g, b = pixels[x, y]
+            if _is_brown_ink(r, g, b, lum_max=155):
+                pixels[x, y] = paper
+    return rgb
+
+
+def stamp_signature(
+    target,
+    donor,
+    width_frac=0.14,
+    inset_right=0.04,
+    inset_bottom=0.03,
+    paper=CREAM,
+):
+    """Erase a huge BR mark on target and paste a small one from donor."""
+    mark = extract_signature(donor)
+    if mark is None:
+        raise ValueError("no usable signature in donor bottom-right")
+    out = erase_br_ink(target, paper=paper)
+    tw, th = out.size
+    mw, mh = mark.size
+    new_w = max(8, int(tw * width_frac))
+    new_h = max(8, int(round(mh * (new_w / float(mw)))))
+    mark = mark.resize((new_w, new_h), RESAMPLE)
+    x = max(0, tw - new_w - int(tw * inset_right))
+    y = max(0, th - new_h - int(th * inset_bottom))
+    layered = out.convert("RGBA")
+    layered.paste(mark, (x, y), mark)
+    return as_rgb(layered, paper)
+
+
+def _target_23(image, size=None):
+    if size:
+        return size
+    width, height = image.size
+    if height and abs(width / float(height) - 2 / 3.0) < 0.03:
+        return (width, height)
+    return IMAGINE_PAD
+
+
+def letterbox_fix(image, size=None, paper=CREAM):
+    """Crop pale/dark bars, fill 2:3 cream, even the new paper, spec vignette."""
+    rgb = as_rgb(image, paper)
+    size = _target_23(rgb, size)
+    cropped, bars = crop_letterbox(rgb)
+    if bars == (0, 0, 0, 0):
+        return rgb, bars
+    filled = fit_full_frame(cropped, size, paper)
+    even = even_cream_border(filled, paper=paper)
+    return apply_vignette(even, paper=paper), bars
+
+
+def edges_fix(image, paper=CREAM):
+    """Even burnt or pale paper in the border, then the spec vignette."""
+    even = even_cream_border(image, paper=paper)
+    return apply_vignette(even, paper=paper)
+
+
+def prepare_scan(image, size=IMAGINE_PAD, paper=CREAM):
+    """Scan → drop caption / surround, pad 2:3 cream for image_edit."""
+    rgb = as_rgb(apply_exif(image), paper)
+    cropped, _bars = crop_letterbox(rgb)
+    trimmed = drop_caption_band(cropped)
+    return pad_to_plate(trimmed, size, paper)
 
 
 def _save_plate_webp(image, path):

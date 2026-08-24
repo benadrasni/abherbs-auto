@@ -240,7 +240,8 @@ class CleanIllustrationTests(unittest.TestCase):
             path = os.path.join(tmp.name, "prompt.txt")
             media.write_imagine_prompt(path, kind="clean")
             text = open(path, encoding="utf-8").read()
-            self.assertIn("#f4efe4", text)
+            self.assertIn("last image as the page background", text)
+            self.assertNotIn("#f4efe4", text)
             self.assertIn("Do not add a Grok signature", text)
             self.assertIn("leave the plate unsigned", text)
             self.assertNotIn("colored by Grok Imagine", text)
@@ -252,10 +253,16 @@ class CleanIllustrationTests(unittest.TestCase):
             colorize = open(path, encoding="utf-8").read()
             self.assertIn("colored by Grok Imagine", colorize)
             self.assertIn("J. Kops", colorize)
+            self.assertIn("last image as the page background", colorize)
+            self.assertNotIn("#f4efe4", colorize)
             media.write_imagine_prompt(path, kind="generate")
             generate = open(path, encoding="utf-8").read()
             self.assertIn("Grok Imagine", generate)
+            self.assertIn("last image as the page background", generate)
+            self.assertNotIn("#f4efe4", generate)
             self.assertNotIn("colored by Grok Imagine", generate)
+            self.assertNotIn("Keep the original composition", generate)
+            self.assertNotIn("This plate is generated entirely by Imagine", generate)
         finally:
             tmp.cleanup()
 
@@ -282,6 +289,108 @@ class CleanIllustrationTests(unittest.TestCase):
             self.assertEqual((128, 128), Image.open(thumb).size)
         finally:
             tmp.cleanup()
+
+    def _page(self, size, plant_box):
+        image = media.apply_vignette(Image.new("RGB", size, media.CREAM))
+        x0, y0, x1, y1 = plant_box
+        for y in range(y0, y1):
+            for x in range(x0, x1):
+                image.putpixel((x, y), (40, 120, 40))
+        return image
+
+    def test_crop_letterbox_white_bars(self):
+        page = self._page((200, 220), (70, 50, 130, 110))
+        image = Image.new("RGB", (200, 300), (242, 238, 227))
+        image.paste(page, (0, 40))
+        cropped, bars = media.crop_letterbox(image)
+        self.assertEqual((0, 40, 0, 40), bars)
+        self.assertEqual((200, 220), cropped.size)
+        self.assertEqual((40, 120, 40), cropped.getpixel((100, 70)))
+
+    def test_crop_letterbox_black_surround(self):
+        page = self._page((160, 240), (40, 80, 120, 140))
+        image = Image.new("RGB", (200, 300), (10, 10, 10))
+        image.paste(page, (20, 30))
+        cropped, bars = media.crop_letterbox(image)
+        self.assertEqual((20, 30, 20, 30), bars)
+        self.assertEqual((160, 240), cropped.size)
+
+    def test_crop_letterbox_noop_on_page(self):
+        image = self._page((200, 300), (60, 80, 140, 160))
+        cropped, bars = media.crop_letterbox(image)
+        self.assertEqual((0, 0, 0, 0), bars)
+        self.assertEqual((200, 300), cropped.size)
+
+    def test_even_cream_spares_the_plant(self):
+        image = Image.new("RGB", (200, 300), media.CREAM)
+        burnt = (160, 148, 128)
+        for y in range(12):
+            for x in range(200):
+                image.putpixel((x, y), burnt)
+                image.putpixel((x, 299 - y), burnt)
+        for y in range(80, 160):
+            for x in range(60, 140):
+                image.putpixel((x, y), (40, 130, 40))
+        out = media.even_cream_border(image)
+        self.assertEqual((40, 130, 40), out.getpixel((100, 120)))
+        corner = out.getpixel((4, 4))
+        self.assertGreater(sum(corner), sum(burnt))
+        self.assertGreater(sum(corner), 500)
+
+    def test_letterbox_fix_fills_23(self):
+        page = self._page((200, 228), (80, 70, 120, 130))
+        image = Image.new("RGB", (200, 300), (242, 238, 227))
+        image.paste(page, (0, 36))
+        out, bars = media.letterbox_fix(image, size=(200, 300))
+        self.assertEqual((0, 36, 0, 36), bars)
+        self.assertEqual((200, 300), out.size)
+        self.assertNotEqual((242, 238, 227), out.getpixel((100, 4)))
+        found = False
+        for y in range(40, 260):
+            if out.getpixel((100, y))[1] > 80 and out.getpixel((100, y))[1] > out.getpixel((100, y))[0]:
+                found = True
+                break
+        self.assertTrue(found)
+
+    def test_prepare_scan_pads_imagine_size(self):
+        image = Image.new("RGB", (80, 140), (250, 250, 250))
+        for y in range(10, 120):
+            for x in range(80):
+                image.putpixel((x, y), media.CREAM)
+        for y in range(40, 80):
+            for x in range(20, 60):
+                image.putpixel((x, y), (20, 90, 20))
+        out = media.prepare_scan(image)
+        self.assertEqual(media.IMAGINE_PAD, out.size)
+        self.assertGreater(sum(out.getpixel((2, 2))), 500)
+
+    def test_stamp_signature_from_donor(self):
+        donor = Image.new("RGB", (200, 300), media.CREAM)
+        for x in range(140, 185):
+            for y in range(282, 294):
+                donor.putpixel((x, y), (90, 60, 30))
+        target = Image.new("RGB", (200, 300), media.CREAM)
+        for x in range(90, 198):
+            for y in range(240, 298):
+                target.putpixel((x, y), (70, 45, 25))
+        for y in range(40, 120):
+            for x in range(40, 100):
+                target.putpixel((x, y), (30, 110, 30))
+        out = media.stamp_signature(target, donor)
+        self.assertEqual((30, 110, 30), out.getpixel((70, 80)))
+        huge = target.getpixel((170, 270))
+        cleared = out.getpixel((170, 270))
+        self.assertGreater(sum(cleared), sum(huge))
+        ink = False
+        for y in range(250, 300):
+            for x in range(150, 200):
+                pixel = out.getpixel((x, y))
+                if pixel[0] < 140 and pixel[0] > pixel[2]:
+                    ink = True
+                    break
+            if ink:
+                break
+        self.assertTrue(ink)
 
 
 if __name__ == "__main__":
