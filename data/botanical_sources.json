@@ -851,11 +851,13 @@
           "year": 1990,
           "bibdigital_id": 9899,
           "record": "https://bibdigital.rjb.csic.es/records/item/9899-flora-iberica-vol-2-platanaceae-plumbaginaceae-partim",
-          "covers": "Platanaceae–Plumbaginaceae (part); includes Polygonaceae",
+          "covers": "Platanaceae–Plumbaginaceae (part); includes Polygonaceae; includes Amaranthaceae, Chenopodiaceae",
           "families": [
             "Platanaceae",
             "Plumbaginaceae",
-            "Polygonaceae"
+            "Polygonaceae",
+            "Amaranthaceae",
+            "Chenopodiaceae"
           ]
         },
         {
@@ -863,10 +865,11 @@
           "year": 2005,
           "bibdigital_id": 9896,
           "record": "https://bibdigital.rjb.csic.es/records/item/9896-flora-iberica-vol-3-plumbaginaceae-partim-capparaceae-2-ordf-ed",
-          "covers": "Plumbaginaceae (part)–Capparaceae (2nd ed.)",
+          "covers": "Plumbaginaceae (part)–Capparaceae (2nd ed.); includes Cucurbitaceae",
           "families": [
             "Plumbaginaceae",
-            "Capparaceae"
+            "Capparaceae",
+            "Cucurbitaceae"
           ]
         },
         {
@@ -974,7 +977,8 @@
           "families": [
             "Gentianaceae",
             "Boraginaceae",
-            "Apocynaceae"
+            "Apocynaceae",
+            "Convolvulaceae"
           ]
         },
         {
@@ -995,11 +999,12 @@
           "year": 2009,
           "bibdigital_id": 13746,
           "record": "https://bibdigital.rjb.csic.es/records/item/13746-flora-iberica-vol-13-plantaginaceae-scrophulariaceae",
-          "covers": "Plantaginaceae–Scrophulariaceae",
+          "covers": "Plantaginaceae–Scrophulariaceae; Buddlejaceae",
           "families": [
             "Plantaginaceae",
             "Scrophulariaceae",
-            "Orobanchaceae"
+            "Orobanchaceae",
+            "Buddlejaceae"
           ]
         },
         {

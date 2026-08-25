@@ -8,7 +8,9 @@
 
 Codes are CSS classes on the base map: country (de), US state (us-or),
 Canadian province (ca-on), Chinese province (cn-xj), Russia WCVP L2
-(ru-eu / ru-sib / ru-fe; or ru for the whole country). Native areas
+(ru-eu / ru-sib / ru-fe; or ru for the whole country; ru-sak / ru-mag
+for Sakhalin / Magadan; au-tas / au-maq / au-qld for Tasmania / Macquarie /
+Queensland / NSW / NT / SA / WA; ar-s / br-s / br-c / br-se for Argentina South / Brazil South / West-Central / Southeast). Native areas
 use the botanical olive; --introduced paints a second colour (terracotta).
 """
 
