@@ -212,8 +212,7 @@ write `web/catalog` and `web/labels`. If publish crashes after media +
 records but during search, finish search/photo only — do not
 re-increment counts.
 
-To patch live English/Slovak/`plants_v2` after a first publish, update
-those nodes only. Do **not** call `catalog.publish.publish()` again (counts and
-`plants_to_update` would double). Set `versions/db_update` if the app
-should refresh. Filter keys change only when color/habitat/petal/L2
-change.
+To patch live English, filters, or `plants_v2` after a first publish
+(or for any species already in the catalog), follow `/update-plant`.
+Do **not** call `catalog.publish.publish()` again (counts and
+`plants_to_update` would double).
