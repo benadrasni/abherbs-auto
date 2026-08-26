@@ -1275,6 +1275,41 @@
         "fr",
         "it"
       ]
+    },
+    {
+      "id": "lindman_nordens_flora",
+      "name": "Bilder ur Nordens flora (Lindman)",
+      "home": "https://runeberg.org/nordflor/",
+      "url": "https://runeberg.org/nordflor/",
+      "fetch": "manual",
+      "reliable": true,
+      "when": {
+        "l3": [
+          "SWE",
+          "NOR",
+          "DEN",
+          "FIN",
+          "ICE"
+        ]
+      },
+      "good_for": [
+        "description",
+        "flower",
+        "inflorescence",
+        "fruit",
+        "leaf",
+        "stem",
+        "habitat"
+      ],
+      "notes": "Carl Lindman, Bilder ur Nordens flora (2nd ed., 1917–1926) on Project Runeberg. Plate pages, not Latin URLs. Search the Latin or Swedish name. Swedish text; use only when the plate treats this plant.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "sv"
+      ]
     }
   ]
 }

@@ -798,7 +798,7 @@ def split_argentina_south(svg: str) -> str:
         copies.append(
             f'    <path\n'
             f'       id="ar-s-{ident}"\n'
-            f'       class="landxx ar-s"\n'
+            f'       class="landxx ar ar-s"\n'
             f'       d="{d_m.group(1)}" />'
         )
     overlay = (
@@ -934,7 +934,7 @@ def split_queensland(svg: str) -> str:
             copies.append(
                 f'    <path\n'
                 f'       id="au-qld-{ident}"\n'
-                f'       class="landxx au-qld"\n'
+                f'       class="landxx au au-qld"\n'
                 f'       d="{d_m.group(1)}" />'
             )
             continue
@@ -945,7 +945,7 @@ def split_queensland(svg: str) -> str:
             copies.append(
                 f'    <circle\n'
                 f'       id="au-qld-{ident}"\n'
-                f'       class="landxx au-qld"\n'
+                f'       class="landxx au au-qld"\n'
                 f'       r="{rr.group(1)}"\n'
                 f'       cy="{cy.group(1)}"\n'
                 f'       cx="{cx.group(1)}" />'
@@ -1015,7 +1015,7 @@ def split_clipped_overlay(
             copies.append(
                 f'    <path\n'
                 f'       id="{overlay_id}-{ident}"\n'
-                f'       class="landxx {overlay_id}"\n'
+                f'       class="landxx {parent_id} {overlay_id}"\n'
                 f'       d="{d_m.group(1)}" />'
             )
             continue
@@ -1026,7 +1026,7 @@ def split_clipped_overlay(
             copies.append(
                 f'    <circle\n'
                 f'       id="{overlay_id}-{ident}"\n'
-                f'       class="landxx {overlay_id}"\n'
+                f'       class="landxx {parent_id} {overlay_id}"\n'
                 f'       r="{rr.group(1)}"\n'
                 f'       cy="{cy.group(1)}"\n'
                 f'       cx="{cx.group(1)}" />'
@@ -1189,7 +1189,7 @@ def split_brazil_south(svg: str) -> str:
         copies.append(
             f'    <path\n'
             f'       id="br-s-{ident}"\n'
-            f'       class="landxx br-s"\n'
+            f'       class="landxx br br-s"\n'
             f'       d="{d_m.group(1)}" />'
         )
     overlay = (
