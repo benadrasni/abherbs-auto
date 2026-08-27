@@ -125,6 +125,7 @@ Rewrite the auto-draft. Rules:
 - Skip culture, culinary, pet-toxicity, and other-species asides.
   Human contact irritation may go in optional `toxicity` text (see §4).
 - `sourceUrls` on the English record: Wikipedia + the floras actually used.
+  Do not put source names in brackets in the seven fields or `toxicity`.
 
 Reliable sources (see `data/botanical_sources.json`): Wikipedia, PFAF,
 RHS, Luontoportti, Missouri Plants, BOTANY.cz, Flóra Slovenska (Slovak

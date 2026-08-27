@@ -11,6 +11,7 @@ catalog/           filter indexes, APG tree, website catalog, publish, promote
 sources/           WCVP, Wikidata, floras, Commons, GBIF, …
 storage/           GCS upload and public ACL
 scripts/           operator CLIs (photos, notifications, one-off patches)
+skills/            copy of workspace `.grok/skills/` (add / update / rename plant)
 tests/
 data/              botanical_sources.json, maps, IPNI overrides
 fixtures/          offline HTML/JSON for tests
