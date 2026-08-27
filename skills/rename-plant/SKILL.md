@@ -21,9 +21,14 @@ Workspace: `~/whatsthatflower`. Python from `ingest/`:
 `GOOGLE_APPLICATION_CREDENTIALS` →
 `~/Development/Keystore/abherbs-backend-firebase-adminsdk-l5787-839f896846.json`.
 
-Queue (pending / stop / done): `references/queue.md`. After a successful
-rename, move that row to **Done** with the date. Do not invent names;
+Queue (pending / stop / keep / done): `references/queue.md`. After a
+successful rename, move that row to **Done** with the date. If the user
+declines a rename, move the row to **Keep**. Do not invent names;
 WCVP sqlite `wcvp/wcvp.sqlite` via `sources.wcvp.lookup`.
+
+GCS paths that still use a different Latin folder or filename while the
+catalog key is already correct: `references/resource-names.md`. Remap
+objects + URLs; do not run this skill.
 
 ## Gate
 
@@ -281,3 +286,54 @@ accepted name). Genus Consolida kept; id added to existing Delphinium
 under Delphinieae (with *D. consolida*, *D. elatum*, *D. oxysepalum*).
 Nested section Consolida kept (826). Photos `caN` → `daN`. Author (L.)
 Schur → L.
+
+*Bryonia dioica* → *Bryonia cretica* (id 75, 2026-08-27). Same genus;
+APG skipped. User chose the parent species as the catalog key (WCVP
+accepted is *B. cretica* subsp. *dioica*). Photos `bdN` → `bcN`.
+Author set to L. (from *B. cretica*). Plate and catalog photos copied
+to `Bryonia_cretica/`.
+
+*Euphrasia rostkoviana* → *Euphrasia officinalis* (id 204, 2026-08-27).
+Same genus; APG skipped. User chose the parent species as the catalog
+key (WCVP accepted is *E. officinalis* subsp. *pratensis*). Photos
+`erN` → `eoN`. Author Hayne → L. Catalog photos stayed under
+`Lamiales/Scrophulariaceae/` (historical folder; live APG family is
+Orobanchaceae, same as *E. stricta*). Genus Euphrasia kept (*E. stricta*,
+*E. nemorosa*).
+
+*Knautia dipsacifolia* → *Knautia maxima* (id 292, 2026-08-27). Same
+genus; APG skipped. User chose the parent species as the catalog key
+(WCVP accepted is *K. maxima* subsp. *maxima*). Homonym *K. dipsacifolia*
+Heuff. is illegitimate → *K. drymeja* subsp. *drymeja*; catalog author
+Kreutzer → accepted (Opiz) J.Ortmann. Photos `kdN` → `kmN`. Genus
+Knautia kept (*K. arvensis*). Plate and catalog photos copied to
+`Knautia_maxima/`.
+
+*Nymphaea caerulea* → *Nymphaea nouchali* (id 660, 2026-08-27). Same
+genus; APG skipped. User chose the parent species as the catalog key
+(WCVP accepted is *N. nouchali* var. *caerulea*). Photos `ncN` → `nnN`.
+Author set to Burm.f. (from *N. nouchali*). Genus Nymphaea kept
+(*N. alba*, *N. odorata*). Plate and catalog photos copied to
+`Nymphaea_nouchali/`.
+
+*Ophrys fuciflora* → *Ophrys holosericea* (id 385, 2026-08-27). Same
+genus; APG skipped. User chose the parent species as the catalog key
+(WCVP accepted is *O. holosericea* subsp. *holosericea*). Homonym
+*O. fuciflora* (Crantz) Rchb.f. is illegitimate → same subspecies;
+catalog author (F.W.Schmidt) Moench → accepted (Burm.f.) Greuter.
+Photos `ofN` → `ohN`. Genus Ophrys kept (*O. apifera*, *O. insectifera*,
+*O. sphegodes*). Plate and catalog photos copied to
+`Ophrys_holosericea/`.
+
+*Rhinanthus angustifolius* → *Rhinanthus major* (id 477, 2026-08-27).
+Same genus; APG skipped. User chose the parent species as the catalog
+key (WCVP accepted is *R. major* var. *major*). Photos `raN` → `rmN`.
+Author C.C.Gmel. → L. Genus Rhinanthus kept (*R. alectorolophus*,
+*R. minor*). Plate and catalog photos copied to `Rhinanthus_major/`.
+Public observation photo copied.
+
+*Citrus sinensis* → *Citrus × aurantium* (id 729, 2026-08-27). Same
+genus; APG skipped. User chose the parent species as the catalog key
+(WCVP accepted is *C. × aurantium* f. *aurantium*). Photos `csN` →
+`caN`. Author (L.) Osbeck → L. Plate and catalog photos copied to
+`Citrus_%C3%97_aurantium/`. English label stayed sweet orange.

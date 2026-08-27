@@ -3,6 +3,7 @@
 Source: live `plants_to_update` vs `wcvp/wcvp.sqlite` (2026-08-25).
 Catalog count 1421. Authority is current WCVP; re-check `wcvp.lookup`
 before `--apply`. After a successful rename, move the row to **Done**.
+If the user declines a rename, move the row to **Keep**.
 
 ## Done
 
@@ -61,6 +62,13 @@ before `--apply`. After a successful rename, move the row to **Done**.
 | Pseudofumaria lutea | 658 | Pseudo-fumaria lutea | 2026-08-26 |
 | Spirodela polyrrhiza | 554 | Spirodela polyrhiza | 2026-08-26 |
 | Consolida ajacis | 825 | Delphinium ajacis | 2026-08-26 |
+| Bryonia dioica | 75 | Bryonia cretica | 2026-08-27 |
+| Euphrasia rostkoviana | 204 | Euphrasia officinalis | 2026-08-27 |
+| Knautia dipsacifolia | 292 | Knautia maxima | 2026-08-27 |
+| Nymphaea caerulea | 660 | Nymphaea nouchali | 2026-08-27 |
+| Ophrys fuciflora | 385 | Ophrys holosericea | 2026-08-27 |
+| Rhinanthus angustifolius | 477 | Rhinanthus major | 2026-08-27 |
+| Citrus sinensis | 729 | Citrus × aurantium | 2026-08-27 |
 
 ## Pending 1:1 (species)
 
@@ -80,20 +88,17 @@ synonym move.
 | Catalog | Id | WCVP accepted spelling |
 |---|---:|---|
 
+## Keep (do not rename)
+
+Catalog key stays as written.
+
+| Catalog | Id | WCVP | Why | When |
+|---|---:|---|---|---|
+| Taraxacum officinale | 569 | Taraxacum sect. Taraxacum | Accepted is a section, not a species. User keeps the aggregate species name. | 2026-08-27 |
+
 ## Stop (not a 1:1 rename)
 
 Do not `--apply` until the user chooses a species-rank key.
 
 | Catalog | Id | WCVP target | Why |
 |---|---:|---|---|
-| Taraxacum officinale | 569 | Taraxacum sect. Taraxacum | Accepted is a section, not a species |
-| Bryonia dioica | 75 | Bryonia cretica subsp. dioica | Accepted rank subspecies |
-| Euphrasia rostkoviana | 204 | Euphrasia officinalis subsp. pratensis | Accepted rank subspecies |
-| Knautia dipsacifolia | 292 | Knautia maxima subsp. maxima | Author Kreutzer; accepted rank subspecies |
-| Nymphaea caerulea | 660 | Nymphaea nouchali var. caerulea | Accepted rank variety |
-| Ophrys fuciflora | 385 | Ophrys holosericea subsp. holosericea | Accepted rank subspecies |
-| Rhinanthus angustifolius | 477 | Rhinanthus major var. major | Accepted rank variety |
-| Citrus sinensis | 729 | Citrus × aurantium | Synonym of a hybrid forma; sweet vs sour orange |
-
-*Citrus × sinensis* (with ×) is also a WCVP synonym of *Citrus × aurantium*,
-not an accepted spelling of the catalog name.
