@@ -139,10 +139,10 @@ def apply_plan(db, plan):
 
     for key in plan["keys_remove"]:
         listing = db.reference("lists_4_v2/" + key).get() or {}
-        if token in listing:
+        if catalog_indexes.listing_has_token(listing, token):
             db.reference("lists_4_v2/%s/%s" % (key, token)).delete()
-        current = db.reference("counts_4_v2/" + key).get() or 0
-        db.reference("counts_4_v2/" + key).set(max(0, int(current) - 1))
+            current = db.reference("counts_4_v2/" + key).get() or 0
+            db.reference("counts_4_v2/" + key).set(max(0, int(current) - 1))
 
     for key in plan["keys_add"]:
         current = db.reference("counts_4_v2/" + key).get() or 0

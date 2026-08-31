@@ -6,6 +6,7 @@ import unittest
 
 from catalog import catalog_indexes
 from catalog import refresh as refresh_indexes
+from scripts import repair_filter_lists
 
 
 ACER = {
@@ -63,6 +64,23 @@ class MatchTests(unittest.TestCase):
         keys = catalog_indexes.matching_keys(header)
         self.assertTrue(any(key.split("_")[1] == "6" for key in keys))
         self.assertFalse(any(key.split("_")[1] == "8" for key in keys))
+
+
+class ListingShapeTests(unittest.TestCase):
+    def test_dict_and_array_ids(self):
+        self.assertEqual({"0", "2"}, catalog_indexes.listing_ids({"0": 1, "1": None, "2": 1}))
+        self.assertEqual({"0", "2"}, catalog_indexes.listing_ids([1, None, 1]))
+        self.assertEqual(set(), catalog_indexes.listing_ids([]))
+        self.assertEqual(set(), catalog_indexes.listing_ids(None))
+
+    def test_token_in_firebase_array(self):
+        # Dense lists_4_v2/___DIST nodes come back as [1, 1, ...] not {"0": 1}.
+        array_listing = [1, 1, None, 1]
+        self.assertTrue(catalog_indexes.listing_has_token(array_listing, "0"))
+        self.assertTrue(catalog_indexes.listing_has_token(array_listing, 3))
+        self.assertFalse(catalog_indexes.listing_has_token(array_listing, "2"))
+        self.assertFalse(catalog_indexes.listing_has_token(array_listing, "5"))
+        self.assertFalse("3" in array_listing)
 
 
 class CountsListsTests(unittest.TestCase):
@@ -265,6 +283,20 @@ class CliTests(unittest.TestCase):
             ["A", "B"],
             refresh_indexes.normalize_plant_list({"1": "B", "0": "A", "count": 2}),
         )
+
+
+class RepairFilterListsTests(unittest.TestCase):
+    def test_finds_leftover_on_firebase_array_list(self):
+        names = ["Acer campestre", "Rosa canina"]
+        headers = [ACER, ROSA]
+        lists = {
+            "___10": [1, 1],
+            "2_6_2_10": {"0": 1},
+            "3_1_2_11": {"1": 1},
+        }
+        extras = repair_filter_lists.find_extras(names, headers, lists)
+        leftover = {(row["id"], row["key"]) for row in extras}
+        self.assertEqual({(1, "___10")}, leftover)
 
 
 if __name__ == "__main__":

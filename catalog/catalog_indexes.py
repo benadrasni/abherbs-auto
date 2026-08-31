@@ -71,6 +71,25 @@ def as_int_set(values):
     return result
 
 
+def listing_ids(listing):
+    """Plant id strings present in a lists_4_v2 value.
+
+    Firebase turns a dense consecutive-integer map into a JSON array of
+    1 / null. Treat both shapes the same.
+    """
+    if not listing:
+        return set()
+    if isinstance(listing, dict):
+        return {str(key) for key, value in listing.items() if value}
+    if isinstance(listing, list):
+        return {str(index) for index, value in enumerate(listing) if value}
+    return set()
+
+
+def listing_has_token(listing, token):
+    return str(token) in listing_ids(listing)
+
+
 def header_values(header):
     if not header:
         return set(), set(), set(), set()
