@@ -340,6 +340,38 @@
       ]
     },
     {
+      "id": "flora_greece",
+      "name": "Flora of Greece",
+      "home": "https://portal.cybertaxonomy.org/flora-greece/",
+      "fetch": "manual",
+      "reliable": true,
+      "when": {
+        "l3": [
+          "GRC",
+          "KRI",
+          "EAI"
+        ]
+      },
+      "good_for": [
+        "description",
+        "flower",
+        "inflorescence",
+        "fruit",
+        "leaf",
+        "stem",
+        "habitat"
+      ],
+      "notes": "Hellenic Botanical Society / BGBM treatments. Species pages are UUID URLs on portal.cybertaxonomy.org, not Latin slugs; genus PDFs live under https://media.e-taxonomy.eu/flora-greece/pdf/. 404 is normal outside Greece and the Aegean.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "en"
+      ]
+    },
+    {
       "id": "minnesota_dnr",
       "name": "Minnesota DNR invasive plants",
       "home": "https://www.dnr.state.mn.us/invasives/terrestrialplants/",
