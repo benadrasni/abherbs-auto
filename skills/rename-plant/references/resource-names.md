@@ -5,7 +5,7 @@ distribution map still live under an old synonym, spelling, or typo.
 This is a GCS + URL remap, **not** `/rename-plant`.
 
 Source: live `plants_v2` 2026-08-27 (1,421 species). 44 mismatches;
-3 done. Website map path is
+44 done. Website map path is
 `{illustration_stem}_distribution.webp` next to the plate
 (`web/src/api.js` `distributionRel`). No `distributionUrl` field.
 
@@ -15,12 +15,10 @@ After a fix: copy GCS (including `@1600` / `@400` / `_distribution` /
 `.thumbnails`), HEAD 200, patch `plants_v2` `illustrationUrl` +
 `photoUrls`, `plants_headers/{id}/url`, `web/catalog/{id}`, delete the
 old folder, set `versions/db_update`, move the row to **Done**.
-Leave Order/Family folders and the Firebase key alone unless asked.
+Leave the Firebase key alone unless asked. Order/Family GCS folders
+must match live `plants_v2.APGIV` Ordo/Familia (see **4**).
 When shipping a new plate, keep the **live basename** until that row
 is remapped.
-
-Do not mix this with APG Order/Family folder drift (Capparales vs
-Brassicales, etc.).
 
 ## Done
 
@@ -29,6 +27,47 @@ Brassicales, etc.).
 | Anthericum ramosum | 41 | `Anthericum_amosum/` (missing r) | 2026-08-27 |
 | Asarum europaeum | 60 | `Asarum_europaneum/` (extra n) | 2026-08-27 |
 | Blitum bonus-henricus | 74 | `Chenopodium_bonus-henricus/` (`cbN` → `bbN`) | 2026-08-27 |
+| Clinopodium acinos | 129 | `Acinos_arvensis/` (`aaN` → `caN`) | 2026-08-31 |
+| Crataegus germanica | 143 | `Mespilus_germanica/` (`mgN` → `cgN`) | 2026-08-31 |
+| Erigeron acris | 189 | `Erigeron_acer/` (gender; `eaN` kept) | 2026-08-31 |
+| Draba verna | 191 | `Europhila_verna/` (folder typo; plate *Erophila*; `evN` → `dvN`) | 2026-08-31 |
+| Frangula alnus | 214 | `Rhamnus_frangula/` (`rfN` → `faN`) | 2026-08-31 |
+| Jacobaea erucifolia | 289 | `Senecio_erucifolius/` (`seN` → `jeN`) | 2026-08-31 |
+| Lamium galeobdolon | 297 | `Galeobdolon_luteum/` (`glN` → `lgN`) | 2026-08-31 |
+| Lepidium draba | 314 | `Cardaria_draba/` (`cdN` → `ldN`) | 2026-08-31 |
+| Lotus maritimus | 325 | `Tetragonolobus_maritimus/` (`tmN` → `lmN`) | 2026-08-31 |
+| Pilosella officinarum | 414 | `Hieracium_pilosella/` (`hpN` → `poN`) | 2026-08-31 |
+| Potentilla pusilla | 439 | `Potentilla_neumanniana/` (plate *P. verna*; `pnN` → `ppN`) | 2026-08-31 |
+| Prunus avium | 448 | `Cerasus_avium/` (`caN` → `paN`) | 2026-08-31 |
+| Ranunculus trichophyllus | 472 | `Batrachium_trichophyllum/` (`btN` → `rtN`) | 2026-08-31 |
+| Scorzoneroides autumnalis | 519 | `Leontodon_autumnalis/` (`laN` → `saN`) | 2026-08-31 |
+| Jacobaea vulgaris | 528 | `Senecio_jacobaea/` (`sjN` → `jvN`) | 2026-08-31 |
+| Calyptocarpus vialis | 647 | `Calyptocarpus_vitalis/` (spelling; `cvN` kept) | 2026-08-31 |
+| Datura innoxia | 940 | `Datura_inoxia/` (WCVP spelling; `diN` kept) | 2026-08-31 |
+| Salvia yangii | 1129 | `Perovskia_atriplicifolia/` (`paN` → `syN`) | 2026-08-31 |
+| Melaleuca citrina | 1140 | `Callistemon_citrinus/` (`ccN` → `mcN`) | 2026-08-31 |
+| Arctium minus | 49 | plate `Arctium_minor.webp` (gender) | 2026-08-31 |
+| Carum carvi | 98 | plate `carum_carvi.webp` (case; map already `Carum_carvi_distribution.webp`) | 2026-08-31 |
+| Comarum palustre | 132 | plate `Potentilla_palustris.webp` (synonym) | 2026-08-31 |
+| Cotoneaster integerrimus | 142 | plate `Cotoneaster_integerrima.webp` (gender) | 2026-08-31 |
+| Lapsana communis | 300 | plate `Lampsana_communis.webp` (spelling) | 2026-08-31 |
+| Lathyrus sylvestris | 305 | plate `Lathyrus_silvestris.webp` (y/i) | 2026-08-31 |
+| Neottia ovata | 374 | plate `neottia_ovata.webp` (case) | 2026-08-31 |
+| Persicaria lapathifolia | 406 | plate `Polygonum_lapathifolium.webp` (synonym) | 2026-08-31 |
+| Polygala vulgaris | 428 | plate `Polygala_vulgare.webp` (ending) | 2026-08-31 |
+| Polygonatum verticillatum | 431 | plate `Polygonatum-verticillatum.webp` (hyphen) | 2026-08-31 |
+| Reseda lutea | 474 | plate `Reseda_luteola.webp` in lutea folder (filename only; *R. luteola* id 1141 untouched) | 2026-08-31 |
+| Rhinanthus alectorolophus | 476 | plate `Rhinanthus_alectolophorus.webp` (typo) | 2026-08-31 |
+| Soldanella carpatica | 544 | plate `Soldanella_carpathica.webp` (spelling) | 2026-08-31 |
+| Stachys sylvatica | 559 | plate `Stachys_silvatica.webp` (y/i) | 2026-08-31 |
+| Thalictrum aquilegiifolium | 573 | plate `Thalictrum_aquilegifolium.webp` (missing i) | 2026-08-31 |
+| Vaccinium vitis-idaea | 605 | plate `Vaccinium_vitis_idaea.webp` (hyphen vs `_`) | 2026-08-31 |
+| Veronica anagallis-aquatica | 616 | plate `Veronica_anagallis.webp` (truncated) | 2026-08-31 |
+| Anacamptis morio | 27 | photos `omN` → `amN` (Orchis morio) | 2026-08-31 |
+| Lysimachia arvensis | 28 | photos `aaN`/`aa.webp` → `laN`/`la.webp` (Anagallis arvensis) | 2026-08-31 |
+| Capsella bursa-pastoris | 92 | photos `cbpN` → `cbN` (3-letter hyphen) | 2026-08-31 |
+| Clematis vitalba | 128 | photos `caN` → `cvN` | 2026-08-31 |
+| Senecio ovatus | 529 | photos `sfN` → `soN` (Senecio fuchsii) | 2026-08-31 |
 
 ## 1. Folder still uses an old name
 
@@ -37,65 +76,39 @@ prefix is usually the old initials too. Target folder slug = catalog
 name with spaces → `_`. Remap photo prefix to
 `plant.resolve.photo_prefix` unless asked to keep it.
 
-| Id | Catalog | Current folder | Plate file | Photos | Map file | Resource name |
-|---:|---|---|---|---|---|---|
-| 129 | Clinopodium acinos | `Lamiales/Lamiaceae/Acinos_arvensis/` | `Acinos_arvensis.webp` | `aaN` | `Acinos_arvensis_distribution.webp` | Acinos arvensis |
-| 143 | Crataegus germanica | `Rosales/Rosaceae/Mespilus_germanica/` | `Mespilus_germanica.webp` | `mgN` | `Mespilus_germanica_distribution.webp` | Mespilus germanica |
-| 189 | Erigeron acris | `Asterales/Asteraceae/Erigeron_acer/` | `Erigeron_acer.webp` | `eaN` | `Erigeron_acer_distribution.webp` | Erigeron acer (gender) |
-| 191 | Draba verna | `Capparales/Brassicaceae/Europhila_verna/` | `Erophila_verna.webp` | `evN` | `Erophila_verna_distribution.webp` | Erophila verna; folder typo Europhila |
-| 214 | Frangula alnus | `Rosales/Rhamnaceae/Rhamnus_frangula/` | `Rhamnus_frangula.webp` | `rfN` | `Rhamnus_frangula_distribution.webp` | Rhamnus frangula |
-| 289 | Jacobaea erucifolia | `Asterales/Asteraceae/Senecio_erucifolius/` | `Senecio_erucifolius.webp` | `seN` | `Senecio_erucifolius_distribution.webp` | Senecio erucifolius |
-| 297 | Lamium galeobdolon | `Lamiales/Lamiaceae/Galeobdolon_luteum/` | `Galeobdolon_luteum.webp` | `glN` | `Galeobdolon_luteum_distribution.webp` | Galeobdolon luteum |
-| 314 | Lepidium draba | `Capparales/Brassicaceae/Cardaria_draba/` | `Cardaria_draba.webp` | `cdN` | `Cardaria_draba_distribution.webp` | Cardaria draba |
-| 325 | Lotus maritimus | `Fabales/Fabaceae/Tetragonolobus_maritimus/` | `Tetragonolobus_maritimus.webp` | `tmN` | `Tetragonolobus_maritimus_distribution.webp` | Tetragonolobus maritimus |
-| 414 | Pilosella officinarum | `Asterales/Asteraceae/Hieracium_pilosella/` | `Hieracium_pilosella.webp` | `hpN` | `Hieracium_pilosella_distribution.webp` | Hieracium pilosella |
-| 439 | Potentilla pusilla | `Rosales/Rosaceae/Potentilla_neumanniana/` | `Potentilla_verna.webp` | `pnN` | `Potentilla_verna_distribution.webp` | folder *P. neumanniana*; plate *P. verna* |
-| 448 | Prunus avium | `Rosales/Rosaceae/Cerasus_avium/` | `Cerasus_avium.webp` | `caN` | `Cerasus_avium_distribution.webp` | Cerasus avium |
-| 472 | Ranunculus trichophyllus | `Ranunculales/Ranunculaceae/Batrachium_trichophyllum/` | `Batrachium_trichophyllum.webp` | `btN` | `Batrachium_trichophyllum_distribution.webp` | Batrachium trichophyllum |
-| 519 | Scorzoneroides autumnalis | `Asterales/Asteraceae/Leontodon_autumnalis/` | `Leontodon_autumnalis.webp` | `laN` | `Leontodon_autumnalis_distribution.webp` | Leontodon autumnalis |
-| 528 | Jacobaea vulgaris | `Asterales/Asteraceae/Senecio_jacobaea/` | `Senecio_jacobaea.webp` | `sjN` | `Senecio_jacobaea_distribution.webp` | Senecio jacobaea |
-| 647 | Calyptocarpus vialis | `Asterales/Asteraceae/Calyptocarpus_vitalis/` | `Calyptocarpus_vitalis.webp` | `cvN` | `Calyptocarpus_vitalis_distribution.webp` | vitalis (spelling) |
-| 940 | Datura innoxia | `Solanales/Solanaceae/Datura_inoxia/` | `Datura_inoxia.webp` | `diN` | `Datura_inoxia_distribution.webp` | Datura inoxia (WCVP spelling) |
-| 1129 | Salvia yangii | `Lamiales/Lamiaceae/Perovskia_atriplicifolia/` | `Perovskia_atriplicifolia.webp` | `paN` | `Perovskia_atriplicifolia_distribution.webp` | Perovskia atriplicifolia |
-| 1140 | Melaleuca citrina | `Myrtales/Myrtaceae/Callistemon_citrinus/` | `Callistemon_citrinus.webp` | `ccN` | `Callistemon_citrinus_distribution.webp` | Callistemon citrinus |
-
-Catalog-named `{Slug}_distribution.webp` in the catalog folder is 404
-for every row above; the live map is the plate-stem file in the old
-folder.
+None remaining.
 
 ## 2. Illustration filename only
 
 Folder and photo files already match the catalog name. Map inherits the
 **plate stem**, so it is mismatched too.
 
-| Id | Catalog | Folder (ok) | Plate file | Map file | Kind |
-|---:|---|---|---|---|---|
-| 49 | Arctium minus | `…/Arctium_minus/` | `Arctium_minor.webp` | `Arctium_minor_distribution.webp` | gender |
-| 98 | Carum carvi | `…/Carum_carvi/` | `carum_carvi.webp` | derived `carum_carvi_distribution.webp` **404**; actual `Carum_carvi_distribution.webp` **200** | case; website map broken |
-| 132 | Comarum palustre | `…/Comarum_palustre/` | `Potentilla_palustris.webp` | `Potentilla_palustris_distribution.webp` | synonym |
-| 142 | Cotoneaster integerrimus | `…/Cotoneaster_integerrimus/` | `Cotoneaster_integerrima.webp` | `Cotoneaster_integerrima_distribution.webp` | gender |
-| 300 | Lapsana communis | `…/Lapsana_communis/` | `Lampsana_communis.webp` | `Lampsana_communis_distribution.webp` | spelling |
-| 305 | Lathyrus sylvestris | `…/Lathyrus_sylvestris/` | `Lathyrus_silvestris.webp` | `Lathyrus_silvestris_distribution.webp` | y/i |
-| 374 | Neottia ovata | `…/Neottia_ovata/` | `neottia_ovata.webp` | `neottia_ovata_distribution.webp` | case |
-| 406 | Persicaria lapathifolia | `…/Persicaria_lapathifolia/` | `Polygonum_lapathifolium.webp` | `Polygonum_lapathifolium_distribution.webp` | synonym |
-| 428 | Polygala vulgaris | `…/Polygala_vulgaris/` | `Polygala_vulgare.webp` | `Polygala_vulgare_distribution.webp` | ending |
-| 431 | Polygonatum verticillatum | `…/Polygonatum_verticillatum/` | `Polygonatum-verticillatum.webp` | `Polygonatum-verticillatum_distribution.webp` | hyphen |
-| 474 | Reseda lutea | `…/Reseda_lutea/` | `Reseda_luteola.webp` | `Reseda_luteola_distribution.webp` | **wrong species** (luteola is catalog id 1141) |
-| 476 | Rhinanthus alectorolophus | `…/Rhinanthus_alectorolophus/` | `Rhinanthus_alectolophorus.webp` | `Rhinanthus_alectolophorus_distribution.webp` | typo |
-| 544 | Soldanella carpatica | `…/Soldanella_carpatica/` | `Soldanella_carpathica.webp` | `Soldanella_carpathica_distribution.webp` | spelling |
-| 559 | Stachys sylvatica | `…/Stachys_sylvatica/` | `Stachys_silvatica.webp` | `Stachys_silvatica_distribution.webp` | y/i |
-| 573 | Thalictrum aquilegiifolium | `…/Thalictrum_aquilegiifolium/` | `Thalictrum_aquilegifolium.webp` | `Thalictrum_aquilegifolium_distribution.webp` | missing i |
-| 605 | Vaccinium vitis-idaea | `…/Vaccinium_vitis-idaea/` | `Vaccinium_vitis_idaea.webp` | `Vaccinium_vitis_idaea_distribution.webp` | hyphen vs `_` |
-| 616 | Veronica anagallis-aquatica | `…/Veronica_anagallis-aquatica/` | `Veronica_anagallis.webp` | `Veronica_anagallis_distribution.webp` | truncated |
+None remaining.
 
 ## 3. Photo prefix only
 
 Plate folder, plate filename, and map already use the catalog name.
 
-| Id | Catalog | Expected | Actual photos | From |
-|---:|---|---|---|---|
-| 27 | Anacamptis morio | `amN` | `omN` | Orchis morio |
-| 28 | Lysimachia arvensis | `laN` | `aaN` | Anagallis arvensis |
-| 92 | Capsella bursa-pastoris | `cbN` | `cbpN` | 3-letter from hyphenated epithet |
-| 128 | Clematis vitalba | `cvN` | `caN` | origin unclear |
-| 529 | Senecio ovatus | `soN` | `sfN` | Senecio fuchsii |
+None remaining.
+
+## 4. APG Order/Family folder drift
+
+GCS `{Order}/{Family}/{Slug}/` must match `plants_v2.APGIV` Ordo and
+Familia. Catalog key, slug, plate stem, and photo prefix stay.
+`plants_headers.family` already matched APG. Live scan 2026-08-31:
+49 plants; **49 done**.
+
+| Kind | n | When |
+|---|---:|---|
+| Family folder (6 also moved order) | 24 | 2026-08-31 |
+| Order folder only (family already APG) | 25 | 2026-08-31 |
+
+Family moves: Liliaceae→Asparagaceae (4), Scrophulariaceae→Plantaginaceae
+(4), Fumariaceae→Papaveraceae (3), Scrophulariaceae→Orobanchaceae (2),
+Tiliaceae→Malvaceae (2), Valerianaceae→Caprifoliaceae (2), plus one each
+Araceae→Acoraceae, Eleagnaceae→Elaeagnaceae, Hippuridaceae→Plantaginaceae,
+Apiaceae→Araliaceae, Saxifragaceae→Celastraceae, Caprifoliaceae→Adoxaceae,
+Liliaceae→Melanthiaceae.
+
+Order-only: Capparales→Brassicales (21 Brassicaceae), Myrtales→Malvales
+(3 *Daphne*), Linales→Malpighiales (*Linum catharticum*).
