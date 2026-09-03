@@ -110,7 +110,8 @@ on the nested node and **not** as a stray family-level genus.
 Rewrite the auto-draft. Rules:
 
 - Multiple sources; short, accurate, easy to read.
-- Up to 4 sentences per field, only if the sources have the facts.
+- `description` around 50 words (habit, range, introductions).
+  Other six fields: up to 4 sentences, only if the sources have the facts.
 - Do not invent.
 - Lead native range with local WCVP (POWO stand-in), not Wikipedia’s
   broader wording. A *sensu lato* / traditional range may follow as a
@@ -124,8 +125,9 @@ Rewrite the auto-draft. Rules:
 - Habitat text must support the `filterHabitat` codes from sources.
 - Skip culture, culinary, pet-toxicity, and other-species asides.
   Human contact irritation may go in optional `toxicity` text (see §4).
-- `sourceUrls` on the English record: Wikipedia + the floras actually used.
-  Do not put source names in brackets in the seven fields or `toxicity`.
+- `sourceUrls` on the English record: English Wikipedia + the floras
+  actually used for that English text. Do not put source names in
+  brackets in the seven fields or `toxicity`.
 
 Reliable sources (see `data/botanical_sources.json`): Wikipedia, PFAF,
 RHS, Luontoportti, Missouri Plants, BOTANY.cz, Flóra Slovenska (Slovak
@@ -157,14 +159,20 @@ Never translate an English common name. `label` / `names` only from:
 If a language has no sourced name, **omit `label`**. The app shows Latin.
 Do not draft CS/RU/DE/FR/PL/JA/ES body texts unless asked.
 
+`translations/{lang}/{Latin}/sourceUrls` lists pages **for that language**
+that were actually used (that language’s Wikipedia, Wikidata, EPPO names
+for that language, floras in that language). Do not copy
+`translations/en` `sourceUrls` onto another language.
+
 ## 7a. Slovak (always)
 
 After English is rewritten, write `translations/sk.json` with the same
 seven fields from the same sourced facts. `label` / `names` only from a
 Slovak source (Wikidata, sk.wikipedia title, EPPO, BOTANY.cz *Slovenská
 jména*, Flóra Slovenska). Omit `label` if none. Do not translate an English vernacular.
-Diagnostic contrasts may use `<b>…</b>`. `sourceUrls` are the pages
-actually used. The file goes live only with incremental publish.
+Diagnostic contrasts may use `<b>…</b>`. `sourceUrls` follow §7 (Slovak
+pages: Wikidata, sk.wikipedia, EPPO, BOTANY.cz, Flóra Slovenska,
+pladias.sk). The file goes live only with incremental publish.
 
 ## 8. Publish (only when asked to add to the database)
 

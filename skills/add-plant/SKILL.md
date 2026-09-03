@@ -54,13 +54,16 @@ add still needs `{slug}_distribution.webp` in the job before publish.
 ## Facts and names
 
 Do not invent. English seven fields from pages that actually cover this
-plant. Lead range with WCVP, not Wikipedia *sensu lato*. Do not mix
+plant. `description` around 50 words; the other six up to 4 sentences.
+Lead range with WCVP, not Wikipedia *sensu lato*. Do not mix
 split-off or *sensu lato* measurements, or involucre with disc diameter.
 RHS spread is not height. Contact rash → `toxicity` text, not class 1/2.
 Details: `ingest/ADD_PLANT.md` §§4 and 6. When a new web source is useful,
 add it to `ingest/data/botanical_sources.json`. Never translate an English
 common name; `label` / `names` only from a source for that language. Omit
 `label` if none. Do not draft CS/RU/DE/FR/PL/JA/ES body texts unless asked.
+`translations/{lang}/{Latin}/sourceUrls` lists pages for that language
+(not a copy of English `sourceUrls`).
 
 ## Slovak
 
@@ -68,5 +71,6 @@ After English is rewritten, write the same seven fields in Slovak to
 `translations/sk.json`, from those sourced facts. `label` / `names` only
 from a Slovak source (Wikidata, sk.wikipedia title, EPPO, BOTANY.cz
 *Slovenská jména*, Flóra Slovenska). Omit `label` if none — the app and site show Latin.
-Diagnostic contrasts may use `<b>…</b>`. `sourceUrls` are the pages
-actually used. Goes live only with incremental publish.
+Diagnostic contrasts may use `<b>…</b>`. `sourceUrls` are the Slovak
+pages actually used (Wikidata, sk.wikipedia, EPPO, BOTANY.cz, Flóra
+Slovenska, pladias.sk). Goes live only with incremental publish.

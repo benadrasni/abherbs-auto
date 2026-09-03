@@ -80,7 +80,8 @@ Rewrite live `translations/en`. Rules and filter codes:
 `ingest/ADD_PLANT.md` §§4, 6, 7. Registry: `botanical_sources.json`.
 
 - Seven fields: `description`, `flower`, `inflorescence`, `fruit`,
-  `leaf`, `stem`, `habitat`. `sourceUrls` = pages actually used.
+  `leaf`, `stem`, `habitat`. `description` around 50 words; other
+  six up to 4 sentences (`ingest/ADD_PLANT.md` §6). `sourceUrls` = pages actually used.
   Body text states the facts only — no source names in brackets
   (`(WCVP)`, `(BOTANY.cz)`, `(Flora Helvetica)`, `(POWO)`, …).
   Conflicting measurements go in `changelog`, not in the field.
@@ -95,7 +96,9 @@ Rewrite live `translations/en`. Rules and filter codes:
 - English `label` / `names` only from an English source. Omit `label`
   if none. Never translate a vernacular into another language.
 
-Do not draft other-language body texts unless asked.
+Do not draft other-language body texts unless asked. If you do,
+`translations/{lang}/sourceUrls` lists pages for that language, not a
+copy of English `sourceUrls`.
 
 ## Patch
 
