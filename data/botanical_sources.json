@@ -286,6 +286,30 @@
       ]
     },
     {
+      "id": "minnesota_wildflowers",
+      "name": "Minnesota Wildflowers",
+      "home": "https://www.minnesotawildflowers.info/",
+      "fetch": "search",
+      "when": {
+        "wcvp_l2": [71, 72, 73, 74, 75, 76, 77, 78, 79]
+      },
+      "good_for": [
+        "morphology",
+        "habitat",
+        "names"
+      ],
+      "notes": "Structured English for Minnesota / north-central USA: habit, height, flowering months, flower, leaf, stem, fruit, habitat. Search the Latin name; 404 or a miss is normal outside that flora. Skip lookalikes so another species is not copied.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat",
+        "names"
+      ],
+      "langs": [
+        "en"
+      ]
+    },
+    {
       "id": "pacific_bulb_society",
       "name": "Pacific Bulb Society wiki",
       "home": "https://www.pacificbulbsociety.org/pbswiki/",
@@ -874,6 +898,7 @@
             "Ephedraceae",
             "Ranunculaceae",
             "Berberidaceae",
+            "Nymphaeaceae",
             "Papaveraceae",
             "Fumariaceae"
           ]
@@ -883,10 +908,11 @@
           "year": 1990,
           "bibdigital_id": 9899,
           "record": "https://bibdigital.rjb.csic.es/records/item/9899-flora-iberica-vol-2-platanaceae-plumbaginaceae-partim",
-          "covers": "Platanaceae–Plumbaginaceae (part); includes Polygonaceae; includes Amaranthaceae, Chenopodiaceae",
+          "covers": "Platanaceae–Plumbaginaceae (part); includes Caryophyllaceae, Polygonaceae, Amaranthaceae, Chenopodiaceae",
           "families": [
             "Platanaceae",
             "Plumbaginaceae",
+            "Caryophyllaceae",
             "Polygonaceae",
             "Amaranthaceae",
             "Chenopodiaceae"
@@ -897,10 +923,11 @@
           "year": 2005,
           "bibdigital_id": 9896,
           "record": "https://bibdigital.rjb.csic.es/records/item/9896-flora-iberica-vol-3-plumbaginaceae-partim-capparaceae-2-ordf-ed",
-          "covers": "Plumbaginaceae (part)–Capparaceae (2nd ed.); includes Cucurbitaceae",
+          "covers": "Plumbaginaceae (part)–Capparaceae (2nd ed.); includes Malvaceae, Cucurbitaceae",
           "families": [
             "Plumbaginaceae",
             "Capparaceae",
+            "Malvaceae",
             "Cucurbitaceae"
           ]
         },
@@ -968,12 +995,13 @@
           "year": 1997,
           "bibdigital_id": 9905,
           "record": "https://bibdigital.rjb.csic.es/records/item/9905-flora-iberica-vol-8-haloragaceae-euphorbiaceae",
-          "covers": "Haloragaceae–Euphorbiaceae",
+          "covers": "Haloragaceae–Euphorbiaceae; includes Lythraceae",
           "families": [
             "Haloragaceae",
             "Euphorbiaceae",
             "Thymelaeaceae",
-            "Elaeagnaceae"
+            "Elaeagnaceae",
+            "Lythraceae"
           ]
         },
         {
@@ -981,11 +1009,13 @@
           "year": 2015,
           "bibdigital_id": 16359,
           "record": "https://bibdigital.rjb.csic.es/records/item/16359-flora-iberica-vol-9-rhamnaceae-polygalaceae",
-          "covers": "Rhamnaceae–Polygalaceae",
+          "covers": "Rhamnaceae–Polygalaceae; includes Geraniaceae, Linaceae",
           "families": [
             "Rhamnaceae",
             "Polygalaceae",
-            "Vitaceae"
+            "Vitaceae",
+            "Geraniaceae",
+            "Linaceae"
           ]
         },
         {
@@ -1005,12 +1035,14 @@
           "year": 2012,
           "bibdigital_id": 15518,
           "record": "https://bibdigital.rjb.csic.es/records/item/15518-flora-iberica-vol-11-gentianaceae-boraginaceae",
-          "covers": "Gentianaceae–Boraginaceae",
+          "covers": "Gentianaceae–Boraginaceae; includes Menyanthaceae, Oleaceae",
           "families": [
             "Gentianaceae",
+            "Menyanthaceae",
             "Boraginaceae",
             "Apocynaceae",
-            "Convolvulaceae"
+            "Convolvulaceae",
+            "Oleaceae"
           ]
         },
         {
@@ -1118,7 +1150,8 @@
           "families": [
             "Cyperaceae",
             "Pontederiaceae",
-            "Iridaceae"
+            "Iridaceae",
+            "Lemnaceae"
           ]
         },
         {
@@ -1231,6 +1264,79 @@
       ]
     },
     {
+      "id": "eflora_bc",
+      "name": "E-Flora BC",
+      "home": "https://linnet.geog.ubc.ca/Atlas/",
+      "url": "https://linnet.geog.ubc.ca/Atlas/Atlas.aspx?sciname={latin_plus}",
+      "fetch": "latin",
+      "reliable": true,
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "morphology",
+        "habitat"
+      ],
+      "notes": "Electronic Atlas of the Flora of British Columbia. Often embeds The Illustrated Flora of British Columbia: habit, height, leaves, heads, corolla, fruit, and a short habitat line. Useful for Eurasian species naturalized in western Canada. 404 or an empty description is normal outside that flora.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "id": "jepson",
+      "name": "Jepson eFlora",
+      "home": "https://ucjeps.berkeley.edu/eflora/",
+      "url": "https://ucjeps.berkeley.edu/eflora/eflora_display.php?name={latin_plus}",
+      "fetch": "latin",
+      "reliable": true,
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "morphology",
+        "habitat"
+      ],
+      "notes": "California flora. Concise English treatment: habit, stem, leaf, inflorescence, flower, fruit, ecology, flowering months. Useful for Eurasian species naturalized in California. 404 is normal outside that flora.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "id": "flora_nz",
+      "name": "Flora of New Zealand",
+      "home": "https://www.nzflora.info/",
+      "url": "https://www.nzflora.info/factsheet/Taxon/{Genus}-{epithet}.html",
+      "fetch": "latin",
+      "reliable": true,
+      "when": {
+        "always": true
+      },
+      "good_for": [
+        "morphology",
+        "habitat",
+        "names"
+      ],
+      "notes": "Landcare Research treatments of native and naturalised vascular plants. Latin URL /factsheet/Taxon/{Genus}-{epithet}.html. Useful for European species naturalised in New Zealand. 404 is normal outside that flora. Southern-hemisphere flowering months stay in the changelog, not as catalog months.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "en"
+      ]
+    },
+    {
       "id": "onrockgarden",
       "name": "Ontario Rock Garden & Hardy Plant Society",
       "home": "https://onrockgarden.com/",
@@ -1306,6 +1412,60 @@
         "de",
         "fr",
         "it"
+      ]
+    },
+    {
+      "id": "floraweb",
+      "name": "FloraWeb (BfN)",
+      "home": "https://www.floraweb.de/",
+      "url": "https://www.floraweb.de/pflanzenarten/artenhome.xsql?suchnr={id}",
+      "fetch": "manual",
+      "reliable": true,
+      "when": {
+        "l3": [
+          "GER"
+        ]
+      },
+      "good_for": [
+        "morphology",
+        "habitat"
+      ],
+      "notes": "German BfN species factsheets. Galium pages often split s.str. from the aggregate (e.g. G. mollugo L. s.str.). Search the Latin name; IDs are not Latin. Skip Ellenberg numbers in user-facing English.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "de"
+      ]
+    },
+    {
+      "id": "tela_botanica",
+      "name": "Tela Botanica (eFlore / Coste)",
+      "home": "https://www.tela-botanica.org/",
+      "url": "https://www.tela-botanica.org/?s={latin_plus}&in=flore",
+      "fetch": "search",
+      "reliable": true,
+      "when": {
+        "l3": [
+          "FRA"
+        ]
+      },
+      "good_for": [
+        "morphology",
+        "habitat",
+        "names"
+      ],
+      "notes": "French collaborative flora. Species pages are https://www.tela-botanica.org/bdtfx-nn-{num}, not Latin slugs; search the scientific name. Coste descriptions give height, flower size, flowering months and a habitat line. French vernaculars are for fr names only — never as English labels. No page is normal outside France.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat",
+        "names"
+      ],
+      "langs": [
+        "fr"
       ]
     },
     {
