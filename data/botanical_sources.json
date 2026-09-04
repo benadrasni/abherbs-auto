@@ -908,11 +908,12 @@
           "year": 1990,
           "bibdigital_id": 9899,
           "record": "https://bibdigital.rjb.csic.es/records/item/9899-flora-iberica-vol-2-platanaceae-plumbaginaceae-partim",
-          "covers": "Platanaceae–Plumbaginaceae (part); includes Caryophyllaceae, Polygonaceae, Amaranthaceae, Chenopodiaceae",
+          "covers": "Platanaceae–Plumbaginaceae (part); includes Caryophyllaceae, Portulacaceae, Polygonaceae, Amaranthaceae, Chenopodiaceae",
           "families": [
             "Platanaceae",
             "Plumbaginaceae",
             "Caryophyllaceae",
+            "Portulacaceae",
             "Polygonaceae",
             "Amaranthaceae",
             "Chenopodiaceae"
@@ -936,10 +937,11 @@
           "year": 1993,
           "bibdigital_id": 9900,
           "record": "https://bibdigital.rjb.csic.es/records/item/9900-flora-iberica-vol-4-cruciferae-monotropaceae",
-          "covers": "Cruciferae–Monotropaceae",
+          "covers": "Cruciferae–Monotropaceae; includes Resedaceae",
           "families": [
             "Brassicaceae",
             "Cruciferae",
+            "Resedaceae",
             "Ericaceae",
             "Pyrolaceae",
             "Monotropaceae"
@@ -1009,13 +1011,14 @@
           "year": 2015,
           "bibdigital_id": 16359,
           "record": "https://bibdigital.rjb.csic.es/records/item/16359-flora-iberica-vol-9-rhamnaceae-polygalaceae",
-          "covers": "Rhamnaceae–Polygalaceae; includes Geraniaceae, Linaceae",
+          "covers": "Rhamnaceae–Polygalaceae; includes Geraniaceae, Linaceae, Oxalidaceae",
           "families": [
             "Rhamnaceae",
             "Polygalaceae",
             "Vitaceae",
             "Geraniaceae",
-            "Linaceae"
+            "Linaceae",
+            "Oxalidaceae"
           ]
         },
         {
@@ -1076,9 +1079,10 @@
           "year": 2001,
           "bibdigital_id": 9907,
           "record": "https://bibdigital.rjb.csic.es/records/item/9907-flora-iberica-vol-14-myoporaceae-campanulaceae",
-          "covers": "Myoporaceae–Campanulaceae",
+          "covers": "Myoporaceae–Campanulaceae; includes Lentibulariaceae",
           "families": [
             "Myoporaceae",
+            "Lentibulariaceae",
             "Campanulaceae"
           ]
         },
@@ -1138,7 +1142,12 @@
           "families": [
             "Butomaceae",
             "Juncaceae",
-            "Alismataceae"
+            "Alismataceae",
+            "Potamogetonaceae",
+            "Hydrocharitaceae",
+            "Najadaceae",
+            "Ruppiaceae",
+            "Zannichelliaceae"
           ]
         },
         {
@@ -1386,6 +1395,36 @@
       ]
     },
     {
+      "id": "jn_ecology_rubus",
+      "name": "JN Ecology (Brambles of the British Isles)",
+      "home": "https://www.jnecology.uk/rubus/",
+      "url": "https://www.jnecology.uk/rubus/accounts/{epithet}.htm",
+      "fetch": "manual",
+      "reliable": true,
+      "when": {
+        "genera": [
+          "Rubus"
+        ],
+        "l3": [
+          "GRB",
+          "IRE"
+        ]
+      },
+      "good_for": [
+        "morphology",
+        "habitat"
+      ],
+      "notes": "John Norton British and Irish Rubus microspecies accounts. Morphology (flowers, stamens, leaves, stems) and a short habitat line. Latin slug /rubus/accounts/{epithet}.htm. No page is normal outside that treatment. Skip lookalikes so another bramble is not copied.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "en"
+      ]
+    },
+    {
       "id": "infoflora",
       "name": "Info Flora (Switzerland)",
       "home": "https://www.infoflora.ch/en/",
@@ -1469,6 +1508,34 @@
       ]
     },
     {
+      "id": "acta_plantarum",
+      "name": "Acta Plantarum",
+      "home": "https://www.actaplantarum.org/",
+      "url": "https://www.actaplantarum.org/flora/flora_info.php?id={id}",
+      "fetch": "search",
+      "reliable": true,
+      "when": {
+        "l3": [
+          "ITA"
+        ]
+      },
+      "good_for": [
+        "morphology",
+        "habitat",
+        "names"
+      ],
+      "notes": "Italian volunteer flora. Species pages are numeric IDs, not Latin slugs; search the scientific name. Italian text with a short morphological card (habit, fruit, leaves). Italian vernaculars are for it names only. No page is normal outside Italy. Skip forum lookalikes so another species is not copied.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat",
+        "names"
+      ],
+      "langs": [
+        "it"
+      ]
+    },
+    {
       "id": "lindman_nordens_flora",
       "name": "Bilder ur Nordens flora (Lindman)",
       "home": "https://runeberg.org/nordflor/",
@@ -1501,6 +1568,32 @@
       ],
       "langs": [
         "sv"
+      ]
+    },
+    {
+      "id": "wiegleb_batrachium",
+      "name": "Wiegleb, Ranunculus sect. Batrachium (Flora von Deutschland)",
+      "home": "https://www.flora-deutschlands.de/",
+      "url": "https://www.flora-deutschlands.de/files/Ranunculaceae-Ranunculus_Sect._Batrachium.pdf",
+      "fetch": "manual",
+      "reliable": true,
+      "when": {
+        "genera": [
+          "Ranunculus"
+        ]
+      },
+      "good_for": [
+        "morphology",
+        "habitat"
+      ],
+      "notes": "G. Wiegleb 2020 treatment of Ranunculus sect. Batrachium for Flora von Deutschland. PDF, not a Latin URL. Use only when that species is treated. German text. Skip lookalikes so another water-crowfoot is not copied.",
+      "kind": "flora",
+      "roles": [
+        "morphology",
+        "habitat"
+      ],
+      "langs": [
+        "de"
       ]
     }
   ]
