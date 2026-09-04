@@ -1,3 +1,5 @@
+import time
+
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
@@ -6,105 +8,114 @@ from geopy.geocoders import Nominatim
 import constants
 
 
-def refresh_public_stats():
+def _is_indoors(observation):
+    return isinstance(observation, dict) and observation.get('indoors') is True
+
+
+def _country_for(observation, geolocator):
+    if 'country' in observation:
+        return observation['country']
+    lat = observation.get('latitude')
+    lon = observation.get('longitude')
+    try:
+        lat_f = float(lat)
+        lon_f = float(lon)
+    except (TypeError, ValueError):
+        return None
+    if abs(lat_f) < 0.001 and abs(lon_f) < 0.001:
+        return None
+    try:
+        location = geolocator.reverse(str(lat) + ', ' + str(lon), exactly_one=True, timeout=10)
+    except Exception as e:
+        print('geocode fail', lat, lon, e)
+        time.sleep(1.1)
+        return None
+    time.sleep(1.1)
+    if not location:
+        return None
+    return location.raw.get('address', {}).get('country_code')
+
+
+def refresh_public_stats(geolocator):
     stats = {}
-
-    # count
     ref_by_date = db.reference('observations/public/by date/list')
-    by_date = ref_by_date.get()
-    stats['count'] = len(by_date)
+    by_date = ref_by_date.get() or {}
 
-    # first / last
-    first = 999999999999999
+    first = None
     first_flower = ''
-    last = 0
+    last = None
     last_flower = ''
     observers = []
-    countries = []
     ranks = {}
     counts = {}
-    for observation_key in by_date.keys():
-        observation = by_date[observation_key]
-        time_in_miliseconds = -1*int(observation['order'])
-        if time_in_miliseconds < first:
+    plant_counts = {}
+    counted = 0
+    skipped_indoors = 0
+
+    for observation_key, observation in by_date.items():
+        if not isinstance(observation, dict):
+            continue
+        if _is_indoors(observation):
+            skipped_indoors += 1
+            continue
+        counted += 1
+
+        time_in_miliseconds = -1 * int(observation['order'])
+        if first is None or time_in_miliseconds < first:
             first = time_in_miliseconds
             first_flower = observation['plant']
-
-        if time_in_miliseconds > last:
+        if last is None or time_in_miliseconds > last:
             last = time_in_miliseconds
             last_flower = observation['plant']
 
-        index = observation['id'].index('_')
-        observer = observation['id'][:index]
+        observer = observation['id'][: observation['id'].index('_')]
         if observer not in observers:
             observers.append(observer)
             ranks[observer] = 1
         else:
             ranks[observer] += 1
 
-        if 'country' in observation.keys():
-            country_code = observation['country']
-        else:
-            try:
-                location = geolocator.reverse(str(observation['latitude']) + ', ' + str(observation['longitude']))
-            except TypeError:
-                print(observation_key)
-                continue
-            except ValueError:
-                print(observation_key)
-                continue
+        plant = observation['plant']
+        plant_counts[plant] = plant_counts.get(plant, 0) + 1
 
-            if (location):
-                country_code = location.raw['address']['country_code']
-                ref_observation_cc = db.reference('observations/public/by date/list/' + observation_key)
-                observation['country'] = country_code
-                ref_observation_cc.update(observation)
-                ref_observation_cc = db.reference('observations/public/by plant/' + observation['plant'] + '/list/' + observation_key)
-                ref_observation_cc.update(observation)
-            else:
-                print(observation_key)
-                continue
+        country_code = _country_for(observation, geolocator)
+        if country_code and 'country' not in observation:
+            print('geo public', observation_key, country_code)
+            observation['country'] = country_code
+            ref_by_date.child(observation_key).update({'country': country_code})
+            db.reference(
+                'observations/public/by plant/' + plant + '/list/' + observation_key
+            ).update({'country': country_code})
+        if country_code:
+            counts[country_code] = counts.get(country_code, 0) + 1
 
-        if country_code not in countries:
-            countries.append(country_code)
-            counts[country_code] = 1
-        else:
-            counts[country_code] += 1
-
-
+    stats['count'] = counted
     stats['firstFlower'] = first_flower
-    stats['firstDate'] = first
+    stats['firstDate'] = first or 0
     stats['lastFlower'] = last_flower
-    stats['lastDate'] = last
+    stats['lastDate'] = last or 0
     stats['observers'] = len(observers)
     stats['countries'] = counts
+    stats['distinctFlowers'] = len(plant_counts)
+    if plant_counts:
+        max_plant = max(plant_counts, key=plant_counts.get)
+        stats['mostObserved'] = max_plant
+        stats['mostObservedCount'] = plant_counts[max_plant]
+    else:
+        stats['mostObserved'] = ''
+        stats['mostObservedCount'] = 0
 
-    # distinct flowers
-    ref_by_plant = db.reference('observations/public/by plant')
-    by_plant = ref_by_plant.get()
-    stats['distinctFlowers'] = len(by_plant)
-
-    # max observed
-    max_count = 0
-    max_plant = ''
-    for plant_name in by_plant.keys():
-        plant_count = len(by_plant[plant_name]['list'])
-        if plant_count > max_count:
-            max_count = plant_count
-            max_plant = plant_name
-    stats['mostObserved'] = max_plant
-    stats['mostObservedCount'] = max_count
-
-    ref_observation_stats = db.reference('observations/public/stats')
-    ref_observation_stats.set(stats)
-
+    db.reference('observations/public/stats').set(stats)
+    print('public counted', counted, 'skipped_indoors', skipped_indoors)
+    print('public stats', stats)
     return ranks
 
 
-def refresh_private_stats(ranks):
-
+def refresh_private_stats(ranks, geolocator):
     ref_by_users = db.reference('observations/by users')
-    by_users = ref_by_users.get()
+    by_users = ref_by_users.get() or {}
+    rank_order = [y[0] for y in ranks]
+
     for user in by_users.keys():
         stats = {}
         try:
@@ -113,83 +124,63 @@ def refresh_private_stats(ranks):
             print(user)
             continue
 
-        # count
-        stats['count'] = len(by_date)
-
-        # rank
-        try:
-            stats['rank'] = [y[0] for y in ranks].index(user) + 1
-        except ValueError:
-            stats['rank'] = 0
-
-            # first / last
-        first = 999999999999999
+        first = None
         first_flower = ''
-        last = 0
+        last = None
         last_flower = ''
-        countries = []
         counts = {}
-        for observation_key in by_date.keys():
-            observation = by_date[observation_key]
+        plant_counts = {}
+        counted = 0
+
+        for observation_key, observation in by_date.items():
+            if not isinstance(observation, dict):
+                continue
+            if _is_indoors(observation):
+                continue
+            counted += 1
             time_in_miliseconds = int(observation['date']['time'])
-            if time_in_miliseconds < first:
+            if first is None or time_in_miliseconds < first:
                 first = time_in_miliseconds
                 first_flower = observation['plant']
-
-            if time_in_miliseconds > last:
+            if last is None or time_in_miliseconds > last:
                 last = time_in_miliseconds
                 last_flower = observation['plant']
 
-            if 'country' in observation.keys():
-                country_code = observation['country']
-            else:
-                try:
-                    location = geolocator.reverse(str(observation['latitude']) + ', ' + str(observation['longitude']))
-                except:
-                    print(observation_key + ': ' + str(observation['latitude']) + ', ' + str(observation['longitude']))
-                    continue
+            plant = observation['plant']
+            plant_counts[plant] = plant_counts.get(plant, 0) + 1
 
-                if location is None:
-                    print(observation_key + ': ' + str(observation['latitude']) + ', ' + str(observation['longitude']))
-                    continue
-
-                country_code = location.raw['address']['country_code']
-                ref_observation_cc = db.reference('observations/by users/' + user + '/by date/list/' + observation_key)
+            country_code = _country_for(observation, geolocator)
+            if country_code and 'country' not in observation:
                 observation['country'] = country_code
-                ref_observation_cc.update(observation)
-                ref_observation_cc = db.reference(
-                    'observations/by users/' + user + '/by plant/' + observation['plant'] + '/list/' + observation_key)
-                ref_observation_cc.update(observation)
+                db.reference(
+                    'observations/by users/' + user + '/by date/list/' + observation_key
+                ).update({'country': country_code})
+                db.reference(
+                    'observations/by users/' + user + '/by plant/' + plant + '/list/' + observation_key
+                ).update({'country': country_code})
+            if country_code:
+                counts[country_code] = counts.get(country_code, 0) + 1
 
-            if country_code not in countries:
-                countries.append(country_code)
-                counts[country_code] = 1
-            else:
-                counts[country_code] += 1
-
+        stats['count'] = counted
+        try:
+            stats['rank'] = rank_order.index(user) + 1
+        except ValueError:
+            stats['rank'] = 0
         stats['firstFlower'] = first_flower
-        stats['firstDate'] = first
+        stats['firstDate'] = first or 0
         stats['lastFlower'] = last_flower
-        stats['lastDate'] = last
+        stats['lastDate'] = last or 0
         stats['countries'] = counts
+        stats['distinctFlowers'] = len(plant_counts)
+        if plant_counts:
+            max_plant = max(plant_counts, key=plant_counts.get)
+            stats['mostObserved'] = max_plant
+            stats['mostObservedCount'] = plant_counts[max_plant]
+        else:
+            stats['mostObserved'] = ''
+            stats['mostObservedCount'] = 0
 
-        # distinct flowers
-        by_plant = by_users[user]['by plant']
-        stats['distinctFlowers'] = len(by_plant)
-
-        # max observed
-        max_count = 0
-        max_plant = ''
-        for plant_name in by_plant.keys():
-            plant_count = len(by_plant[plant_name]['list'])
-            if plant_count > max_count:
-                max_count = plant_count
-                max_plant = plant_name
-        stats['mostObserved'] = max_plant
-        stats['mostObservedCount'] = max_count
-
-        ref_observation_stats = db.reference('observations/by users/' + user + '/stats')
-        ref_observation_stats.set(stats)
+        db.reference('observations/by users/' + user + '/stats').set(stats)
 
 
 if __name__ == "__main__":
@@ -197,9 +188,9 @@ if __name__ == "__main__":
     firebase_admin.initialize_app(cred, {
         'databaseURL': constants.databaseURL
     })
-    geolocator = Nominatim(user_agent="abherbs")
+    geolocator = Nominatim(user_agent=constants.user_agent, timeout=10)
 
-    ranks = refresh_public_stats()
+    ranks = refresh_public_stats(geolocator)
     sorted_ranks = sorted(ranks.items(), key=lambda kv: kv[1], reverse=True)
     print(sorted_ranks)
-    refresh_private_stats(sorted_ranks)
+    refresh_private_stats(sorted_ranks, geolocator)
