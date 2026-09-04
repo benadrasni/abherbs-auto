@@ -33,6 +33,27 @@ def load_patches(folder):
     return patches
 
 
+LIVE_EN_KEEP = ("trivia", "herbalism")
+
+
+def carry_live_optional_fields(live_en, new_en, fields=LIVE_EN_KEEP):
+    """Keep live English optional fields on a full translations/en replace."""
+    if new_en is None:
+        return new_en
+    out = dict(new_en)
+    live = live_en or {}
+    for field in fields:
+        value = live.get(field)
+        if value:
+            out[field] = value
+    return out
+
+
+def carry_live_trivia(live_en, new_en):
+    """Keep live English trivia on a full translations/en replace."""
+    return carry_live_optional_fields(live_en, new_en, fields=("trivia",))
+
+
 def search_names(translation):
     names = set()
     if not translation:
@@ -76,6 +97,8 @@ def plan_patch(db, patch):
 
     old_names = search_names(live_en)
     new_en = patch.get("translations_en")
+    if new_en is not None:
+        new_en = carry_live_optional_fields(live_en, new_en)
     new_names = search_names(new_en) if new_en is not None else old_names
 
     return {
@@ -116,6 +139,9 @@ def print_plan(plan):
         print("  search names +%s -%s" % (plan["names_add"], plan["names_remove"]))
     if plan["label_old"] != plan["label_new"]:
         print("  web label: %r -> %r" % (plan["label_old"], plan["label_new"]))
+    for field in LIVE_EN_KEEP:
+        if (plan["live_en"] or {}).get(field):
+            print("  %s: kept" % field)
 
 
 def apply_plan(db, plan):

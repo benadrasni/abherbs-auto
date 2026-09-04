@@ -93,6 +93,9 @@ Rewrite live `translations/en`. Rules and filter codes:
   when the live codes still match the sources.
 - Height, flowering months, and `toxicityClass` on `plants_v2` from the
   same sources (contact rash → `toxicity` text, not class 1/2).
+- Keep culture, culinary, pet-toxicity, and other-species asides out of
+  the seven fields. Culinary and traditional use belong in live
+  `herbalism` (Uses); leave that field unchanged.
 - English `label` / `names` only from an English source. Omit `label`
   if none. Never translate a vernacular into another language.
 
@@ -118,7 +121,9 @@ Write `{id}_{Slug}.json` in the dump folder (full English replace):
 
 - `translations_en` is a **full** `translations/en/{Latin}` payload
   (`.set`). Keep `wikipedia`, `label`, `names`, `toxicity` unless the
-  changelog says why they go.
+  changelog says why they go. Leave live `trivia` and `herbalism`
+  unchanged; apply copies them from live onto the payload. Do not
+  rewrite trivia or herbalism (Uses).
 - `header` only the filter arrays that change (full new lists, not a
   code-level delta). `{}` = leave filters.
 - `plants_v2` only fields that change (`heightFrom` / `heightTo`,

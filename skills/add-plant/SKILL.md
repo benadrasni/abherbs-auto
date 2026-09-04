@@ -58,6 +58,9 @@ plant. `description` around 50 words; the other six up to 4 sentences.
 Lead range with WCVP, not Wikipedia *sensu lato*. Do not mix
 split-off or *sensu lato* measurements, or involucre with disc diameter.
 RHS spread is not height. Contact rash → `toxicity` text, not class 1/2.
+Culinary and traditional use may go in optional `herbalism` (UI: Uses);
+keep it out of the seven identification fields. `/update-plant` does
+not rewrite live `herbalism`.
 Details: `ingest/ADD_PLANT.md` §§4 and 6. When a new web source is useful,
 add it to `ingest/data/botanical_sources.json`. Never translate an English
 common name; `label` / `names` only from a source for that language. Omit

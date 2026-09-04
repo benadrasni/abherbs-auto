@@ -123,8 +123,13 @@ Rewrite the auto-draft. Rules:
   be true; do not collapse them into one number.
 - Do not repeat description facts in habitat.
 - Habitat text must support the `filterHabitat` codes from sources.
-- Skip culture, culinary, pet-toxicity, and other-species asides.
-  Human contact irritation may go in optional `toxicity` text (see §4).
+- Skip culture, culinary, pet-toxicity, and other-species asides from
+  the seven fields. Culinary and traditional medicinal use go in
+  optional `herbalism` (UI: Uses): up to 4 sentences, sourced, no
+  doses, no “treats X”. Historical use in past or traditional voice.
+  Do not invite ingestion of a poisonous plant. `/update-plant` leaves
+  live `herbalism` unchanged. Human contact irritation may go in
+  optional `toxicity` text (see §4).
 - `sourceUrls` on the English record: English Wikipedia + the floras
   actually used for that English text. Do not put source names in
   brackets in the seven fields or `toxicity`.
