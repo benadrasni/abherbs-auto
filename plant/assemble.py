@@ -167,6 +167,7 @@ def write_review(path, packet):
         "- height: %s–%s cm" % (v2.get("heightFrom"), v2.get("heightTo")),
         "- flowering: %s–%s" % (v2.get("floweringFrom"), v2.get("floweringTo")),
         "- toxicityClass: %s" % v2.get("toxicityClass"),
+        "- inflorescenceType: %s" % (", ".join(v2.get("inflorescenceType") or []) or "—"),
         "- illustration: %s" % (job.get("illustration") or {}),
         "- distribution map: %s" % (
             "ok" if _distribution_map_ok(packet) else "missing"
@@ -353,6 +354,9 @@ def apply_inference(packet, traits, english):
             if value and not str(key).startswith("_")
         )
         translations["en"] = existing
+        from plant.inflorescence_type import classify
+
+        v2["inflorescenceType"] = classify(existing.get("inflorescence") or "")
         missing = english.get("_draft_missing") or []
         if missing:
             job.setdefault("warnings", []).append(

@@ -334,6 +334,44 @@ class BotanicalRegistryTests(unittest.TestCase):
         self.assertIn("Galium+album", polska["url"])
         self.assertFalse(polska["reliable"])
 
+    def test_ruj_library_and_central_europe_hint(self):
+        libs = botanical.libraries()
+        self.assertIn("ruj", libs)
+        self.assertEqual("https://ruj.uj.edu.pl/", libs["ruj"]["home"])
+        ruj = next(item for item in botanical.load() if item["id"] == "ruj")
+        self.assertTrue(ruj.get("reliable"))
+        self.assertEqual("ruj", ruj.get("library"))
+        self.assertTrue(
+            botanical.applies(
+                ruj,
+                "Aconitum moldavicum",
+                family="Ranunculaceae",
+                native_l2=[11, 13, 14],
+                native_l3=["POL", "CZE", "HUN", "ROM", "UKR"],
+            )
+        )
+        self.assertFalse(
+            botanical.applies(
+                ruj,
+                "Argemone mexicana",
+                family="Papaveraceae",
+                native_l2=[79, 80, 81],
+                native_l3=["MEX"],
+            )
+        )
+        hints = botanical.hints_for(
+            "Aconitum moldavicum",
+            family="Ranunculaceae",
+            native_l2=[11, 13, 14],
+            native_l3=["POL"],
+        )
+        ruj_hint = next(item for item in hints if item["id"] == "ruj")
+        self.assertEqual(
+            "https://ruj.uj.edu.pl/search?query=Aconitum+moldavicum",
+            ruj_hint["url"],
+        )
+        self.assertTrue(ruj_hint["reliable"])
+
 
 class EppoTests(unittest.TestCase):
     def test_pick_exact_plant_not_hybrid(self):

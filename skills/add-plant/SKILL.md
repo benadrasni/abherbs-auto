@@ -68,6 +68,12 @@ common name; `label` / `names` only from a source for that language. Omit
 `translations/{lang}/{Latin}/sourceUrls` lists pages for that language
 (not a copy of English `sourceUrls`).
 
+After rewriting English `inflorescence`, set `plants_v2.inflorescenceType`
+from that paragraph (`plant.inflorescence_type.classify`). Array of the
+17 legend keys, primary first. Empty if none apply (solitary flower,
+catkin, unnamed cluster). Dry-run auto-draft is a guess — reclassify
+after the editorial English. Details: `ingest/ADD_PLANT.md` §6.
+
 ## Slovak
 
 After English is rewritten, write the same seven fields in Slovak to

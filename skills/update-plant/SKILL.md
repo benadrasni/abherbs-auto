@@ -69,7 +69,9 @@ Writes `plants/_jobs/_update/{id}_{Slug}/`:
 that returns a page for this species, plus WCVP (local sqlite; live
 POWO is Cloudflare-blocked). 404 / empty is normal when the flora does
 not cover the plant — skip it. When a new web source is useful, add it
-to the registry.
+to the registry. Central Europe: RUJ (`ruj`, https://ruj.uj.edu.pl/) is
+reliable for WCVP L2 11/13/14 — search the Latin name and use a paper
+that actually treats the plant (e.g. *Aconitum moldavicum*).
 
 Patch JSON shape: `plants/_jobs/_accuracy_fix/` (e.g.
 `publish_51_59/51_Arctostaphylos_uva-ursi.json`).
@@ -85,6 +87,12 @@ Rewrite live `translations/en`. Rules and filter codes:
   Body text states the facts only — no source names in brackets
   (`(WCVP)`, `(BOTANY.cz)`, `(Flora Helvetica)`, `(POWO)`, …).
   Conflicting measurements go in `changelog`, not in the field.
+- Once English `inflorescence` changed vs live, run
+  `plant.inflorescence_type.classify` on the new paragraph and put the
+  result in patch `plants_v2.inflorescenceType`. Array of the 17 legend
+  keys, primary first. Empty if none apply (solitary flower, catkin,
+  unnamed cluster). Leave the live type if inflorescence text is
+  unchanged. Details: `ingest/ADD_PLANT.md` §6.
 - Lead native range with WCVP, not Wikipedia *sensu lato*.
 - Habitat text must support the `filterHabitat` codes.
 - Then retune `plants_headers` `filterColor` / `filterHabitat` /
@@ -127,7 +135,8 @@ Write `{id}_{Slug}.json` in the dump folder (full English replace):
 - `header` only the filter arrays that change (full new lists, not a
   code-level delta). `{}` = leave filters.
 - `plants_v2` only fields that change (`heightFrom` / `heightTo`,
-  `floweringFrom` / `floweringTo`, `toxicityClass`, …).
+  `floweringFrom` / `floweringTo`, `toxicityClass`, `inflorescenceType`,
+  …).
 - `changelog` one line per decision (kept vs changed, and the source).
 
 Show the changelog and filter delta in the reply. Wait for apply.
@@ -152,6 +161,8 @@ one folder (no `_live.json` needed).
 ## Verify
 
 - Live `translations/en/{Latin}` has the seven fields and `sourceUrls`
+- If inflorescence changed: `plants_v2/{Latin}.inflorescenceType` matches
+  the new paragraph (absent in RTDB when none of the 17 apply)
 - Header filters match the changelog
 - If filters changed: a new key lists the id; a removed key does not;
   `counts_4_v2` moved by 1, not doubled

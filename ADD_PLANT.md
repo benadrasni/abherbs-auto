@@ -133,15 +133,26 @@ Rewrite the auto-draft. Rules:
 - `sourceUrls` on the English record: English Wikipedia + the floras
   actually used for that English text. Do not put source names in
   brackets in the seven fields or `toxicity`.
+- After the rewritten `inflorescence` paragraph, set
+  `plants_v2.inflorescenceType` with `plant.inflorescence_type.classify`
+  (keys in `TYPES` / `app/docs/DATA_MODEL.md`). Array, primary first.
+  Empty `[]` if none of the 17 diagrams apply (solitary flower, catkin,
+  unnamed cluster). Dry-run `apply_inference` classifies the auto-draft;
+  re-run after editorial English and write `plants_v2.json`. Review
+  compound vs simple (umbel / spike), and flowering head → `capitulum`
+  not `head`. Do not invent keys. Publish writes the whole `plants_v2`
+  record; RTDB omits an empty array.
 
 Reliable sources (see `data/botanical_sources.json`): Wikipedia, PFAF,
 RHS, Luontoportti, Missouri Plants, BOTANY.cz, Flóra Slovenska (Slovak
 body text; bibdigital volumes under `flora_slovenska`), Flora Iberica
-(Iberian/Balearic), EPPO (names).
+(Iberian/Balearic), Jagiellonian University Repository (RUJ,
+https://ruj.uj.edu.pl/; Central Europe WCVP L2 11/13/14), EPPO (names).
 POWO is Cloudflare-blocked; use local WCVP. When a new site is useful,
 add it to the registry (`reliable: true` if it is a real flora).
-Central Europe / Poland scans: RCIN dLibra (`libraries.rcin`); the
-Flora Polska work (`flora_polska`) is a hint only until a volume is
+Central Europe / Poland: RUJ (`libraries.ruj` / work `ruj`; search the
+Latin name, e.g. *Aconitum moldavicum*); RCIN dLibra (`libraries.rcin`);
+the Flora Polska work (`flora_polska`) is a hint only until a volume is
 used.
 
 Registry shape: `libraries` (bibdigital cite/browse) and `sources`
@@ -209,6 +220,8 @@ rebuilds.
 - `web/catalog/{id}` has the same id, Latin name, and `illustrationUrl`
 - `web/labels/en/{id}` matches the sourced English `label` (absent if none)
 - English seven fields present
+- `plants_v2/{Latin}.inflorescenceType` matches the rewritten English
+  inflorescence (absent in RTDB when none of the 17 apply)
 - photos, illustration, and `{stem}_distribution.webp` publicly readable on GCS
 - APG nested node includes the id; no stray sibling genus
 - `search_v3/la/{latin lower}` has the id
